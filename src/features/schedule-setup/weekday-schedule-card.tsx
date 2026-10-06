@@ -2,7 +2,7 @@ import { StyleSheet, Switch, Text, View } from "react-native";
 
 import { TextField } from "@/components/ui";
 import { useTheme } from "@/hooks/use-theme";
-import { radius, spacing, typography } from "@/theme";
+import { layout, radius, spacing, typography } from "@/theme";
 
 import { isValidTime, type WeekdayDraft } from "./schedule-setup-model";
 
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   header: {
-    minHeight: 48,
+    minHeight: layout.minimumTouchTarget,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
