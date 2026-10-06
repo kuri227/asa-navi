@@ -43,7 +43,10 @@ export const calculatePlan = (input: PlanningInput): PlanningResult => {
   assertValidPlanningInput(input);
 
   const basePlan = calculateBasePlan(input);
-  const enabledTasks = input.tasks.filter((task) => task.enabled);
+  const completedTaskIds = new Set(input.completedTaskIds);
+  const enabledTasks = input.tasks.filter(
+    (task) => task.enabled && !completedTaskIds.has(task.id),
+  );
   const normalRequiredMin = calculateNormalMorningDuration(enabledTasks);
   const availableMin = availableWholeMinutes(
     input.now,

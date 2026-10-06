@@ -8,5 +8,6 @@ export { calculatePlan } from "./calculate-plan";
 export { calculateRouteDuration } from "./calculate-route-duration";
 export { compressTasks } from "./compress-tasks";
 export { optimizeTasks } from "./optimize-tasks";
+export { replan } from "./replan";
 export { PlanningDomainError } from "./domain-error";
 export type * from "./types";

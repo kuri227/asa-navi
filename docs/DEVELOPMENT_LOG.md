@@ -32,6 +32,38 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-B-7: completed task replan
+
+### 実装内容
+
+- completedTaskIdsを残りtaskの必要時間、最適化、予定時刻から除外。
+- `replan` APIを追加し、現在時刻から計画を再構築。
+- 基本計画の推奨起床は元のroutine全体を基準に維持。
+- TC-P05、全task完了、非mutationをtest。
+
+### 主なcommit
+
+- この記録を含むreplan commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- replan tests: 4/4 pass
+
+### 発生した問題
+
+- なし。
+
+### 解決方法
+
+- 追加対応なし。
+
+### 次のPhase
+
+- Phase 1-B-8: weekday / date override resolverを実装する。
+
 ## 2026-10-06 — Phase 1-B-6: late calculation / status
 
 ### 実装内容
