@@ -4,6 +4,7 @@ export {
   calculateNormalMorningDuration,
 } from "./calculate-base-plan";
 export { calculateLatestDepartureAt } from "./calculate-latest-departure-at";
+export { calculatePlan } from "./calculate-plan";
 export { calculateRouteDuration } from "./calculate-route-duration";
 export { compressTasks } from "./compress-tasks";
 export { optimizeTasks } from "./optimize-tasks";

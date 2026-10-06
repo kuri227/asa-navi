@@ -32,6 +32,38 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-B-6: late calculation / status
+
+### 実装内容
+
+- 現在時刻、利用可能時間、最適化後taskから予想出発・到着を算出。
+- slack 10分以上をcomfortable、0〜9分をtight、超過をlateとして判定。
+- late adjustmentとtaskの予定開始・終了時刻を生成。
+- TC-P01、TC-P04、exactly 0、event開始済み、秒境界をtest。
+
+### 主なcommit
+
+- この記録を含むstatus calculation commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- plan status tests: 5/5 pass
+
+### 発生した問題
+
+- 仕様は分単位だが、端末の現在時刻には秒が含まれる。
+
+### 解決方法
+
+- 利用可能時間は切り捨て、遅刻時間は切り上げる安全側の丸め規則をarchitectureへ明記した。
+
+### 次のPhase
+
+- Phase 1-B-7: completed taskを除外するreplanを実装する。
+
 ## 2026-10-06 — Phase 1-B-5: optional task skipping
 
 ### 実装内容
