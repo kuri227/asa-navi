@@ -1,5 +1,37 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-C-1: Repository interfaces / persistence models
+
+### 実装内容
+
+- Application層にRepository interfaceを定義。
+- SQLite rowを直接漏らさない永続化modelを定義。
+- SQLite由来の失敗を分類して原因を保持する`RepositoryError`を追加。
+
+### 主なcommit
+
+- この記録を含むRepository境界commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 11 suites / 53 tests pass
+
+### 発生した問題
+
+- 初回実装時の`specialType`候補が仕様書のDDLと一致していなかった。
+
+### 解決方法
+
+- 自己レビューでDDLを照合し、`meal`、`bath`等のCHECK制約と同じunionへ修正した。
+- sessionの必須計画時刻とcolumn名もDDLに合わせて型契約を修正した。
+
+### 次のPhase
+
+- Phase 1-C-2: expo-sqlite導入、migration runner、`001_initial_schema.sql`。
+
 ## 2026-10-06 — Phase 0: 調査・計画
 
 ### 実装内容
