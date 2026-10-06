@@ -34,7 +34,8 @@
 | Navigation   | Expo Router                                     |
 | Language     | TypeScript 6 / strict mode                      |
 | Domain       | React Native非依存の純粋TypeScript              |
-| Database     | expo-sqlite + versioned migration（実装予定）   |
+| Database     | expo-sqlite + versioned migration               |
+| Validation   | Zod（UI・DB等の信頼境界）                       |
 | Notification | AlarmService + expo-notifications（実装予定）   |
 | Test         | Jest / jest-expo / React Native Testing Library |
 | Quality      | ESLint / Prettier / TypeScript / expo-doctor    |

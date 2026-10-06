@@ -1,5 +1,37 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-C-3: schedule / route / routine repositories
+
+### 実装内容
+
+- `ScheduleRepository`、`RouteRepository`、`RoutineRepository`のSQLite実装を追加。
+- query値をbind parameterで渡し、DB rowをZodで検証してcamelCase modelへ変換。
+- replace例外のtitle / start time、task duration整合性等、DBのcolumn型だけでは表現しきれない条件を検証。
+
+### 主なcommit
+
+- この記録を含むread Repository commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 13 suites / 60 tests pass
+- `npm audit`: 5 moderate / 50 high / 0 critical（Zod追加前から増加なし）
+
+### 発生した問題
+
+- Zod install直後のnpm表示が一時的にhigh 51件を示した。
+
+### 解決方法
+
+- lockfile確定後にJSON監査と依存経路を再確認し、high 50件・同じ3 root advisoryであることを確認した。
+
+### 次のPhase
+
+- Phase 1-C-4: morning session / task execution Repository実装。
+
 ## 2026-10-06 — Phase 1-C-2: SQLite migration foundation
 
 ### 実装内容

@@ -1,0 +1,202 @@
+import type { SQLiteBindParams } from "expo-sqlite";
+
+import { RepositoryError } from "@/application/errors/repository-error";
+
+import type { QueryDatabase } from "../../query-database";
+import { SQLiteRouteRepository } from "../sqlite-route-repository";
+import { SQLiteRoutineRepository } from "../sqlite-routine-repository";
+import { SQLiteScheduleRepository } from "../sqlite-schedule-repository";
+
+class FakeQueryDatabase implements QueryDatabase {
+  readonly calls: { sql: string; params?: SQLiteBindParams }[] = [];
+
+  constructor(
+    private readonly firstRows: unknown[] = [],
+    private readonly allRows: unknown[][] = [],
+  ) {}
+
+  async getFirstAsync<T>(
+    sql: string,
+    params?: SQLiteBindParams,
+  ): Promise<T | null> {
+    this.calls.push({ sql, params });
+    return (this.firstRows.shift() ?? null) as T | null;
+  }
+
+  async getAllAsync<T>(sql: string, params?: SQLiteBindParams): Promise<T[]> {
+    this.calls.push({ sql, params });
+    return (this.allRows.shift() ?? []) as T[];
+  }
+}
+
+const timestamp = "2026-10-06T00:00:00.000Z";
+
+describe("SQLiteScheduleRepository", () => {
+  it("maps a weekday row and binds the weekday", async () => {
+    const database = new FakeQueryDatabase([
+      {
+        id: "schedule-1",
+        weekday: 2,
+        title: "1限",
+        start_time: "08:50",
+        location_label: "A棟",
+        route_id: "route-1",
+        is_active: 1,
+      },
+    ]);
+
+    const result = await new SQLiteScheduleRepository(
+      database,
+    ).getWeekdaySchedule(2);
+
+    expect(result).toEqual({
+      id: "schedule-1",
+      weekday: 2,
+      title: "1限",
+      startTime: "08:50",
+      locationLabel: "A棟",
+      routeId: "route-1",
+      isActive: true,
+    });
+    expect(database.calls[0].params).toEqual({ $weekday: 2 });
+  });
+
+  it("rejects a replace override without its required event data", async () => {
+    const database = new FakeQueryDatabase([
+      {
+        id: "override-1",
+        target_date: "2026-10-06",
+        override_type: "replace",
+        title: null,
+        start_time: null,
+        location_label: null,
+        route_id: null,
+      },
+    ]);
+
+    await expect(
+      new SQLiteScheduleRepository(database).getOverride("2026-10-06"),
+    ).rejects.toMatchObject<Partial<RepositoryError>>({
+      code: "mapping_failed",
+    });
+  });
+});
+
+describe("SQLiteRouteRepository", () => {
+  it("returns route segments in the database order", async () => {
+    const database = new FakeQueryDatabase(
+      [
+        {
+          id: "route-1",
+          name: "大学ルート",
+          origin_place_id: null,
+          destination_place_id: null,
+          is_default: 1,
+          is_active: 1,
+          created_at: timestamp,
+          updated_at: timestamp,
+        },
+      ],
+      [
+        [
+          {
+            id: "segment-1",
+            route_id: "route-1",
+            sort_order: 0,
+            mode: "walk",
+            from_label: "自宅",
+            to_label: "駅",
+            line_name: null,
+            duration_min: 8,
+            from_place_id: null,
+            to_place_id: null,
+            created_at: timestamp,
+            updated_at: timestamp,
+          },
+        ],
+      ],
+    );
+
+    const result = await new SQLiteRouteRepository(
+      database,
+    ).getRouteWithSegments("route-1");
+
+    expect(result?.route.name).toBe("大学ルート");
+    expect(result?.segments[0]).toMatchObject({ mode: "walk", durationMin: 8 });
+    expect(database.calls[1].params).toEqual({ $routeId: "route-1" });
+  });
+});
+
+describe("SQLiteRoutineRepository", () => {
+  it("maps validated task rows to Planning Engine input", async () => {
+    const database = new FakeQueryDatabase(
+      [],
+      [
+        [
+          {
+            id: "task-1",
+            name: "朝食",
+            normal_duration_min: 15,
+            minimum_duration_min: 8,
+            requirement: "required",
+            compression_priority: 10,
+            skip_priority: 100,
+            sort_order: 0,
+            enabled: 1,
+            special_type: "meal",
+            created_at: timestamp,
+            updated_at: timestamp,
+          },
+        ],
+      ],
+    );
+
+    const result = await new SQLiteRoutineRepository(
+      database,
+    ).listEnabledTasks();
+
+    expect(result).toEqual([
+      {
+        id: "task-1",
+        name: "朝食",
+        normalDurationMin: 15,
+        minimumDurationMin: 8,
+        requirement: "required",
+        compressionPriority: 10,
+        skipPriority: 100,
+        sortOrder: 0,
+        enabled: true,
+      },
+    ]);
+  });
+
+  it("rejects a task whose minimum duration exceeds normal duration", async () => {
+    const database = new FakeQueryDatabase(
+      [],
+      [
+        [
+          {
+            id: "task-invalid",
+            name: "不正タスク",
+            normal_duration_min: 5,
+            minimum_duration_min: 6,
+            requirement: "required",
+            compression_priority: 10,
+            skip_priority: 10,
+            sort_order: 0,
+            enabled: 1,
+            special_type: null,
+            created_at: timestamp,
+            updated_at: timestamp,
+          },
+        ],
+      ],
+    );
+
+    await expect(
+      new SQLiteRoutineRepository(database).listEnabledTasks(),
+    ).rejects.toMatchObject<Partial<RepositoryError>>({
+      code: "mapping_failed",
+    });
+  });
+});
