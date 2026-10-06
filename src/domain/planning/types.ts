@@ -73,3 +73,10 @@ export type PlanningResult = Readonly<{
   tasks: readonly PlannedTask[];
   adjustments: readonly PlanningAdjustment[];
 }>;
+
+export type BasePlan = Readonly<{
+  routeDurationMin: number;
+  normalMorningDurationMin: number;
+  latestDepartureAt: Date;
+  recommendedWakeAt: Date;
+}>;

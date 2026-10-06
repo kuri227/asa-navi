@@ -32,6 +32,37 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-B-3: recommended wake / base plan
+
+### 実装内容
+
+- enabled taskの通常時間を合計し、disabled taskを除外。
+- 最終出発時刻から推奨起床時刻を逆算する基本計画を追加。
+- TC-P01、task 0件、route 0分、決定性、非mutationをtest。
+
+### 主なcommit
+
+- この記録を含むbase plan commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- base plan tests: 4/4 pass
+
+### 発生した問題
+
+- なし。
+
+### 解決方法
+
+- 追加対応なし。
+
+### 次のPhase
+
+- Phase 1-B-4: task compressionを実装する。
+
 ## 2026-10-06 — Phase 1-B-2: route duration / latest departure
 
 ### 実装内容
