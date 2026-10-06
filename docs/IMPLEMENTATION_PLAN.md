@@ -24,10 +24,11 @@
 ### Repository
 
 - GitHub: `https://github.com/kuri227/asa-navi`
-- 2026-10-06時点でリモートは空。既存commit、既存branch履歴、既存コードはない。
-- ローカルへclone済み。branchは`main`、remoteは`origin`。
-- `package.json`、Expo、React Native、TypeScript、ESLint、Prettier、テスト、Expo Router、SQLite実装は未導入。
-- `README.md`、`AGENTS.md`、その他のリポジトリ内仕様書は存在しなかった。
+- 2026-10-06に空のリモートから初回計画commitを作成した。
+- Phase 1-Aは`feat/project-foundation` branchで進行中。remoteは`origin`。
+- Phase 1-A-1でExpo SDK 57.0.26、React Native 0.86.3、React 19.2.3、TypeScript 6.0.3、Expo Router 57.0.24を公式default templateから初期化した。
+- ESLintは公式Expo設定で導入済み。Prettier、test、SQLiteは後続Sub Phaseで導入する。
+- `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
 

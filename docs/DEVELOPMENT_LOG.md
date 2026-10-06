@@ -32,6 +32,45 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-A-1: Expoプロジェクト初期化
+
+### 実装内容
+
+- `feat/project-foundation` branchを作成。
+- `create-expo-app` 5.0.0のdefault templateでExpo SDK 57プロジェクトを初期化。
+- app name、slug、schemeを朝ナビ用に設定。
+- Expo Router、TypeScript strict、公式ESLint設定を導入。
+- CSS / CSS Modulesの型宣言を追加。
+- React 19 lintに合わせ、Web hydration判定を`useSyncExternalStore`で実装。
+- Expo templateのMIT noticeを第三者通知として保存。
+
+### 主なcommit
+
+- この記録を含むfoundation commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run lint`: pass
+- `npx tsc --noEmit`: pass
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform web --output-dir dist`: pass
+
+### 発生した問題
+
+- 公式default templateのCSS importにTypeScript宣言がなく、typecheckが失敗した。
+- Web hydration hookがReact 19の`react-hooks/set-state-in-effect`に抵触した。
+- `npm audit`は11 moderate / 19 highを報告した。すべて公式Expo / React Native toolchainのtransitive dependencyで、自動修正案はSDK互換性を破壊するdowngrade / upgradeだった。
+
+### 解決方法
+
+- CSS / CSS Modulesへ型宣言を追加。
+- hydration検知をeffect内の同期state更新から`useSyncExternalStore`へ置換。
+- `npm audit fix --force`は実行せず、ADR-0001にリスクと追跡方針を記録。
+
+### 次のPhase
+
+- Phase 1-A-2: strict TypeScript、path alias、基本directoryを朝ナビのarchitectureへ合わせる。
+
 ## 2026-10-06 — 開発指示書v1.1反映
 
 ### 実装内容
