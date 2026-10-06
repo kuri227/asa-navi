@@ -32,6 +32,38 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-B-5: optional task skipping
+
+### 実装内容
+
+- 短縮後に残るdeficitへoptional task省略を適用。
+- skipPriority、sortOrder、IDの順で決定的に省略。
+- required taskを省略候補から除外。
+- TC-P03、requiredのみ、optional 0件、exactly 0 deficitをtest。
+
+### 主なcommit
+
+- この記録を含むoptional skip commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- optimization tests: 4/4 pass
+
+### 発生した問題
+
+- なし。
+
+### 解決方法
+
+- 追加対応なし。
+
+### 次のPhase
+
+- Phase 1-B-6: late calculationとstatusを実装する。
+
 ## 2026-10-06 — Phase 1-B-4: task compression
 
 ### 実装内容

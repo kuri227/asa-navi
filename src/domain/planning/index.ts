@@ -6,5 +6,6 @@ export {
 export { calculateLatestDepartureAt } from "./calculate-latest-departure-at";
 export { calculateRouteDuration } from "./calculate-route-duration";
 export { compressTasks } from "./compress-tasks";
+export { optimizeTasks } from "./optimize-tasks";
 export { PlanningDomainError } from "./domain-error";
 export type * from "./types";
