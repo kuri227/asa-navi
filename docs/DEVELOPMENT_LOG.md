@@ -1,5 +1,43 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-D-6: morning routine setup
+
+### 実装内容
+
+- 朝食、身支度、着替え、持ち物確認のプリセットと独自タスク追加を実装。
+- タスク名、通常時間、最短時間、必須・省略可の編集と削除・上下並べ替えに対応。
+- UI境界とApplication UseCaseの双方で件数、時間範囲、最短時間と通常時間の整合性を検証。
+- タスク順をsortOrderとPlanning Engineの圧縮・省略優先順へ変換し、SQLiteへ1transactionで全置換保存。
+- 保存成功後に通知権限の事前説明セクションへ進む導線を追加。
+
+### 主なcommit
+
+- `ed88e48 feat(routine): persist ordered morning tasks`
+- この記録を含むroutine setup UI commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 28 suites / 104 tests pass
+- `npm run test:sqlite`: pass
+- `npm run migration:check`: pass
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform android --output-dir dist-android-d6`: pass
+
+### 発生した問題
+
+- 初回実行時、存在しないtypography tokenを参照してTypeScript検査が失敗した。
+
+### 解決方法
+
+- 既存Design Tokenの`typography.title`へ統一し、全品質ゲートを再実行した。
+
+### 次のPhase
+
+- Phase 1-D-7: 通知権限の事前説明。
+
 ## 2026-10-06 — Phase 1-D-5: date override setup
 
 ### 実装内容

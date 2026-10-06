@@ -35,6 +35,7 @@
   - Phase 1-D-3で複数区間の通学ルート入力・検証・SQLite保存を実装した。
   - Phase 1-D-4で月〜日の最初の予定・予定なし入力とSQLite保存を実装した。
   - Phase 1-D-5で例外日のcancel / replace入力とSQLite保存を実装した。
+  - Phase 1-D-6で朝タスクのプリセット追加・時間・必須区分・並べ替えとSQLite保存を実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -47,7 +48,7 @@
 
 ### Specification gap
 
-実装は存在しないため、仕様との差分はコアMVP全体である。既存データや既存機能との互換性問題は現時点ではない。
+Planning Engine、SQLite基盤、初回設定のうち朝ルーティンまでを実装済み。通知権限の事前説明、朝セッションUI、通知adapter、実機検証が主な未実装範囲である。
 
 ## 4. 対象外機能
 

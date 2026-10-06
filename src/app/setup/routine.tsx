@@ -1,29 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
-import { ScreenContainer } from "@/components/ui";
-import { useTheme } from "@/hooks/use-theme";
-import { spacing, typography } from "@/theme";
+import { router } from "expo-router";
+
+import { RoutineSetupScreen } from "@/features/routine-setup/routine-setup-screen";
+import { saveMorningRoutineToDatabase } from "@/infrastructure/app-services/save-morning-routine";
 
 export default function RoutineSetupRoute() {
-  const theme = useTheme();
   return (
-    <ScreenContainer>
-      <View style={styles.copy}>
-        <Text
-          accessibilityRole="header"
-          style={[styles.title, { color: theme.text }]}
-        >
-          朝のルーティンを設定しましょう
-        </Text>
-        <Text style={[styles.description, { color: theme.textSecondary }]}>
-          朝食や身支度など、出発までに行うことを登録します。
-        </Text>
-      </View>
-    </ScreenContainer>
+    <RoutineSetupScreen
+      onSave={saveMorningRoutineToDatabase}
+      onSaved={() => router.navigate("/setup/notifications")}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  copy: { gap: spacing.lg },
-  title: { ...typography.heading },
-  description: { ...typography.body },
-});
