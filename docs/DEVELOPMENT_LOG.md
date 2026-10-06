@@ -1,5 +1,43 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-C-2: SQLite migration foundation
+
+### 実装内容
+
+- Expo SDK 57互換の`expo-sqlite ~57.0.3`を追加。
+- 仕様v0.3の10 table・5 indexを`001_initial_schema.sql`へ定義。
+- WAL、foreign keys、`schema_migrations`、exclusive transactionを使うmigration runnerを実装。
+- raw SQLを正本としてMetro用moduleを生成し、CIで同期を検査するscriptを追加。
+
+### 主なcommit
+
+- この記録を含むSQLite migration foundation commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run migration:check`: pass
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 12 suites / 55 tests pass
+- `npx expo-doctor`: 21/21 pass
+- SQLite 3.53.1でmigrationを2回適用: `integrity_check=ok`、10 table、5 index
+- `npm audit`: 5 moderate / 50 high / 0 critical（既知3 root advisory、増加なし）
+
+### 発生した問題
+
+- Expoのoverload付き`runAsync`を最小migration portへ直接構造代入できなかった。
+- Prettierが生成moduleを書き換え、最初の同期checkが失敗した。
+
+### 解決方法
+
+- Expo SQLite objectをmigration portへ変換する明示adapterを追加。
+- 生成行を`prettier-ignore`対象にし、生成直後とformat後が一致するよう修正。
+
+### 次のPhase
+
+- Phase 1-C-3: schedule / route / routine Repository実装。
+
 ## 2026-10-06 — Phase 1-C-1: Repository interfaces / persistence models
 
 ### 実装内容

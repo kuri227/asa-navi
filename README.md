@@ -136,7 +136,7 @@ npm audit
 
 SQLiteは永続データの唯一の正本とします。migrationは`001_initial_schema.sql`のように番号を付け、適用済みfileは変更せず新しいmigrationを追加します。UIからSQLを直接実行しません。
 
-SQLiteとmigration runnerはPhase 1-Cで実装予定です。
+`expo-sqlite`とmigration runnerは実装済みです。SQL fileを変更した場合は`npm run migration:generate`でアプリbundle用moduleを更新し、`npm run migration:check`で同期を確認します。適用済みmigrationは変更せず、次の番号のfileを追加してください。Repository実装はPhase 1-Cで継続中です。
 
 ## アーキテクチャ
 
@@ -181,7 +181,7 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 
 ## 未実装
 
-- SQLite migration / Repository
+- SQLite Repository
 - 朝ナビ固有UIとdesign token
 - 曜日予定、例外日、通学ルート、朝ルーティンの設定
 - 朝セッションと再計画画面

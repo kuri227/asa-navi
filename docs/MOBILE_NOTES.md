@@ -49,6 +49,13 @@
 - remote pushは本MVP対象外。
 - build料金やcloud availabilityを中核設計の前提にしない。
 
+### expo-sqliteの検証範囲
+
+- SDK 57推奨版`expo-sqlite ~57.0.3`を使用する。
+- iOS / Androidではmigrationをexclusive transactionで実行し、WALとforeign key制約を有効にする。
+- SDK 57時点のWeb対応はalphaで、exclusive transactionはWeb非対応。第1段階の永続化受入確認はiOS / Androidを対象にする。
+- migration SQLは`.sql`を正本とし、Metro用TypeScript moduleはscriptで生成する。
+
 ## 6. 実機記録テンプレート
 
 ```text
