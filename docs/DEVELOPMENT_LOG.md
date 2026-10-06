@@ -32,6 +32,38 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-A-5: GitHub Actions
+
+### 実装内容
+
+- Pull Request、main push、手動実行に対応するQuality workflowを追加。
+- Node.js 22.17.1とnpm cacheを使用し、localと同じformat、lint、typecheck、test、expo-doctorを実行。
+- 新規critical advisoryをCIで拒否し、既知の未修正highはdependency security文書で追跡。
+- workflow権限をrepository contentのreadだけに制限。
+
+### 主なcommit
+
+- この記録を含むCI commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- local quality gate: pass
+- workflow syntax: Prettier parse / static review pass
+- critical audit gate: pass（0 critical）
+- GitHub Actions run: Pull Request作成後に確認
+
+### 発生した問題
+
+- 既知のhigh advisoryには上流修正版がないため、`npm audit`を全severityでblockingにすると全CIが恒常的に失敗する。
+
+### 解決方法
+
+- criticalをblockingにし、highは到達可能性と更新条件を明記してPhaseごとに追跡する。
+
+### 次のPhase
+
+- Phase 1-A-6: 初学者向けREADME初版を整備する。
+
 ## 2026-10-06 — Phase 1-A-4: Jest / React Native Testing Library
 
 ### 実装内容
