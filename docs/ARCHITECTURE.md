@@ -101,8 +101,16 @@ src/
 ### 日時方針
 
 - Domain APIは`Date`を受け取るが、DB境界ではISO 8601文字列としてvalidate / serializeする。
-- 曜日テンプレートは`HH:mm`、例外日はlocal calendar dateとして解決し、絶対時刻への変換はUseCase境界で行う。
+- 曜日テンプレートは`HH:mm`、例外日は対象日と時刻として保持する。
+- ApplicationのSchedule Resolverが曜日・対象日・timezoneから具体的な絶対日時を作り、Planning Engineへ渡す。
+- Planning Engineは曜日や`HH:mm`を解釈しない。
 - 日付跨ぎ、DSTがあるtimezone、端末timezone変更をtest対象とする。
+
+### Validation責務
+
+- Zod等の境界validationは、UI、DB、外部入力の負数、空文字、不正enum、不正日時を拒否する。
+- Domainは`minimumDurationMin <= normalDurationMin`、required taskをskipしないこと、route順序、計算整合性等のinvariantを自身で守る。
+- Domain invariantを境界schemaだけへ委ねない。
 
 ## 5. Application / UseCase
 
@@ -258,5 +266,6 @@ Complete action
 - 新規native moduleまたは外部サービス
 - Expo Notificationsからnative alarmへの切替
 - Local-firstまたは依存方向に影響する判断
+- 仕様書にない主要package（state / UI / form / ORM / date-time / native / analytics / logging等）の追加
 
-ADRには問題、背景、選択肢、推奨、影響、決定者と日付を記録する。
+主要依存のADRでは目的、標準機能では不足する理由、maintenance、Expo / React Native互換性、native依存、削除容易性、license、代替案も記録する。ADRには問題、背景、選択肢、推奨、影響、決定者と日付を記録する。

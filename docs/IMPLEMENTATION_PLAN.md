@@ -7,7 +7,7 @@
 
 朝ナビは、学生の最初の予定、通学時間、朝の準備タスクから起床・出発時刻を逆算し、寝坊や進捗の遅れが生じたときも実行可能な朝プランへ再計画するローカルファーストのモバイルアプリである。
 
-一次資料は `asanavi_spec_v0_3.md` と「朝ナビの一日を支えるアプリ画面フロー.png」。資料が競合する場合は、最新のユーザー要件、実装仕様書、画面フロー、既存コードの順で優先する。
+一次資料は `asanavi_spec_v0_3.md` と「朝ナビの一日を支えるアプリ画面フロー.png」。開発運用は`docs/DEVELOPMENT_GUIDE.md`も参照する。資料が競合する場合は、最新のユーザー要件、実装仕様書、実装計画、画面フロー、既存コードの順で優先する。
 
 ## 2. MVPの目的
 
@@ -145,6 +145,7 @@ Acceptance Criteria:
 
 - Android向けの空アプリが起動できる。
 - `format:check`、`lint`、`typecheck`、`test`がローカルで成功する。
+- `npx expo-doctor`で重大な問題が検出されない。
 - PR時に同じ品質ゲートをCIで実行できる。
 - secretや生成物がcommit対象にならない。
 
@@ -291,6 +292,7 @@ Acceptance Criteria:
 - commit前にformat、lint、typecheck、関連test。Phase完了時に全品質ゲート。
 - Phase単位でPRを作り、Purpose、Changes、Architecture decisions、Tests、Screenshots、Known limitations、Next stepを書く。
 - CIは`npm ci`とdependency cacheを使い、format check、lint、typecheck、unit testを別stepで可視化する。
+- Foundationでは`npx expo-doctor`も実行し、Expo / React Native / Reactの互換性を確認する。
 - force push、main履歴書き換え、大量squashはユーザー確認なしに行わない。
 
 ## 12. リスクと対策
@@ -305,6 +307,7 @@ Acceptance Criteria:
 | 初学者に追えない履歴 | 小さいcommit、README、Development Log、理由中心のADR |
 | Expo / store要件の更新 | Phase開始時に公式docsを再確認し、versionをcommitで固定 |
 | npmや依存導入の再現性 | `package-lock.json`をcommitし、CIは`npm ci`を使う |
+| 主要依存の肥大化・lock-in | 目的、互換性、maintenance、license、代替案を確認しADRへ記録 |
 
 ## 13. 将来拡張
 

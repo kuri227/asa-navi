@@ -31,3 +31,30 @@
 ### 次のPhase
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
+
+## 2026-10-06 — 開発指示書v1.1反映
+
+### 実装内容
+
+- `docs/DEVELOPMENT_GUIDE.md`として追加指示を永続化。
+- expo-doctor、主要依存ADR、validation責務分離、Schedule Resolver、日時境界testを既存計画へ反映。
+
+### 主なcommit
+
+- この記録を含む文書commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- Markdown差分、必須語句、Git whitespaceを確認する。
+
+### 発生した問題
+
+- 既存計画には主要依存のADR条件とexpo-doctor完了ゲートが明記されていなかった。
+
+### 解決方法
+
+- v1.1を開発運用の参照文書として追加し、計画・設計・テスト文書へ差分を統合した。
+
+### 次のPhase
+
+- Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。

@@ -24,9 +24,10 @@ npm run format:check
 npm run lint
 npm run typecheck
 npm test
+npx expo-doctor
 ```
 
-script名はPhase 1-Aで確定する。失敗理由を特定せずskipしない。
+`expo-doctor`はFoundationの完了ゲートとする。script名はPhase 1-Aで確定する。失敗理由を特定せずskipしない。
 
 ## 3. レイヤ別テスト
 
@@ -62,7 +63,11 @@ script名はPhase 1-Aで確定する。失敗理由を特定せずskipしない�
 - priority同値、sortOrder同値時の決定性。
 - route 0区間、duration 0、複数区間。
 - nowが予定起床直後、最終出発exactly、最終出発後。
+- first eventがすでに開始している。
 - first event / wake / routeが日付を跨ぐ。
+- 深夜0時を跨ぐ。
+- timezone変更後に保存済みsessionを復元する。
+- DSTのあるtimezoneでもlocal templateからの具体日時化が不整合を起こしにくい。
 - input arrayとDateをmutationしない。
 - 同じ入力を複数回呼んだ結果が同じ。
 - 負のduration、不正priority、重複ID等のinvalid input。
