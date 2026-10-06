@@ -1,5 +1,36 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-C-5: settings / alarm record repositories
+
+### 実装内容
+
+- 単一行のapp settingsを初期化、取得、upsertするRepositoryを実装。
+- alarm recordの作成、session単位一覧、status・platform notification ID更新を実装。
+- 通知adapterとDB記録を分離し、将来AlarmKit / AlarmManagerへ差し替え可能な保存境界を維持。
+
+### 主なcommit
+
+- この記録を含むsettings / alarm persistence commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 15 suites / 66 tests pass
+
+### 発生した問題
+
+- 新規DBでは`app_settings`行がまだ存在しない。
+
+### 解決方法
+
+- `get()`で固定ID 1の既定値を`INSERT OR IGNORE`し、SQLiteへ保存された値を読み返す設計にした。
+
+### 次のPhase
+
+- Phase 1-C-6: SQLite integration / constraint / reopen復元テスト。
+
 ## 2026-10-06 — Phase 1-C-4: morning session / task execution repositories
 
 ### 実装内容
