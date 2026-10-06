@@ -1,5 +1,42 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-D-4: weekday schedule setup
+
+### 実装内容
+
+- 月〜日それぞれの最初の予定、開始時刻、任意の場所を入力する画面を実装。
+- 曜日単位で「予定あり／予定なし」を切り替えられるnative Switchを追加。
+- 曜日テンプレートの時刻を絶対日時へ変換せず、`HH:mm`としてvalidation・保存。
+- 予定ありの曜日だけをSQLiteへ保存し、予定なしは行なしとしてResolverの`null`契約と統一。
+- 全曜日置換を1transactionで行い、既定通学ルートを各予定へ関連付け。
+
+### 主なcommit
+
+- `a475c8b feat(schedule): persist weekday first events`
+- この記録を含むschedule setup UI commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 23 suites / 89 tests pass
+- `npm run test:sqlite`: pass
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform android --output-dir dist-android-d4`: pass
+
+### 発生した問題
+
+- `weekday_schedules`には「予定なし」専用行がなく、title / start_timeはNOT NULLだった。
+
+### 解決方法
+
+- 予定なしを行なしで表現し、7曜日の明示保存時に予定ありの行だけをtransactionで再作成する方式を採用。
+
+### 次のPhase
+
+- Phase 1-D-5: 例外日設定（cancel / replace）。
+
 ## 2026-10-06 — Phase 1-D-3: multi-segment commute route setup
 
 ### 実装内容

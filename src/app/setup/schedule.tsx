@@ -1,36 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
 
-import { ScreenContainer } from "@/components/ui";
-import { useTheme } from "@/hooks/use-theme";
-import { spacing, typography } from "@/theme";
+import { ScheduleSetupScreen } from "@/features/schedule-setup/schedule-setup-screen";
+import { saveWeekdaySchedulesToDatabase } from "@/infrastructure/app-services/save-weekday-schedules";
 
 export default function ScheduleSetupRoute() {
-  const theme = useTheme();
   return (
-    <ScreenContainer>
-      <View style={styles.copy}>
-        <Text
-          accessibilityRole="header"
-          style={[styles.title, { color: theme.text }]}
-        >
-          曜日の予定を設定しましょう
-        </Text>
-        <Text style={[styles.description, { color: theme.textSecondary }]}>
-          曜日ごとの最初の予定と開始時刻を登録します。
-        </Text>
-      </View>
-    </ScreenContainer>
+    <ScheduleSetupScreen
+      onSave={saveWeekdaySchedulesToDatabase}
+      onSaved={() => router.navigate("/setup/overrides")}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  copy: {
-    gap: spacing.lg,
-  },
-  title: {
-    ...typography.heading,
-  },
-  description: {
-    ...typography.body,
-  },
-});
