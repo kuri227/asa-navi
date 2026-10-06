@@ -32,6 +32,41 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-A-6: 初学者向けREADME
+
+### 実装内容
+
+- プロダクト目的、MVP機能、技術構成、directory、必要環境を説明。
+- npmでのsetup、Android / iOS、Expo Go / Development Build、品質commandを手順化。
+- DB、architecture、Planning Engine、Git運用、security、roadmap、troubleshootingを整理。
+- 実装済みと未実装を分け、sample UIを製品機能として扱わないことを明記。
+
+### 主なcommit
+
+- この記録を含むREADME commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 1 suite / 1 test pass
+- `npx expo-doctor`: 21/21 pass
+- Android export bundle: pass
+- Markdown link / command review: pass
+
+### 発生した問題
+
+- WindowsではiOS Simulatorを実行できない。
+
+### 解決方法
+
+- iPhoneのExpo Go、macOS、EAS Development Buildの選択肢と制約を明記した。
+
+### 次のPhase
+
+- Phase 1-A完了確認後、Phase 1-B-1: Planning EngineのDomain typesとvalidation方針。
+
 ## 2026-10-06 — Phase 1-A-5: GitHub Actions
 
 ### 実装内容
