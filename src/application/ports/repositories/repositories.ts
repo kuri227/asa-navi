@@ -18,6 +18,7 @@ import type {
 export interface ScheduleRepository {
   getWeekdaySchedule(weekday: number): Promise<WeekdaySchedule | null>;
   getOverride(targetDate: string): Promise<DateScheduleOverride | null>;
+  replaceWeekdaySchedules(schedules: readonly WeekdaySchedule[]): Promise<void>;
 }
 
 export interface RoutineRepository {

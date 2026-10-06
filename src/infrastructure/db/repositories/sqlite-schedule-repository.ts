@@ -6,7 +6,7 @@ import type {
   WeekdaySchedule,
 } from "@/application/schedule";
 
-import type { QueryDatabase } from "../query-database";
+import type { MutationDatabase } from "../query-database";
 import {
   nullableStringSchema,
   parseDatabaseRow,
@@ -44,7 +44,10 @@ const overrideRowSchema = z.discriminatedUnion("override_type", [
 ]);
 
 export class SQLiteScheduleRepository implements ScheduleRepository {
-  constructor(private readonly database: QueryDatabase) {}
+  constructor(
+    private readonly database: MutationDatabase,
+    private readonly now: () => Date = () => new Date(),
+  ) {}
 
   getWeekdaySchedule(weekday: number): Promise<WeekdaySchedule | null> {
     return runRepositoryQuery(async () => {
@@ -96,5 +99,37 @@ export class SQLiteScheduleRepository implements ScheduleRepository {
         routeId: value.route_id,
       };
     });
+  }
+
+  replaceWeekdaySchedules(
+    schedules: readonly WeekdaySchedule[],
+  ): Promise<void> {
+    const now = this.now().toISOString();
+    return runRepositoryQuery(() =>
+      this.database.withExclusiveTransactionAsync(async (transaction) => {
+        await transaction.runAsync("DELETE FROM weekday_schedules");
+        for (const schedule of schedules) {
+          await transaction.runAsync(
+            `INSERT INTO weekday_schedules (
+              id, weekday, title, start_time, location_label, route_id,
+              is_active, created_at, updated_at
+            ) VALUES (
+              $id, $weekday, $title, $startTime, $locationLabel, $routeId,
+              $isActive, $now, $now
+            )`,
+            {
+              $id: schedule.id,
+              $weekday: schedule.weekday,
+              $title: schedule.title,
+              $startTime: schedule.startTime,
+              $locationLabel: schedule.locationLabel ?? null,
+              $routeId: schedule.routeId ?? null,
+              $isActive: schedule.isActive ? 1 : 0,
+              $now: now,
+            },
+          );
+        }
+      }),
+    );
   }
 }

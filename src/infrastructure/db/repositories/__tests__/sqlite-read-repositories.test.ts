@@ -91,6 +91,41 @@ describe("SQLiteScheduleRepository", () => {
       code: "mapping_failed",
     });
   });
+
+  it("replaces weekday schedules in one transaction", async () => {
+    const database = new FakeQueryDatabase();
+    const repository = new SQLiteScheduleRepository(
+      database,
+      () => new Date(timestamp),
+    );
+
+    await repository.replaceWeekdaySchedules([
+      {
+        id: "schedule-1",
+        weekday: 1,
+        title: "1限",
+        startTime: "08:50",
+        locationLabel: "A棟",
+        routeId: "route-1",
+        isActive: true,
+      },
+    ]);
+
+    expect(
+      database.calls.map(({ sql }) =>
+        sql.trim().split(/\s+/).slice(0, 3).join(" "),
+      ),
+    ).toEqual([
+      "DELETE FROM weekday_schedules",
+      "INSERT INTO weekday_schedules",
+    ]);
+    expect(database.calls[1].params).toMatchObject({
+      $weekday: 1,
+      $startTime: "08:50",
+      $routeId: "route-1",
+      $now: timestamp,
+    });
+  });
 });
 
 describe("SQLiteRouteRepository", () => {
