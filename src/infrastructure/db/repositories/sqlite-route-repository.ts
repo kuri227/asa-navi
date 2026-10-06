@@ -7,7 +7,7 @@ import type {
   RouteWithSegments,
 } from "@/application/ports/repositories";
 
-import type { QueryDatabase } from "../query-database";
+import type { MutationDatabase } from "../query-database";
 import {
   booleanIntegerSchema,
   isoDateTimeSchema,
@@ -75,7 +75,7 @@ function mapSegment(row: unknown): CommuteRouteSegment {
 }
 
 export class SQLiteRouteRepository implements RouteRepository {
-  constructor(private readonly database: QueryDatabase) {}
+  constructor(private readonly database: MutationDatabase) {}
 
   getDefaultRoute(): Promise<CommuteRoute | null> {
     return runRepositoryQuery(async () => {
@@ -105,5 +105,76 @@ export class SQLiteRouteRepository implements RouteRepository {
         segments: segmentRows.map(mapSegment),
       };
     });
+  }
+
+  saveRouteWithSegments(routeWithSegments: RouteWithSegments): Promise<void> {
+    return runRepositoryQuery(() =>
+      this.database.withExclusiveTransactionAsync(async (transaction) => {
+        const { route, segments } = routeWithSegments;
+        if (route.isDefault) {
+          await transaction.runAsync(
+            "UPDATE commute_routes SET is_default = 0 WHERE id <> $routeId",
+            { $routeId: route.id },
+          );
+        }
+        await transaction.runAsync(
+          `INSERT INTO commute_routes (
+            id, name, origin_place_id, destination_place_id, is_default,
+            is_active, created_at, updated_at
+          ) VALUES (
+            $id, $name, $originPlaceId, $destinationPlaceId, $isDefault,
+            $isActive, $createdAt, $updatedAt
+          )
+          ON CONFLICT(id) DO UPDATE SET
+            name = excluded.name,
+            origin_place_id = excluded.origin_place_id,
+            destination_place_id = excluded.destination_place_id,
+            is_default = excluded.is_default,
+            is_active = excluded.is_active,
+            updated_at = excluded.updated_at`,
+          {
+            $id: route.id,
+            $name: route.name,
+            $originPlaceId: route.originPlaceId ?? null,
+            $destinationPlaceId: route.destinationPlaceId ?? null,
+            $isDefault: route.isDefault ? 1 : 0,
+            $isActive: route.isActive ? 1 : 0,
+            $createdAt: route.createdAt.toISOString(),
+            $updatedAt: route.updatedAt.toISOString(),
+          },
+        );
+        await transaction.runAsync(
+          "DELETE FROM route_segments WHERE route_id = $routeId",
+          { $routeId: route.id },
+        );
+        for (const segment of segments) {
+          await transaction.runAsync(
+            `INSERT INTO route_segments (
+              id, route_id, sort_order, mode, from_label, to_label,
+              line_name, duration_min, from_place_id, to_place_id,
+              created_at, updated_at
+            ) VALUES (
+              $id, $routeId, $sortOrder, $mode, $fromLabel, $toLabel,
+              $lineName, $durationMin, $fromPlaceId, $toPlaceId,
+              $createdAt, $updatedAt
+            )`,
+            {
+              $id: segment.id,
+              $routeId: segment.routeId,
+              $sortOrder: segment.sortOrder,
+              $mode: segment.mode,
+              $fromLabel: segment.fromLabel,
+              $toLabel: segment.toLabel,
+              $lineName: segment.lineName ?? null,
+              $durationMin: segment.durationMin,
+              $fromPlaceId: segment.fromPlaceId ?? null,
+              $toPlaceId: segment.toPlaceId ?? null,
+              $createdAt: segment.createdAt.toISOString(),
+              $updatedAt: segment.updatedAt.toISOString(),
+            },
+          );
+        }
+      }),
+    );
   }
 }

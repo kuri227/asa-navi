@@ -28,6 +28,7 @@ export interface RoutineRepository {
 export interface RouteRepository {
   getDefaultRoute(): Promise<CommuteRoute | null>;
   getRouteWithSegments(routeId: string): Promise<RouteWithSegments | null>;
+  saveRouteWithSegments(route: RouteWithSegments): Promise<void>;
 }
 
 export interface MorningSessionRepository {

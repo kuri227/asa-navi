@@ -2,12 +2,12 @@ import type { SQLiteBindParams } from "expo-sqlite";
 
 import { RepositoryError } from "@/application/errors/repository-error";
 
-import type { QueryDatabase } from "../../query-database";
+import type { MutationDatabase, WriteDatabase } from "../../query-database";
 import { SQLiteRouteRepository } from "../sqlite-route-repository";
 import { SQLiteRoutineRepository } from "../sqlite-routine-repository";
 import { SQLiteScheduleRepository } from "../sqlite-schedule-repository";
 
-class FakeQueryDatabase implements QueryDatabase {
+class FakeQueryDatabase implements MutationDatabase {
   readonly calls: { sql: string; params?: SQLiteBindParams }[] = [];
 
   constructor(
@@ -26,6 +26,17 @@ class FakeQueryDatabase implements QueryDatabase {
   async getAllAsync<T>(sql: string, params?: SQLiteBindParams): Promise<T[]> {
     this.calls.push({ sql, params });
     return (this.allRows.shift() ?? []) as T[];
+  }
+
+  async runAsync(sql: string, params?: SQLiteBindParams): Promise<unknown> {
+    this.calls.push({ sql, params });
+    return undefined;
+  }
+
+  withExclusiveTransactionAsync(
+    task: (transaction: WriteDatabase) => Promise<void>,
+  ): Promise<void> {
+    return task(this);
   }
 }
 
@@ -124,6 +135,51 @@ describe("SQLiteRouteRepository", () => {
     expect(result?.route.name).toBe("大学ルート");
     expect(result?.segments[0]).toMatchObject({ mode: "walk", durationMin: 8 });
     expect(database.calls[1].params).toEqual({ $routeId: "route-1" });
+  });
+
+  it("replaces route segments in one transaction", async () => {
+    const database = new FakeQueryDatabase();
+    const repository = new SQLiteRouteRepository(database);
+
+    await repository.saveRouteWithSegments({
+      route: {
+        id: "route-1",
+        name: "大学ルート",
+        isDefault: true,
+        isActive: true,
+        createdAt: new Date(timestamp),
+        updatedAt: new Date(timestamp),
+      },
+      segments: [
+        {
+          id: "segment-1",
+          routeId: "route-1",
+          sortOrder: 0,
+          mode: "walk",
+          fromLabel: "自宅",
+          toLabel: "吹田駅",
+          durationMin: 8,
+          createdAt: new Date(timestamp),
+          updatedAt: new Date(timestamp),
+        },
+      ],
+    });
+
+    expect(
+      database.calls.map(({ sql }) =>
+        sql.trim().split(/\s+/).slice(0, 3).join(" "),
+      ),
+    ).toEqual([
+      "UPDATE commute_routes SET",
+      "INSERT INTO commute_routes",
+      "DELETE FROM route_segments",
+      "INSERT INTO route_segments",
+    ]);
+    expect(database.calls[3].params).toMatchObject({
+      $routeId: "route-1",
+      $sortOrder: 0,
+      $durationMin: 8,
+    });
   });
 });
 
