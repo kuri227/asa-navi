@@ -32,6 +32,37 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-B-1: Planning domain typesとinvariant
+
+### 実装内容
+
+- PlanningInput、task、route、result、adjustment等のreadonly Domain型を追加。
+- 負数・非整数duration、不正日時、重複ID、不正priority、最短時間超過をDomainErrorとして検出。
+- route 0件、duration 0、minimumとnormalの同値を有効として維持。
+- validationの境界値unit testを追加。
+
+### 主なcommit
+
+- この記録を含むdomain types commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- Planning input tests: 5/5 pass
+
+### 発生した問題
+
+- なし。
+
+### 解決方法
+
+- 追加対応なし。
+
+### 次のPhase
+
+- Phase 1-B-2: route durationとlatest departureを実装する。
+
 ## 2026-10-06 — Phase 1-A-6: 初学者向けREADME
 
 ### 実装内容
