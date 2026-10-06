@@ -32,6 +32,43 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-A-1補足: dependency audit hardening
+
+### 実装内容
+
+- local / globalのNode.js、npm、package構成を確認。
+- `npm audit`の各依存経路と修正版の有無を調査。
+- 互換性を検証した`decode-uri-component` 0.5.0と`uuid` 11.1.1をnpm `overrides`へ追加。
+- 残存advisoryの到達可能性、軽減策、再確認条件を`DEPENDENCY_SECURITY.md`へ記録。
+
+### 主なcommit
+
+- この記録を含むdependency hardening commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm ci`: pass
+- `npm run lint`: pass
+- `npx tsc --noEmit`: pass
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform web --output-dir dist`: pass
+- `xcode`経由の`uuid.v4()`互換確認: pass
+- `npm audit`: 11 moderateを解消、修正版未公開の2 advisoryに由来する19 highが残存
+
+### 発生した問題
+
+- `braces`と`node-forge`の最新公開versionがadvisory対象で、互換な修正版が存在しない。
+- npmの自動修正候補はExpo 44 / React Native 0.72への非互換downgradeを含む。
+
+### 解決方法
+
+- 修正可能な依存だけをoverrideし、bundleとtoolingの互換性を検証した。
+- `npm audit fix --force`は採用せず、残存リスクを追跡対象として明文化した。
+
+### 次のPhase
+
+- Phase 1-A-2: strict TypeScript、path alias、基本directoryをarchitectureへ合わせる。
+
 ## 2026-10-06 — Phase 1-A-1: Expoプロジェクト初期化
 
 ### 実装内容

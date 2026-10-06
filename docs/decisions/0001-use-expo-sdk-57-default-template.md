@@ -45,9 +45,14 @@ default templateはExpo Router、TypeScript、`src/app`構成、platform設定�
 
 ## Security observation
 
-初期化直後の`npm audit`は11 moderate / 19 highを報告した。報告対象はExpo CLI、Metro、React Native等のtransitive dependencyを含む。npmの提示する修正にはExpo 44へのdowngradeやSDK 58系packageへの単独upgradeが含まれ、SDK 57の互換性を壊す。
+初期化直後の`npm audit`は11 moderate / 19 highを報告した。依存経路と実際のAPI互換性を確認し、修正版が公開されている次のtransitive dependencyをnpm `overrides`で固定した。
 
-したがって`npm audit fix --force`は実行しない。Expo SDK 57互換releaseを追跡し、`npx expo install --fix`と`expo-doctor`を基準に更新する。runtimeへ外部入力を受ける機能を追加する前、および各Phase完了時に再評価する。
+- `decode-uri-component`: 0.2.2から0.5.0
+- `uuid`: 7.0.3から11.1.1
+
+この変更後、moderate 11件は解消した。`npm ci`、lint、typecheck、`expo-doctor`、Web exportに加え、`xcode` packageから`uuid.v4()`を呼び出す互換確認も成功した。
+
+残る19 highは、2026-10-06時点で修正版が公開されていない`braces`と`node-forge`の2件がExpo CLI、Metro、React Native等の依存関係へ波及して表示されている。npmが提示するExpo 44 / React Native 0.72への変更はSDK 57の互換性を壊すdowngradeであり、修正ではない。したがって`npm audit fix --force`は実行しない。詳細な到達可能性、確認手順、更新条件は`docs/DEPENDENCY_SECURITY.md`で管理する。
 
 ## Consequences
 
