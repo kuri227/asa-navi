@@ -80,3 +80,9 @@ export type BasePlan = Readonly<{
   latestDepartureAt: Date;
   recommendedWakeAt: Date;
 }>;
+
+export type TaskOptimizationResult = Readonly<{
+  tasks: readonly PlannedTask[];
+  adjustments: readonly PlanningAdjustment[];
+  remainingDeficitMin: number;
+}>;

@@ -32,6 +32,38 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-B-4: task compression
+
+### 実装内容
+
+- deficitに応じてtaskをminimumDurationまで段階的に短縮。
+- compressionPriority、sortOrder、IDの順で決定的に処理。
+- 結果のtask表示順はsortOrder、IDで維持。
+- disabled task除外、minimum同値、回収不足、TC-P02をtest。
+
+### 主なcommit
+
+- この記録を含むcompression commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- compression tests: 5/5 pass
+
+### 発生した問題
+
+- なし。
+
+### 解決方法
+
+- 追加対応なし。
+
+### 次のPhase
+
+- Phase 1-B-5: optional task skippingを実装する。
+
 ## 2026-10-06 — Phase 1-B-3: recommended wake / base plan
 
 ### 実装内容
