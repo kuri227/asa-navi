@@ -6,7 +6,7 @@ import type {
 } from "@/application/ports/repositories";
 import type { MorningTaskTemplate } from "@/domain/planning";
 
-import type { QueryDatabase } from "../query-database";
+import type { MutationDatabase } from "../query-database";
 import {
   booleanIntegerSchema,
   isoDateTimeSchema,
@@ -73,7 +73,10 @@ function toPlanningTask(
 }
 
 export class SQLiteRoutineRepository implements RoutineRepository {
-  constructor(private readonly database: QueryDatabase) {}
+  constructor(
+    private readonly database: MutationDatabase,
+    private readonly now: () => Date = () => new Date(),
+  ) {}
 
   listEnabledTasks(): Promise<MorningTaskTemplate[]> {
     return runRepositoryQuery(async () => {
@@ -92,5 +95,43 @@ export class SQLiteRoutineRepository implements RoutineRepository {
       );
       return rows.map(mapPersistedTask);
     });
+  }
+
+  replaceTaskTemplates(
+    tasks: readonly PersistedMorningTaskTemplate[],
+  ): Promise<void> {
+    const updatedAt = this.now().toISOString();
+    return runRepositoryQuery(() =>
+      this.database.withExclusiveTransactionAsync(async (transaction) => {
+        await transaction.runAsync("DELETE FROM morning_task_templates");
+        for (const task of tasks) {
+          await transaction.runAsync(
+            `INSERT INTO morning_task_templates (
+              id, name, normal_duration_min, minimum_duration_min,
+              requirement, compression_priority, skip_priority, sort_order,
+              enabled, special_type, created_at, updated_at
+            ) VALUES (
+              $id, $name, $normalDurationMin, $minimumDurationMin,
+              $requirement, $compressionPriority, $skipPriority, $sortOrder,
+              $enabled, $specialType, $createdAt, $updatedAt
+            )`,
+            {
+              $id: task.id,
+              $name: task.name,
+              $normalDurationMin: task.normalDurationMin,
+              $minimumDurationMin: task.minimumDurationMin,
+              $requirement: task.requirement,
+              $compressionPriority: task.compressionPriority,
+              $skipPriority: task.skipPriority,
+              $sortOrder: task.sortOrder,
+              $enabled: task.enabled ? 1 : 0,
+              $specialType: task.specialType ?? null,
+              $createdAt: task.createdAt.toISOString(),
+              $updatedAt: updatedAt,
+            },
+          );
+        }
+      }),
+    );
   }
 }

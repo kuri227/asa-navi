@@ -320,4 +320,39 @@ describe("SQLiteRoutineRepository", () => {
       code: "mapping_failed",
     });
   });
+
+  it("replaces task templates in one transaction", async () => {
+    const database = new FakeQueryDatabase();
+    const repository = new SQLiteRoutineRepository(
+      database,
+      () => new Date(timestamp),
+    );
+    await repository.replaceTaskTemplates([
+      {
+        id: "task-1",
+        name: "朝食",
+        normalDurationMin: 15,
+        minimumDurationMin: 8,
+        requirement: "required",
+        compressionPriority: 0,
+        skipPriority: 0,
+        sortOrder: 0,
+        enabled: true,
+        specialType: "meal",
+        createdAt: new Date(timestamp),
+        updatedAt: new Date(timestamp),
+      },
+    ]);
+    expect(database.calls).toHaveLength(2);
+    expect(database.calls[0].sql).toContain(
+      "DELETE FROM morning_task_templates",
+    );
+    expect(database.calls[1].params).toMatchObject({
+      $name: "朝食",
+      $normalDurationMin: 15,
+      $minimumDurationMin: 8,
+      $sortOrder: 0,
+      $updatedAt: timestamp,
+    });
+  });
 });

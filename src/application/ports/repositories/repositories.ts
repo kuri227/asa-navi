@@ -27,6 +27,9 @@ export interface ScheduleRepository {
 export interface RoutineRepository {
   listEnabledTasks(): Promise<MorningTaskTemplate[]>;
   listTaskTemplates(): Promise<PersistedMorningTaskTemplate[]>;
+  replaceTaskTemplates(
+    tasks: readonly PersistedMorningTaskTemplate[],
+  ): Promise<void>;
 }
 
 export interface RouteRepository {
