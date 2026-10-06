@@ -32,6 +32,36 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-A-2: TypeScriptとlayer directory
+
+### 実装内容
+
+- Expo templateの`strict: true`と`@/*` path aliasが有効であることを確認。
+- `npm run typecheck`を追加し、localとCIで同じcommandを利用可能にした。
+- Domain、Application、Infrastructure、Features、Stores、Theme、Validationの基本directoryと責務を文書化。
+
+### 主なcommit
+
+- この記録を含むarchitecture foundation commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npx expo-doctor`: 21/21 pass
+
+### 発生した問題
+
+- Gitは空directoryを管理しないため、`.gitkeep`だけでは初学者が各層の責務を判断できない。
+
+### 解決方法
+
+- 各基本directoryに短いREADMEを置き、依存方向と将来配置するmoduleを明示した。
+
+### 次のPhase
+
+- Phase 1-A-3: ESLint / Prettier / format checkを設定する。
+
 ## 2026-10-06 — Phase 1-A-1補足: dependency audit hardening
 
 ### 実装内容
