@@ -1,5 +1,41 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-D-3: multi-segment commute route setup
+
+### 実装内容
+
+- ルート名、移動手段、始点、終点、任意の路線名、所要時間を入力する画面を実装。
+- 徒歩・電車・バス・自転車・その他の選択、区間追加・削除・上下並べ替えに対応。
+- Zodによる境界validationと、連番`sortOrder`を保証するapplication use caseを追加。
+- 既定ルート切替・route upsert・segment置換を1transactionで行うRepository書き込みを追加。
+- 保存成功後に曜日予定設定へ遷移する導線を追加。
+
+### 主なcommit
+
+- `bab37e3 feat(route): persist validated multi-segment routes`
+- この記録を含むroute setup UI commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: pass
+- `npm run test:sqlite`: pass
+- `npx expo export --platform android --output-dir dist-android-d3`: pass
+
+### 発生した問題
+
+- RNTL 14 / React 19で、状態更新を伴う複数イベントを同期発火すると再描画前の要素を参照した。
+
+### 解決方法
+
+- 各ユーザー操作を`await`し、区間追加後の再描画完了を待ってから次の入力を行うtestへ修正。
+
+### 次のPhase
+
+- Phase 1-D-4: 曜日予定設定。
+
 ## 2026-10-06 — Phase 1-D-2: onboarding
 
 ### 実装内容

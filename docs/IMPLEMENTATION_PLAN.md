@@ -32,6 +32,7 @@
   - Phase 1-CでSQLite migration、Repository、constraint / reopen integration testを実装した。
   - Phase 1-D-1でDesign Tokenとアクセシブルな共通フォーム部品を実装した。
   - Phase 1-D-2でオンボーディングと通学ルート設定への初回導線を実装した。
+  - Phase 1-D-3で複数区間の通学ルート入力・検証・SQLite保存を実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
