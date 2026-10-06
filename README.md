@@ -181,6 +181,7 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - 仕様TC-P01〜TC-P10と追加境界値のunit / acceptance test
 - SQLite migrationとschedule / route / routine / session / task execution / settings / alarm Repository
 - light / dark Design Tokenとアクセシブルな共通フォーム部品
+- 朝ナビの価値を説明し、通学ルート設定へつなぐオンボーディング
 
 ## 未実装
 

@@ -1,5 +1,38 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-D-2: onboarding
+
+### 実装内容
+
+- 朝ナビの価値、計画例、セットアップ所要時間を伝えるオンボーディングを実装。
+- Root navigationをExpo RouterのStackへ変更し、「始める」から通学ルート設定へ遷移する導線を追加。
+- 小型画面ではscroll、通常画面では余白を活用し、Safe Area・文字拡大・48dp操作領域へ対応。
+- 画面本体とRouter依存を分離し、表示・操作testとnavigation testを追加。
+
+### 主なcommit
+
+- この記録を含むonboarding commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: pass
+- `npx expo export --platform android --output-dir dist-android-d2`: pass
+
+### 発生した問題
+
+- SDK 57向けversioned Router URLは公式サイト上で直接取得できなかった。
+
+### 解決方法
+
+- Expo `llms.txt`から2026-09-29更新のRouter navigation / layout資料を取得し、`router.navigate`とRoot Stackの現行仕様を確認。
+
+### 次のPhase
+
+- Phase 1-D-3: 複数区間の通学ルート設定。
+
 ## 2026-10-06 — Phase 1-D-1: design tokens / accessible form foundation
 
 ### 実装内容
