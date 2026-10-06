@@ -132,4 +132,39 @@ export class SQLiteScheduleRepository implements ScheduleRepository {
       }),
     );
   }
+
+  replaceDateOverrides(
+    overrides: readonly DateScheduleOverride[],
+  ): Promise<void> {
+    const now = this.now().toISOString();
+    return runRepositoryQuery(() =>
+      this.database.withExclusiveTransactionAsync(async (transaction) => {
+        await transaction.runAsync("DELETE FROM date_schedule_overrides");
+        for (const override of overrides) {
+          const isReplace = override.overrideType === "replace";
+          await transaction.runAsync(
+            `INSERT INTO date_schedule_overrides (
+              id, target_date, override_type, title, start_time,
+              location_label, route_id, note, created_at, updated_at
+            ) VALUES (
+              $id, $targetDate, $overrideType, $title, $startTime,
+              $locationLabel, $routeId, NULL, $now, $now
+            )`,
+            {
+              $id: override.id,
+              $targetDate: override.targetDate,
+              $overrideType: override.overrideType,
+              $title: isReplace ? override.title : null,
+              $startTime: isReplace ? override.startTime : null,
+              $locationLabel: isReplace
+                ? (override.locationLabel ?? null)
+                : null,
+              $routeId: isReplace ? (override.routeId ?? null) : null,
+              $now: now,
+            },
+          );
+        }
+      }),
+    );
+  }
 }

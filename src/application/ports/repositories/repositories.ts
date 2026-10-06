@@ -19,6 +19,9 @@ export interface ScheduleRepository {
   getWeekdaySchedule(weekday: number): Promise<WeekdaySchedule | null>;
   getOverride(targetDate: string): Promise<DateScheduleOverride | null>;
   replaceWeekdaySchedules(schedules: readonly WeekdaySchedule[]): Promise<void>;
+  replaceDateOverrides(
+    overrides: readonly DateScheduleOverride[],
+  ): Promise<void>;
 }
 
 export interface RoutineRepository {

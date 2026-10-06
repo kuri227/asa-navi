@@ -126,6 +126,36 @@ describe("SQLiteScheduleRepository", () => {
       $now: timestamp,
     });
   });
+
+  it("replaces cancel and replace overrides in one transaction", async () => {
+    const database = new FakeQueryDatabase();
+    const repository = new SQLiteScheduleRepository(
+      database,
+      () => new Date(timestamp),
+    );
+    await repository.replaceDateOverrides([
+      { id: "cancel-1", targetDate: "2026-10-13", overrideType: "cancel" },
+      {
+        id: "replace-1",
+        targetDate: "2026-10-20",
+        overrideType: "replace",
+        title: "2限",
+        startTime: "10:40",
+        routeId: "route-1",
+      },
+    ]);
+    expect(database.calls).toHaveLength(3);
+    expect(database.calls[1].params).toMatchObject({
+      $overrideType: "cancel",
+      $title: null,
+      $routeId: null,
+    });
+    expect(database.calls[2].params).toMatchObject({
+      $overrideType: "replace",
+      $title: "2限",
+      $routeId: "route-1",
+    });
+  });
 });
 
 describe("SQLiteRouteRepository", () => {

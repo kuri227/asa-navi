@@ -26,6 +26,10 @@ class FakeScheduleRepository implements ScheduleRepository {
     this.saved = schedules;
     return Promise.resolve();
   }
+
+  replaceDateOverrides(): Promise<void> {
+    return Promise.resolve();
+  }
 }
 
 function createWeek(): WeekdayScheduleSetupInput[] {
