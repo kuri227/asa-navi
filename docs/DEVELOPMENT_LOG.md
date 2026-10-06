@@ -1,5 +1,47 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-D-7: notification permission onboarding
+
+### 実装内容
+
+- 通知が必要な理由と、通常通知が標準時計相当ではない制約をOSダイアログ前に説明。
+- `AlarmService`契約から権限操作だけを使うportを定義し、UI / UseCaseからExpo依存を分離。
+- SDK 57互換の`expo-notifications ~57.0.21`とconfig pluginを追加。
+- Androidでは権限要求前に重要度MAXの通知channelを作成し、iOSではalert / soundを要求。
+- 権限拒否・Web・API失敗時も初期設定を完了できる回復導線を実装。
+- `onboardingCompleted`をSQLiteへ保存し、次回起動時はセットアップをskipする導線を追加。
+
+### 主なcommit
+
+- この記録を含むnotification onboarding commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 31 suites / 115 tests pass
+- `npm run test:sqlite`: pass
+- `npm run migration:check`: pass
+- `npx expo install --check`: dependencies up to date
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform android --output-dir dist-android-d7`: pass
+- `npm audit`: 5 moderate / 51 high、根本advisory追加なし、非互換なforce修正のみ
+
+### 発生した問題
+
+- 起動時DB読込失敗を未完了扱いにすると、既存設定を誤って再入力・上書きする可能性があった。
+- React 19の非同期route testで、Promise解決をtestの`act`境界外に置くと警告が発生した。
+
+### 解決方法
+
+- DB失敗を独立したerror stateとして表示し、再試行するまでセットアップへ進めないようにした。
+- deferred Promiseを`act`内で解決し、状態更新とtest assertionの境界を明示した。
+
+### 次のPhase
+
+- Phase 1-E-1: 前夜ホームと翌朝プラン。
+
 ## 2026-10-06 — Phase 1-D-6: morning routine setup
 
 ### 実装内容

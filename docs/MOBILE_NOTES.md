@@ -8,7 +8,7 @@
 - Expo SDKは実装開始時点の最新安定版を使う。2026-10-06の公式表ではSDK 57がReact Native 0.86、React 19.2.3、Node 22.13以上を対象とする。
 - 現在のNode 22.17.1はSDK 57の最低要件を満たす。
 - `expo-sqlite`は永続DBとして利用でき、SDK 57推奨版は`~57.0.3`。ユーザー入力を含むSQLはbind parameter / prepared statementを使う。
-- `expo-notifications`でlocal notificationを検証する。ただし通常通知と時計アプリ相当のアラームを同一視しない。
+- SDK 57推奨版`expo-notifications ~57.0.21`でlocal notificationを検証する。ただし通常通知と時計アプリ相当のアラームを同一視しない。
 - 通知PhaseからDevelopment Buildを標準とする。
 
 ## 2. iOS
@@ -27,6 +27,7 @@
 - schedule前に`canScheduleExactAlarms()`相当を確認し、拒否時にfallbackと説明を用意する。
 - OEM省電力でdeliveryが遅れる可能性を端末別に記録する。
 - `expo-notifications`でexact deliveryを要求する場合もmanifest、permission、delivery modeをSDK固定後に再確認する。
+- Androidの通知権限要求前に、重要度MAXの`morning-alarm` channelを作成する。実際の音量・表示・遅延は実機で評価する。
 
 ## 4. UI / UX観点
 
@@ -77,7 +78,7 @@ Notes:
 
 ## 7. 未確定事項
 
-- SDK 57で採用する`expo-notifications`の固定versionとAndroid delivery option。
+- Androidで採用する最終的なdelivery optionと通知精度。
 - iOS実機 / macOS検証環境。
 - 製品として許容する通知遅延。
 - AlarmKit / exact alarmへ進む定量的な閾値。

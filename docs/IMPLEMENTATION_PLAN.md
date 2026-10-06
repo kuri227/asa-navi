@@ -36,6 +36,7 @@
   - Phase 1-D-4で月〜日の最初の予定・予定なし入力とSQLite保存を実装した。
   - Phase 1-D-5で例外日のcancel / replace入力とSQLite保存を実装した。
   - Phase 1-D-6で朝タスクのプリセット追加・時間・必須区分・並べ替えとSQLite保存を実装した。
+  - Phase 1-D-7で通知理由の事前説明、OS権限要求、拒否時継続、初期設定完了の永続化を実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -48,7 +49,7 @@
 
 ### Specification gap
 
-Planning Engine、SQLite基盤、初回設定のうち朝ルーティンまでを実装済み。通知権限の事前説明、朝セッションUI、通知adapter、実機検証が主な未実装範囲である。
+Planning Engine、SQLite基盤、通知権限を含む初回設定フローを実装済み。朝セッションUI、通知予約adapter、実機検証が主な未実装範囲である。
 
 ## 4. 対象外機能
 
