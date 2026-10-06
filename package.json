@@ -28,15 +28,26 @@
     "react-native-worklets": "0.10.1"
   },
   "devDependencies": {
+    "@testing-library/react-native": "^14.0.1",
+    "@types/jest": "29.5.14",
     "@types/react": "~19.2.2",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~57.0.2",
+    "jest": "~29.7.0",
+    "jest-expo": "~57.0.5",
     "prettier": "^3.9.9",
     "typescript": "~6.0.3"
   },
   "overrides": {
     "decode-uri-component": "0.5.0",
+    "test-renderer": "1.2.0",
     "uuid": "11.1.1"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.css$": "<rootDir>/test/style-mock.js"
+    },
+    "preset": "jest-expo"
   },
   "scripts": {
     "start": "expo start",
@@ -47,6 +58,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch",
     "typecheck": "tsc --noEmit"
   },
   "private": true

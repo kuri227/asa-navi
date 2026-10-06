@@ -32,6 +32,41 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-A-4: Jest / React Native Testing Library
+
+### 実装内容
+
+- Expo SDK 57公式手順に沿ってJest 29、`jest-expo`、Jest型定義、React Native Testing Libraryを追加。
+- CIでも終了する`npm test`と、local開発用`npm run test:watch`を追加。
+- `jest-expo` presetとJest型定義を設定。
+- path aliasを通して共有componentをrenderするsmoke testを追加。
+
+### 主なcommit
+
+- この記録を含むtest foundation commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 1 suite / 1 test pass
+- `npx expo-doctor`: 21/21 pass
+
+### 発生した問題
+
+- test tooling追加後の全依存監査は、Jest 29のtransitive dependencyにより件数が増加した。
+- React Native Testing Library 14.0.1が取得する最新`test-renderer` 1.3.0はReact 19.3を要求し、SDK 57のReact 19.2.3とpeer warningになった。
+
+### 解決方法
+
+- Expo SDK 57と互換性のないJest 30へ単独upgradeせず、本番依存と開発toolingを分けて監査・記録する。
+- RNTLが許容する1.xのうちReact 19.2に対応する`test-renderer` 1.2.0をoverrideし、`npm ci`とtestで検証した。
+
+### 次のPhase
+
+- Phase 1-A-5: GitHub Actionsで同じ品質ゲートを実行する。
+
 ## 2026-10-06 — Phase 1-A-3: ESLint / Prettier
 
 ### 実装内容
