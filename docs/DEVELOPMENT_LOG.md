@@ -1,5 +1,41 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-D-1: design tokens / accessible form foundation
+
+### 実装内容
+
+- 画面フローからlight / dark semantic color、spacing、typography、radius、layout tokenを抽出。
+- 48dp以上の`AppButton`、label・helper・errorを持つ`TextField`、`FormSection`、Safe Area / keyboard対応の`ScreenContainer`を追加。
+- 既存theme APIを新tokenへ接続し、段階的に画面移行できる互換層を維持。
+- light / darkの本文・補助文・主CTAについてWCAG AA contrast testを追加。
+
+### 主なcommit
+
+- この記録を含むUI foundation commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 17 suites / 74 tests pass
+- `npx expo export --platform android --output-dir dist-android-d1`: pass
+- native screenshot: 未実施（この環境に`adb`なし。ブラウザcaptureでは代替しない）
+
+### 発生した問題
+
+- 初期の主CTA青は白文字とのcontrastが4.04:1で、通常文字の4.5:1基準を満たさなかった。
+- 現在のRNTLには想定したaccessibility state matcherが存在しなかった。
+
+### 解決方法
+
+- 主色を`#006FC9`へ調整し、light / dark双方を自動contrast testで固定。
+- component propsを直接検証し、disabled時にactionが呼ばれないbehavior testを併用。
+
+### 次のPhase
+
+- Phase 1-D-2: onboarding画面と初回導線。
+
 ## 2026-10-06 — Phase 1-C-6: SQLite integration / reopen tests
 
 ### 実装内容

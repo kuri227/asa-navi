@@ -180,6 +180,7 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - 曜日予定と日付例外を絶対日時へ変換するSchedule Resolver
 - 仕様TC-P01〜TC-P10と追加境界値のunit / acceptance test
 - SQLite migrationとschedule / route / routine / session / task execution / settings / alarm Repository
+- light / dark Design Tokenとアクセシブルな共通フォーム部品
 
 ## 未実装
 

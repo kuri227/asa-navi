@@ -30,6 +30,7 @@
 - ESLint、Prettier、Jest、React Native Testing Library、CIを導入済み。SQLiteはPhase 1-Cで導入する。
   - Planning EngineとSchedule Resolverを実装し、TC-P01〜TC-P10を含むtestが成功している。
   - Phase 1-CでSQLite migration、Repository、constraint / reopen integration testを実装した。
+  - Phase 1-D-1でDesign Tokenとアクセシブルな共通フォーム部品を実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
