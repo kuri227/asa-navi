@@ -3,7 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@date-fns/tz": "^1.5.0",
     "@expo/ui": "~57.0.21",
+    "date-fns": "^4.4.0",
     "expo": "~57.0.26",
     "expo-constants": "~57.0.20",
     "expo-device": "~57.0.2",

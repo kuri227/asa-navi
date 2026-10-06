@@ -32,6 +32,41 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-B-8: weekday / date override resolver
+
+### 実装内容
+
+- 曜日templateと日付overrideをApplication層で絶対日時へ解決。
+- cancel、replace、通常曜日、予定なしの優先順位を実装。
+- 同曜日に複数予定がある場合は最初のactive予定を採用。
+- date-fns公式timezone packageの採用理由をADR-0002へ記録。
+- TC-P08、TC-P09、IANA timezone、DST gap、不正timezoneをtest。
+
+### 主なcommit
+
+- この記録を含むschedule resolver commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- schedule resolver tests: 7/7 pass
+- `npx expo-doctor`: 21/21 pass
+- Android export bundle: pass
+
+### 発生した問題
+
+- system timezoneへ暗黙依存すると端末timezone変更やDSTで復元時刻がずれる。
+
+### 解決方法
+
+- 対象timezoneを必須入力とし、DST gapの存在しないlocal timeをValidationErrorで拒否する。
+
+### 次のPhase
+
+- Phase 1-B-9: TC-P01〜P10と追加境界値の統合・refactor。
+
 ## 2026-10-06 — Phase 1-B-7: completed task replan
 
 ### 実装内容
