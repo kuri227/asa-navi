@@ -31,15 +31,15 @@ npx expo-doctor
 
 ## 3. レイヤ別テスト
 
-| Layer | Test | 主な対象 |
-| --- | --- | --- |
-| Domain | Unit | 計算、優先順位、不変条件、決定性、境界値 |
-| Schedule resolution | Unit | date override > weekday > no schedule |
-| Repository | SQLite integration | migration、CRUD、constraint、mapping、reopen |
-| UseCase | Unit with fakes | orchestration、失敗伝播、保存順序、再予約 |
-| Component | RNTL | 表示、入力、error、accessibility label、操作 |
-| Navigation | Integration | onboarding、setup、morning、deep link |
-| Notification | Adapter + device | permission、schedule、cancel、delivery、tap |
+| Layer               | Test               | 主な対象                                     |
+| ------------------- | ------------------ | -------------------------------------------- |
+| Domain              | Unit               | 計算、優先順位、不変条件、決定性、境界値     |
+| Schedule resolution | Unit               | date override > weekday > no schedule        |
+| Repository          | SQLite integration | migration、CRUD、constraint、mapping、reopen |
+| UseCase             | Unit with fakes    | orchestration、失敗伝播、保存順序、再予約    |
+| Component           | RNTL               | 表示、入力、error、accessibility label、操作 |
+| Navigation          | Integration        | onboarding、setup、morning、deep link        |
+| Notification        | Adapter + device   | permission、schedule、cancel、delivery、tap  |
 
 ## 4. Planning Engine必須ケース
 
@@ -108,17 +108,17 @@ npx expo-doctor
 
 ## 8. 実機test matrix
 
-| 条件 | Android | iOS |
-| --- | --- | --- |
-| foreground notification | 必須 | 必須 |
-| background notification | 必須 | 必須 |
-| terminated app | 必須 | 必須 |
-| permission denied -> recovery | 必須 | 必須 |
-| device reboot | 必須 | 可能な範囲 |
-| battery saver / focus mode | 必須 | 必須 |
-| timezone / date boundary | 必須 | 必須 |
-| font scaling | 必須 | 必須 |
-| TalkBack / VoiceOver | 必須 | 必須 |
+| 条件                          | Android | iOS        |
+| ----------------------------- | ------- | ---------- |
+| foreground notification       | 必須    | 必須       |
+| background notification       | 必須    | 必須       |
+| terminated app                | 必須    | 必須       |
+| permission denied -> recovery | 必須    | 必須       |
+| device reboot                 | 必須    | 可能な範囲 |
+| battery saver / focus mode    | 必須    | 必須       |
+| timezone / date boundary      | 必須    | 必須       |
+| font scaling                  | 必須    | 必須       |
+| TalkBack / VoiceOver          | 必須    | 必須       |
 
 未実施項目は成功扱いにせず、環境と理由を記録する。
 

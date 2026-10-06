@@ -55,20 +55,20 @@
 
 ## 5. 技術構成
 
-| 領域 | 方針 |
-| --- | --- |
-| App | React Native + Expo SDK 57安定版を初期候補とする |
-| Navigation | Expo Router |
-| Language | TypeScript `strict: true`、`any`禁止 |
-| Domain | React Native / Expo / SQLite非依存の純粋TypeScript |
-| Persistence | `expo-sqlite` + versioned migration + Repository |
-| Validation | ZodをUI・DB境界で使用 |
-| Date/time | date-fnsを境界・UseCaseで使用。Domainは入力された`Date`を扱う |
-| UI state | Zustand。永続データの正本にはしない |
-| Notification | `AlarmService`越しの`expo-notifications` |
-| Test | jest-expo + React Native Testing Library |
-| Quality | ESLint + Prettier + `tsc --noEmit` |
-| CI | GitHub Actionsでinstall、format、lint、typecheck、test |
+| 領域         | 方針                                                          |
+| ------------ | ------------------------------------------------------------- |
+| App          | React Native + Expo SDK 57安定版を初期候補とする              |
+| Navigation   | Expo Router                                                   |
+| Language     | TypeScript `strict: true`、`any`禁止                          |
+| Domain       | React Native / Expo / SQLite非依存の純粋TypeScript            |
+| Persistence  | `expo-sqlite` + versioned migration + Repository              |
+| Validation   | ZodをUI・DB境界で使用                                         |
+| Date/time    | date-fnsを境界・UseCaseで使用。Domainは入力された`Date`を扱う |
+| UI state     | Zustand。永続データの正本にはしない                           |
+| Notification | `AlarmService`越しの`expo-notifications`                      |
+| Test         | jest-expo + React Native Testing Library                      |
+| Quality      | ESLint + Prettier + `tsc --noEmit`                            |
+| CI           | GitHub Actionsでinstall、format、lint、typecheck、test        |
 
 Expo公式の2026-10-06時点のSDK表ではSDK 57はReact Native 0.86、React 19.2.3、Node 22.13以上を対象としており、現在のNode 22.17.1は要件を満たす。実際の初期化時に安定版タグと依存整合性を再確認し、pre-releaseは採用しない。
 
@@ -298,17 +298,17 @@ Acceptance Criteria:
 
 ## 12. リスクと対策
 
-| リスク | 対策 |
-| --- | --- |
-| 通知を目覚まし相当に誤認 | 通知と本格アラームを明確に分け、実機評価後にnative PoCを判断 |
-| 日時・日付跨ぎ・タイムゾーン | Clock境界、固定入力、日付跨ぎtest、端末TZ変更試験 |
-| 仕様のUI入力不足 | 仕様を優先し、勝手に簡略化せずADRで提案 |
-| UIからDBへ直接依存 | UseCaseとRepository interfaceで境界を強制 |
-| session状態と通知記録の不整合 | UseCase単位の更新順序、失敗型、再試行方針をtest |
-| 初学者に追えない履歴 | 小さいcommit、README、Development Log、理由中心のADR |
-| Expo / store要件の更新 | Phase開始時に公式docsを再確認し、versionをcommitで固定 |
-| npmや依存導入の再現性 | `package-lock.json`をcommitし、CIは`npm ci`を使う |
-| 主要依存の肥大化・lock-in | 目的、互換性、maintenance、license、代替案を確認しADRへ記録 |
+| リスク                        | 対策                                                         |
+| ----------------------------- | ------------------------------------------------------------ |
+| 通知を目覚まし相当に誤認      | 通知と本格アラームを明確に分け、実機評価後にnative PoCを判断 |
+| 日時・日付跨ぎ・タイムゾーン  | Clock境界、固定入力、日付跨ぎtest、端末TZ変更試験            |
+| 仕様のUI入力不足              | 仕様を優先し、勝手に簡略化せずADRで提案                      |
+| UIからDBへ直接依存            | UseCaseとRepository interfaceで境界を強制                    |
+| session状態と通知記録の不整合 | UseCase単位の更新順序、失敗型、再試行方針をtest              |
+| 初学者に追えない履歴          | 小さいcommit、README、Development Log、理由中心のADR         |
+| Expo / store要件の更新        | Phase開始時に公式docsを再確認し、versionをcommitで固定       |
+| npmや依存導入の再現性         | `package-lock.json`をcommitし、CIは`npm ci`を使う            |
+| 主要依存の肥大化・lock-in     | 目的、互換性、maintenance、license、代替案を確認しADRへ記録  |
 
 ## 13. 将来拡張
 

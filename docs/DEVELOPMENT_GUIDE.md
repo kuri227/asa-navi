@@ -164,14 +164,14 @@ SQLiteを唯一の永続データ正本とする。Migration、Repository経由�
 
 ## 17. テスト
 
-| 対象 | 方法 |
-| --- | --- |
-| Domain | Unit test |
-| Repository | SQLite integration test |
-| UseCase | fake / mock repository |
-| Component | React Native Testing Library |
-| Navigation | 主要経路integration test |
-| Notification | adapter test + 実機 |
+| 対象         | 方法                         |
+| ------------ | ---------------------------- |
+| Domain       | Unit test                    |
+| Repository   | SQLite integration test      |
+| UseCase      | fake / mock repository       |
+| Component    | React Native Testing Library |
+| Navigation   | 主要経路integration test     |
+| Notification | adapter test + 実機          |
 
 バグ修正は再現testを先に追加する。
 

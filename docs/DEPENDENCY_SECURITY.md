@@ -15,10 +15,10 @@
 
 初回監査は11 moderate / 19 highだった。次のoverrideを適用し、11 moderateを解消した。
 
-| Package | Before | Override | 検証 |
-| --- | --- | --- | --- |
-| `decode-uri-component` | 0.2.2 | 0.5.0 | Expo Routerを含むWeb bundle成功 |
-| `uuid` | 7.0.3 | 11.1.1 | `xcode`の読込と`uuid.v4()`呼出し成功 |
+| Package                | Before | Override | 検証                                 |
+| ---------------------- | ------ | -------- | ------------------------------------ |
+| `decode-uri-component` | 0.2.2  | 0.5.0    | Expo Routerを含むWeb bundle成功      |
+| `uuid`                 | 7.0.3  | 11.1.1   | `xcode`の読込と`uuid.v4()`呼出し成功 |
 
 適用後は0 moderate / 19 high。`npm audit --omit=dev`も同じ結果になる。これは`expo`が開発CLIをproduction dependencyとして内包するためであり、19個の独立したruntime脆弱性がアプリbundleに含まれるという意味ではない。
 

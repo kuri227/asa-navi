@@ -161,7 +161,7 @@ RepositoryはDB rowをそのまま外へ漏らさず、validation済みmodelへ�
 ## 8. AlarmService境界
 
 ```ts
-type AlarmPermissionState = 'granted' | 'denied' | 'notDetermined';
+type AlarmPermissionState = "granted" | "denied" | "notDetermined";
 
 interface AlarmService {
   schedule(input: AlarmScheduleInput): Promise<{ alarmId: string }>;

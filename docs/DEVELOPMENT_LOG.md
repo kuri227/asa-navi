@@ -32,6 +32,38 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-A-3: ESLint / Prettier
+
+### 実装内容
+
+- Prettierをdevelopment dependencyとして追加。
+- `npm run format`と`npm run format:check`を追加。
+- dependency lockfileと生成物をformat対象から除外。
+- repository内のsource、設定、Markdownを統一formatへ整形。
+
+### 主なcommit
+
+- この記録を含むformat tooling commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npx expo-doctor`: 21/21 pass
+
+### 発生した問題
+
+- なし。
+
+### 解決方法
+
+- 追加対応なし。
+
+### 次のPhase
+
+- Phase 1-A-4: jest-expo / React Native Testing Libraryとsmoke testを設定する。
+
 ## 2026-10-06 — Phase 1-A-2: TypeScriptとlayer directory
 
 ### 実装内容
