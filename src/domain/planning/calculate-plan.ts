@@ -3,6 +3,7 @@ import {
   calculateBasePlan,
   calculateNormalMorningDuration,
 } from "./calculate-base-plan";
+import { PlanningDomainError } from "./domain-error";
 import { optimizeTasks } from "./optimize-tasks";
 import type {
   PlannedTask,
@@ -13,6 +14,15 @@ import type {
 
 const MILLISECONDS_PER_MINUTE = 60_000;
 const COMFORTABLE_SLACK_MIN = 10;
+
+const assertCalculatedDate = (date: Date, fieldName: string): void => {
+  if (Number.isNaN(date.getTime())) {
+    throw new PlanningDomainError(
+      "INVALID_DATE",
+      `${fieldName} is outside the supported Date range.`,
+    );
+  }
+};
 
 const availableWholeMinutes = (from: Date, until: Date): number =>
   Math.floor((until.getTime() - from.getTime()) / MILLISECONDS_PER_MINUTE);
@@ -62,6 +72,7 @@ export const calculatePlan = (input: PlanningInput): PlanningResult => {
   const predictedDepartureAt = new Date(
     input.now.getTime() + plannedDurationMin * MILLISECONDS_PER_MINUTE,
   );
+  assertCalculatedDate(predictedDepartureAt, "predictedDepartureAt");
   const departureDelayMs =
     predictedDepartureAt.getTime() - basePlan.latestDepartureAt.getTime();
   const lateByMin = Math.max(
@@ -78,13 +89,16 @@ export const calculatePlan = (input: PlanningInput): PlanningResult => {
     adjustments.push({ type: "late", lateByMin });
   }
 
+  const predictedArrivalAt = new Date(
+    input.firstEvent.startAt.getTime() + departureDelayMs,
+  );
+  assertCalculatedDate(predictedArrivalAt, "predictedArrivalAt");
+
   return {
     recommendedWakeAt: basePlan.recommendedWakeAt,
     latestDepartureAt: basePlan.latestDepartureAt,
     predictedDepartureAt,
-    predictedArrivalAt: new Date(
-      input.firstEvent.startAt.getTime() + departureDelayMs,
-    ),
+    predictedArrivalAt,
     slackMin,
     lateByMin,
     status:

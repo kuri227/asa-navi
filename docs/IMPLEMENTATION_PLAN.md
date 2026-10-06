@@ -25,9 +25,10 @@
 
 - GitHub: `https://github.com/kuri227/asa-navi`
 - 2026-10-06に空のリモートから初回計画commitを作成した。
-- Phase 1-Aは`feat/project-foundation` branchで進行中。remoteは`origin`。
+- Phase 1-AとPhase 1-Bは`feat/project-foundation` branchで完了。remoteは`origin`。
 - Phase 1-A-1でExpo SDK 57.0.26、React Native 0.86.3、React 19.2.3、TypeScript 6.0.3、Expo Router 57.0.24を公式default templateから初期化した。
-- ESLintは公式Expo設定で導入済み。Prettier、test、SQLiteは後続Sub Phaseで導入する。
+- ESLint、Prettier、Jest、React Native Testing Library、CIを導入済み。SQLiteはPhase 1-Cで導入する。
+- Planning EngineとSchedule Resolverを実装し、TC-P01〜TC-P10を含む52 testが成功している。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment

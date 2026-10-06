@@ -175,10 +175,12 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - Jest / React Native Testing Libraryのsmoke test
 - GitHub Actionsのquality workflow
 - dependency auditの調査、互換override、残存リスク記録
+- Planning Engine（基本計画、短縮、省略、遅刻判定、completed task再計画）
+- 曜日予定と日付例外を絶対日時へ変換するSchedule Resolver
+- 仕様TC-P01〜TC-P10と追加境界値のunit / acceptance test
 
 ## 未実装
 
-- Planning Engine
 - SQLite migration / Repository
 - 朝ナビ固有UIとdesign token
 - 曜日予定、例外日、通学ルート、朝ルーティンの設定

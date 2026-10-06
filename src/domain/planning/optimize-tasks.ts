@@ -20,10 +20,6 @@ export const optimizeTasks = (
   deficitMin: number,
 ): TaskOptimizationResult => {
   const compressed = compressTasks(tasks, deficitMin);
-  if (compressed.remainingDeficitMin === 0) {
-    return compressed;
-  }
-
   for (const task of tasks) {
     if (!Number.isSafeInteger(task.skipPriority) || task.skipPriority < 0) {
       throw new PlanningDomainError(
@@ -31,6 +27,10 @@ export const optimizeTasks = (
         `Task ${task.id} skipPriority must be a non-negative safe integer.`,
       );
     }
+  }
+
+  if (compressed.remainingDeficitMin === 0) {
+    return compressed;
   }
 
   const tasksById = new Map(

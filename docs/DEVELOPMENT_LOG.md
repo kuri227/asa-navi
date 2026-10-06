@@ -32,6 +32,43 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-B-9: Planning Engine acceptance / refactor
+
+### 実装内容
+
+- TC-P01〜TC-P10を明示したacceptance testを追加。
+- DomainからReact、React Native、Expo、Application、InfrastructureへのimportをESLintで禁止。
+- explicit `any`をerrorとして禁止。
+- deficit 0時にもskipPriority invariantを検証するよう修正。
+- 予想出発・到着がDate範囲外になる場合をDomainErrorへ統一。
+- READMEと実装計画の進捗をPhase 1-B完了へ更新。
+
+### 主なcommit
+
+- この記録を含むPlanning Engine acceptance commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 10 suites / 52 tests pass
+- TC-P01〜TC-P10: 10/10 pass
+- `npx expo-doctor`: 21/21 pass
+- `npm audit`: 5 moderate / 50 high / 0 critical（既知3 advisory、増加なし）
+
+### 発生した問題
+
+- 個別testは成功していたが、仕様番号ごとの完了証跡が一か所にまとまっていなかった。
+
+### 解決方法
+
+- 仕様ケースをacceptance testへ集約し、個別unit testと二層で回帰を検出する。
+
+### 次のPhase
+
+- Phase 1-C-1: Repository interfacesとdomain persistence model。
+
 ## 2026-10-06 — Phase 1-B-8: weekday / date override resolver
 
 ### 実装内容
