@@ -34,6 +34,7 @@
   - Phase 1-D-2でオンボーディングと通学ルート設定への初回導線を実装した。
   - Phase 1-D-3で複数区間の通学ルート入力・検証・SQLite保存を実装した。
   - Phase 1-D-4で月〜日の最初の予定・予定なし入力とSQLite保存を実装した。
+  - Phase 1-D-5で例外日のcancel / replace入力とSQLite保存を実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment

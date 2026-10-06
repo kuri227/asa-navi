@@ -1,5 +1,42 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-D-5: date override setup
+
+### 実装内容
+
+- 例外日を0件以上追加・削除できる設定画面を実装。
+- 休講・予定なしを`cancel`、特別時間割を`replace`として入力・保存。
+- replaceでは最初の予定、開始時刻、任意の場所を入力可能。
+- 実在日付、重複日付、`HH:mm`、replace必須項目を境界とUseCaseの双方で検証。
+- 全例外日の置換を1transactionで保存し、通常曜日予定より優先する既存Resolver契約へ接続。
+
+### 主なcommit
+
+- `24b3a55 feat(schedule): persist date-specific overrides`
+- この記録を含むoverride setup UI commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 25 suites / 95 tests pass
+- `npm run test:sqlite`: pass
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform android --output-dir dist-android-d5`: pass
+
+### 発生した問題
+
+- 文字列形式だけでは`2026-02-31`のような実在しない日付を画面側で判定できなかった。
+
+### 解決方法
+
+- UTC日付へ安全に変換し、ISO復元値が入力日付と一致することを確認する純粋validationを追加。
+
+### 次のPhase
+
+- Phase 1-D-6: 朝ルーティン設定。
+
 ## 2026-10-06 — Phase 1-D-4: weekday schedule setup
 
 ### 実装内容
