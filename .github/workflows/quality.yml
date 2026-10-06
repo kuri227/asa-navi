@@ -49,6 +49,9 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Test SQLite integration
+        run: npm run test:sqlite
+
       - name: Validate Expo project
         run: npx expo-doctor
 

@@ -1,5 +1,40 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-C-6: SQLite integration / reopen tests
+
+### 実装内容
+
+- 実SQLite processで初期migrationの再適用、table / index数、integrityを検証。
+- task durationのCHECK制約とsession削除時のtask execution cascadeを検証。
+- DBをprocess間で再openし、app settingsとactive morning sessionを復元できることを検証。
+- SQLite integration testをGitHub Actionsのquality jobへ追加。
+
+### 主なcommit
+
+- この記録を含むSQLite integration commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run test:sqlite`: pass（SQLite 3.53.1）
+- `npm run migration:check`: pass
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 15 suites / 66 tests pass
+- `npx expo-doctor`: 21/21 pass（Phase終了時に再確認）
+
+### 発生した問題
+
+- Jest環境ではExpo native SQLite moduleを実行できない。
+
+### 解決方法
+
+- Repository mapping / bind契約はJestで、DDL・constraint・reopenは実SQLite CLIで検証する二層構成にした。
+
+### 次のPhase
+
+- Phase 1-D-1: Design Tokenと共通UI foundation。
+
 ## 2026-10-06 — Phase 1-C-5: settings / alarm record repositories
 
 ### 実装内容

@@ -112,7 +112,7 @@ iPhoneではExpo GoでQR codeを読み取れます。iOS SimulatorはmacOSとXco
 npm test
 ```
 
-watch modeは`npm run test:watch`です。Domainはunit test、RepositoryはSQLite integration test、UseCaseはfake Repository、UIはReact Native Testing Libraryで検証します。詳細は[テスト計画](docs/TEST_PLAN.md)を参照してください。
+watch modeは`npm run test:watch`です。Domainはunit test、Repositoryは`npm run test:sqlite`によるSQLite integration test、UseCaseはfake Repository、UIはReact Native Testing Libraryで検証します。詳細は[テスト計画](docs/TEST_PLAN.md)を参照してください。
 
 ## Format / Lint / Typecheck
 
@@ -179,10 +179,10 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - Planning Engine（基本計画、短縮、省略、遅刻判定、completed task再計画）
 - 曜日予定と日付例外を絶対日時へ変換するSchedule Resolver
 - 仕様TC-P01〜TC-P10と追加境界値のunit / acceptance test
+- SQLite migrationとschedule / route / routine / session / task execution / settings / alarm Repository
 
 ## 未実装
 
-- SQLite Repository
 - 朝ナビ固有UIとdesign token
 - 曜日予定、例外日、通学ルート、朝ルーティンの設定
 - 朝セッションと再計画画面

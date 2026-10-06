@@ -65,6 +65,7 @@
     "migration:check": "node ./scripts/generate-migrations.js --check",
     "migration:generate": "node ./scripts/generate-migrations.js",
     "test": "jest --runInBand",
+    "test:sqlite": "node ./scripts/test-sqlite-integration.js",
     "test:watch": "jest --watch",
     "typecheck": "tsc --noEmit"
   },
