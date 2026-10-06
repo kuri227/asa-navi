@@ -32,6 +32,38 @@
 
 - Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化。
 
+## 2026-10-06 — Phase 1-B-2: route duration / latest departure
+
+### 実装内容
+
+- 複数route segmentの所要時間を合計する純粋関数を追加。
+- 予定開始、到着余裕、通学時間から最終出発時刻を算出。
+- 空route、0分区間、日付跨ぎ、入力mutationなし、Date範囲外をtest。
+- durationと合計値をsafe integerに制限。
+
+### 主なcommit
+
+- この記録を含むdeparture calculation commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- departure tests: 7/7 pass
+
+### 発生した問題
+
+- 最初のDate上限test値がJavaScript Dateの有効範囲内だった。
+
+### 解決方法
+
+- 実際のDate上限を超えるsafe integerへ境界値を修正し、範囲外結果がDomainErrorになることを再検証した。
+
+### 次のPhase
+
+- Phase 1-B-3: recommended wake timeとbase planを実装する。
+
 ## 2026-10-06 — Phase 1-B-1: Planning domain typesとinvariant
 
 ### 実装内容

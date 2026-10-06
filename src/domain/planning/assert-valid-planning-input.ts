@@ -2,7 +2,7 @@ import { PlanningDomainError } from "./domain-error";
 import type { PlanningInput } from "./types";
 
 const assertNonNegativeInteger = (value: number, fieldName: string): void => {
-  if (!Number.isInteger(value) || value < 0) {
+  if (!Number.isSafeInteger(value) || value < 0) {
     throw new PlanningDomainError(
       "INVALID_DURATION",
       `${fieldName} must be a non-negative integer.`,
@@ -11,7 +11,7 @@ const assertNonNegativeInteger = (value: number, fieldName: string): void => {
 };
 
 const assertPriority = (value: number, fieldName: string): void => {
-  if (!Number.isInteger(value) || value < 0) {
+  if (!Number.isSafeInteger(value) || value < 0) {
     throw new PlanningDomainError(
       "INVALID_PRIORITY",
       `${fieldName} must be a non-negative integer.`,
