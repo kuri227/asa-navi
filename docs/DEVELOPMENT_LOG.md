@@ -1,5 +1,38 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-06 — Phase 1-C-4: morning session / task execution repositories
+
+### 実装内容
+
+- 朝セッションの作成、active session復元、計画保存、status更新を実装。
+- 朝タスク実行の一括置換、一覧復元、upsertを実装。
+- 一括置換はexclusive transaction内でdeleteと再作成を完結させる。
+- DateはDB境界でISO 8601文字列へ変換し、復元時にZod検証後Dateへ戻す。
+
+### 主なcommit
+
+- この記録を含むmorning session persistence commit。hashはGit logを正本とする。
+
+### テスト結果
+
+- `npm run format`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 14 suites / 63 tests pass
+
+### 発生した問題
+
+- Expo SQLite transaction型は通常のdatabase型と同じquery APIを持つが、TypeScript上は同一classではない。
+
+### 解決方法
+
+- read / write / transaction能力を最小interfaceへ分離し、Expo objectを明示adapterで変換した。
+- Repositoryが更新時刻を予測時刻から流用しないよう、注入可能なclock functionを使用した。
+
+### 次のPhase
+
+- Phase 1-C-5: alarm record / settings Repository実装。
+
 ## 2026-10-06 — Phase 1-C-3: schedule / route / routine repositories
 
 ### 実装内容
