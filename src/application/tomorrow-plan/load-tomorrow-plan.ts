@@ -22,10 +22,12 @@ export type TomorrowPlanPreview =
   | Readonly<{
       kind: "noSchedule";
       targetDate: string;
+      timeZone: string;
     }>
   | Readonly<{
       kind: "planned";
       targetDate: string;
+      timeZone: string;
       source: "weekday" | "override";
       firstEvent: FirstEvent;
       routeName: string;
@@ -57,7 +59,11 @@ export async function loadTomorrowPlan(
     dateOverrides: override ? [override] : [],
   });
   if (!resolved) {
-    return { kind: "noSchedule", targetDate: input.targetDate };
+    return {
+      kind: "noSchedule",
+      targetDate: input.targetDate,
+      timeZone: input.timeZone,
+    };
   }
 
   const defaultRoute = resolved.routeId
@@ -90,6 +96,7 @@ export async function loadTomorrowPlan(
   return {
     kind: "planned",
     targetDate: input.targetDate,
+    timeZone: input.timeZone,
     source: resolved.source,
     firstEvent: resolved.firstEvent,
     routeName: routeWithSegments.route.name,

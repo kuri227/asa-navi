@@ -25,6 +25,8 @@ function createDependencies() {
     }),
     replaceWeekdaySchedules: jest.fn(),
     replaceDateOverrides: jest.fn(),
+    saveDateOverride: jest.fn(),
+    deleteDateOverride: jest.fn(),
   };
   const routeRepository: RouteRepository = {
     getDefaultRoute: jest.fn().mockResolvedValue(null),
@@ -129,7 +131,11 @@ describe("loadTomorrowPlan", () => {
         { targetDate: "2026-10-09", timeZone: "Asia/Tokyo", now },
         dependencies,
       ),
-    ).resolves.toEqual({ kind: "noSchedule", targetDate: "2026-10-09" });
+    ).resolves.toEqual({
+      kind: "noSchedule",
+      targetDate: "2026-10-09",
+      timeZone: "Asia/Tokyo",
+    });
     expect(
       dependencies.routeRepository.getRouteWithSegments,
     ).not.toHaveBeenCalled();
