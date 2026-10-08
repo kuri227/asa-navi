@@ -64,10 +64,47 @@ describe("MorningStartScreen", () => {
         timeZone="Asia/Tokyo"
       />,
     );
-    await waitFor(() => screen.getByText("朝プランを開始しました"));
+    await waitFor(() => screen.getByText("今日の朝プラン"));
     expect(screen.getByText("08:00")).toBeTruthy();
-    expect(screen.getByText("朝食")).toBeTruthy();
+    expect(screen.getAllByText("朝食")).toHaveLength(2);
     expect(screen.getByText("目安 15分")).toBeTruthy();
+    expect(screen.getByText("予定より5分遅い起床です")).toBeTruthy();
+    expect(screen.getByText("このプランなら10分の余裕があります")).toBeTruthy();
+  });
+
+  it("explains recovery adjustments and lateness in text", async () => {
+    const screen = await render(
+      <MorningStartScreen
+        onBackHome={jest.fn()}
+        startSession={jest.fn().mockResolvedValue({
+          ...activeSession,
+          session: {
+            ...activeSession.session,
+            planStatus: "late",
+            lateByMin: 4,
+          },
+          plan: {
+            ...activeSession.plan,
+            slackMin: 0,
+            lateByMin: 4,
+            status: "late",
+            adjustments: [
+              {
+                type: "compress",
+                taskId: "breakfast",
+                fromMin: 15,
+                toMin: 8,
+              },
+              { type: "late", lateByMin: 4 },
+            ],
+          },
+        })}
+        timeZone="Asia/Tokyo"
+      />,
+    );
+    await waitFor(() => screen.getByText("このプランでは4分遅れる見込みです"));
+    expect(screen.getByText("間に合わせるための調整")).toBeTruthy();
+    expect(screen.getByText("・朝食を15分から8分に短縮")).toBeTruthy();
   });
 
   it("offers retry and a safe way back after a restore error", async () => {

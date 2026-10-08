@@ -7,6 +7,11 @@ import { useTheme } from "@/hooks/use-theme";
 import { radius, spacing, typography } from "@/theme";
 
 import { formatPlanTime } from "../home/home-plan-formatters";
+import {
+  getAdjustmentText,
+  getPlanStatusMessage,
+  getWakeTimingMessage,
+} from "./morning-plan-presenter";
 
 type Props = Readonly<{
   timeZone: string;
@@ -92,6 +97,13 @@ export function MorningStartScreen({
   const taskName = value.plan.tasks.find(
     ({ taskId }) => taskId === currentTask?.taskTemplateId,
   )?.name;
+  const taskNames = new Map(
+    value.plan.tasks.map((task) => [task.taskId, task.name]),
+  );
+  const adjustmentTexts = value.plan.adjustments
+    .map((adjustment) => getAdjustmentText(adjustment, taskNames))
+    .filter((text): text is string => text !== null);
+  const late = value.plan.lateByMin > 0;
   return (
     <ScreenContainer>
       <View style={styles.heading}>
@@ -102,7 +114,33 @@ export function MorningStartScreen({
           accessibilityRole="header"
           style={[styles.headingText, { color: theme.text }]}
         >
-          朝プランを開始しました
+          今日の朝プラン
+        </Text>
+        <Text style={[styles.body, { color: theme.textSecondary }]}>
+          {getWakeTimingMessage(
+            value.session.actualWakeAt,
+            value.session.plannedWakeAt,
+          )}
+        </Text>
+      </View>
+      <View
+        accessibilityLiveRegion="polite"
+        style={[
+          styles.status,
+          {
+            backgroundColor: late
+              ? theme.errorContainer
+              : theme.successContainer,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.statusText,
+            { color: late ? theme.error : theme.success },
+          ]}
+        >
+          {getPlanStatusMessage(value.plan)}
         </Text>
       </View>
       <View
@@ -140,6 +178,48 @@ export function MorningStartScreen({
           </Text>
         ) : null}
       </View>
+      {adjustmentTexts.length > 0 ? (
+        <View
+          style={[
+            styles.adjustments,
+            { backgroundColor: theme.warningContainer },
+          ]}
+        >
+          <Text style={[styles.title, { color: theme.warning }]}>
+            間に合わせるための調整
+          </Text>
+          {adjustmentTexts.map((text) => (
+            <Text key={text} style={[styles.body, { color: theme.text }]}>
+              ・{text}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+      <View style={styles.taskList}>
+        <Text style={[styles.title, { color: theme.text }]}>
+          このあとの流れ
+        </Text>
+        {value.plan.tasks.map((task, index) => (
+          <View
+            key={task.taskId}
+            style={[styles.taskRow, { borderBottomColor: theme.border }]}
+          >
+            <Text style={[styles.taskNumber, { color: theme.primary }]}>
+              {index + 1}
+            </Text>
+            <View style={styles.taskContent}>
+              <Text style={[styles.bodyStrong, { color: theme.text }]}>
+                {task.name}
+              </Text>
+              <Text style={[styles.body, { color: theme.textSecondary }]}>
+                {task.action === "skipped"
+                  ? "省略"
+                  : `${task.plannedDurationMin}分${task.action === "compressed" ? "（短縮）" : ""}`}
+              </Text>
+            </View>
+          </View>
+        ))}
+      </View>
       <Text style={[styles.note, { color: theme.textSecondary }]}>
         タスクの完了操作と自動再計画は次の実装段階で追加します。この画面は再起動しても同じセッションを復元します。
       </Text>
@@ -168,9 +248,26 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     gap: spacing.sm,
   },
+  status: { borderRadius: radius.card, padding: spacing.lg },
+  statusText: { ...typography.bodyStrong },
+  adjustments: {
+    borderRadius: radius.card,
+    padding: spacing.xl,
+    gap: spacing.sm,
+  },
+  taskList: { gap: spacing.sm },
+  taskRow: {
+    flexDirection: "row",
+    gap: spacing.md,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  taskNumber: { ...typography.bodyStrong, width: 24 },
+  taskContent: { flex: 1 },
   label: { ...typography.label },
   title: { ...typography.title },
   time: { ...typography.display },
   body: { ...typography.body },
+  bodyStrong: { ...typography.bodyStrong },
   note: { ...typography.body },
 });
