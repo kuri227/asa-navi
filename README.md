@@ -2,7 +2,7 @@
 
 朝ナビは、学生の最初の予定と通学時間、朝の準備タスクから、起床時刻と出発時刻を逆算するモバイルアプリです。寝坊や準備の遅れが起きたときも、短縮・省略・遅刻見込みを含む実行可能な朝プランへ組み直します。
 
-現在はコアMVPの開発中です。Expo SDK 57の開発基盤と品質ゲートまで完了しており、画面にはまだExpoのsample UIが表示されます。
+現在はコアMVPの開発中です。初回設定と前夜ホームまで実装済みで、保存した予定・通学ルート・朝タスクから翌朝の起床時刻と出発時刻を表示できます。
 
 ## 何を解決するアプリか
 
@@ -101,7 +101,7 @@ iPhoneではExpo GoでQR codeを読み取れます。iOS SimulatorはmacOSとXco
 
 ## Expo GoとDevelopment Buildの違い
 
-- Expo Go: Expo Goに組み込まれたnative moduleだけを使う簡易確認環境です。現時点のsample appをすぐ確認できます。
+- Expo Go: Expo Goに組み込まれたnative moduleだけを使う簡易確認環境です。初回設定と前夜ホームをすぐ確認できます。
 - Development Build: 朝ナビ専用のnative moduleと設定を含む開発用アプリです。通知や将来のnative adapter等を正確に検証するときに使います。
 
 `ios/`と`android/`はContinuous Native Generationで生成し、手編集しません。native設定は`app.json`とconfig pluginで管理します。
@@ -137,7 +137,7 @@ npm audit
 
 SQLiteは永続データの唯一の正本とします。migrationは`001_initial_schema.sql`のように番号を付け、適用済みfileは変更せず新しいmigrationを追加します。UIからSQLを直接実行しません。
 
-`expo-sqlite`とmigration runnerは実装済みです。SQL fileを変更した場合は`npm run migration:generate`でアプリbundle用moduleを更新し、`npm run migration:check`で同期を確認します。適用済みmigrationは変更せず、次の番号のfileを追加してください。Repository実装はPhase 1-Cで継続中です。
+`expo-sqlite`、migration runner、主要Repositoryは実装済みです。SQL fileを変更した場合は`npm run migration:generate`でアプリbundle用moduleを更新し、`npm run migration:check`で同期を確認します。適用済みmigrationは変更せず、次の番号のfileを追加してください。
 
 ## アーキテクチャ
 
@@ -187,10 +187,12 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - 休講・予定なしと特別時間割をSQLiteへ保存する例外日設定
 - プリセット・独自タスクの時間、必須区分、順序をSQLiteへ保存する朝ルーティン設定
 - 通知理由の事前説明、OS権限要求、拒否時継続、初期設定完了の永続化
+- 例外日を考慮した翌朝計画の読込と、前夜ホームでの起床・出発・通学情報表示
+- 他の日の例外設定を消さずに、明日だけを休講・特別時間割・通常予定へ変更する画面
 
 ## 未実装
 
-- 朝セッションと再計画画面
+- 朝セッションの開始・復元と再計画画面
 - ローカル通知の予約・取消・deep link
 - Android / iOS実機検証
 

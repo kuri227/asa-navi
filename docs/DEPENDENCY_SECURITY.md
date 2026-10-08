@@ -1,6 +1,6 @@
 # 依存関係セキュリティ
 
-更新日: 2026-10-06
+更新日: 2026-10-09
 
 ## 方針
 
@@ -38,6 +38,8 @@ Expo SDK 57公式の互換構成であるJest 29、`jest-expo`、React Native Te
 `npm audit fix --dry-run`も実行したが、非breakingな修正候補はなかった。件数の増加は主に3件の根本advisory（`braces`、`node-forge`、`sprintf-js`）が依存元packageへ伝播したmeta vulnerabilityである。Jest 30やExpo 44を混在させず、Expo SDK互換releaseでまとめて更新する。
 
 Phase 1-D-7で`expo-notifications ~57.0.21`を公式の`npx expo install`から追加した後も再監査した。表示件数は全依存56件、production lockfile 51件へ変化したが、根本advisoryは同じ3件であり、新しい根本脆弱性は確認されなかった。`npm audit fix --force`の提案はJest 30またはExpo 44への非互換変更を含むため適用していない。
+
+2026-10-09に`npx expo install --fix`を実行し、Expo 57.0.27、Expo Router 57.0.25、`expo-notifications` 57.0.22等のSDK 57互換patchへ更新した。`expo-doctor`は21/21、`expo install --check`は最新判定。監査件数は全依存54件、`--omit=dev --package-lock-only` 50件へ減少した。`npm audit fix --dry-run`で非breakingな恒久修正はなく、force候補は引き続きJest 30またはExpo 44への非互換変更だったため適用していない。根本advisoryは同じ3件である。
 
 ## 残存advisory
 

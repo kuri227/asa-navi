@@ -1,5 +1,51 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-E-1: evening home and tomorrow plan
+
+### 実装内容
+
+- 曜日予定と日付例外を解決し、最初の予定・通学区間・朝タスク・設定から翌朝の基本計画を構築。
+- 端末タイムゾーンの暦日で明日を決定し、UTC境界と月跨ぎをtest。
+- 前夜ホームへ起床目安、出発目安、最初の予定、朝準備時間、通学区間を表示。
+- 予定なし、読込中、DB errorと再試行、例外予定を色だけに依存せず表示。
+- 明日だけを休講・特別時間割へupsertし、通常予定へ戻すときは確認後に対象日だけを削除。
+- Expo SDK 57の最新互換patchへ更新。
+
+### 主なcommit
+
+- `b80c9e3 feat(home): build tomorrow plan preview`
+- `1bf8bfd feat(home): connect tomorrow plan preview`
+- `20f0532 feat(schedule): safely edit one date override`
+- `36ad04d feat(home): add tomorrow morning overview`
+- `0efea42 chore: align Expo SDK 57 patch versions`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 37 suites / 135 tests pass
+- `npm run test:sqlite`: pass
+- `npm run migration:check`: pass
+- `npx expo install --check`: dependencies up to date
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform android --output-dir dist-android-e1`: pass
+- `npm audit --omit=dev --package-lock-only`: 5 moderate / 45 high。根本advisory追加なし
+
+### 発生した問題
+
+- 初期実装の編集ボタンは、初回設定用の例外日一括置換画面へ進むため、既存の別日設定を消す可能性があった。
+- Expo DoctorがSDK 57内のpatch不一致7件を検出した。
+
+### 解決方法
+
+- 単一日専用のRepository操作とUseCaseを追加し、upsertでは他の日へ触れず、削除は確認dialog後に対象日のみ実行。
+- `npx expo install --fix`で公式互換patchへ更新し、全品質ゲートとAndroid bundleを再検証。
+
+### 次のPhase
+
+- Phase 1-E-2: 手動開始 / 通知遷移とsession復元。
+
 ## 2026-10-06 — Phase 1-D-7: notification permission onboarding
 
 ### 実装内容

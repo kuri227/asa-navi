@@ -1,6 +1,6 @@
 # 朝ナビ 実装計画
 
-更新日: 2026-10-06
+更新日: 2026-10-09
 対象: 第1段階（コアMVP）
 
 ## 1. プロジェクト概要
@@ -26,8 +26,8 @@
 - GitHub: `https://github.com/kuri227/asa-navi`
 - 2026-10-06に空のリモートから初回計画commitを作成した。
 - Phase 1-AとPhase 1-Bは`feat/project-foundation` branchで完了。remoteは`origin`。
-- Phase 1-A-1でExpo SDK 57.0.26、React Native 0.86.3、React 19.2.3、TypeScript 6.0.3、Expo Router 57.0.24を公式default templateから初期化した。
-- ESLint、Prettier、Jest、React Native Testing Library、CIを導入済み。SQLiteはPhase 1-Cで導入する。
+- Phase 1-A-1でExpo SDK 57、React Native 0.86.3、React 19.2.3、TypeScript 6.0.3を公式default templateから初期化した。2026-10-09時点の互換patchはExpo 57.0.27、Expo Router 57.0.25。
+- ESLint、Prettier、Jest、React Native Testing Library、CI、SQLiteを導入済み。
   - Planning EngineとSchedule Resolverを実装し、TC-P01〜TC-P10を含むtestが成功している。
   - Phase 1-CでSQLite migration、Repository、constraint / reopen integration testを実装した。
   - Phase 1-D-1でDesign Tokenとアクセシブルな共通フォーム部品を実装した。
@@ -37,6 +37,7 @@
   - Phase 1-D-5で例外日のcancel / replace入力とSQLite保存を実装した。
   - Phase 1-D-6で朝タスクのプリセット追加・時間・必須区分・並べ替えとSQLite保存を実装した。
   - Phase 1-D-7で通知理由の事前説明、OS権限要求、拒否時継続、初期設定完了の永続化を実装した。
+  - Phase 1-E-1で例外日を解決した翌朝プレビュー、前夜ホーム、単一日の安全な例外編集を実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -49,7 +50,7 @@
 
 ### Specification gap
 
-Planning Engine、SQLite基盤、通知権限を含む初回設定フローを実装済み。朝セッションUI、通知予約adapter、実機検証が主な未実装範囲である。
+Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホームを実装済み。朝セッション開始・復元UI、通知予約adapter、実機検証が主な未実装範囲である。
 
 ## 4. 対象外機能
 
@@ -334,9 +335,9 @@ Acceptance Criteria:
 
 ## 15. 次の最小Sub Phase
 
-`Phase 1-A-1: Expo + Router + TypeScriptプロジェクト初期化`。
+`Phase 1-E-2: 手動開始 / 通知遷移とsession復元`。
 
-初期化前にExpo安定版とNode互換性を再確認し、生成差分をレビューする。完了条件は、生成直後のアプリが起動可能で、依存関係を`package-lock.json`へ固定し、不要なsample codeを理由なく削除していないこと。
+前夜ホームの計画から朝セッションを作成し、二重作成を防ぎ、アプリ再起動後は対象日のactive sessionを復元する。通知deep linkの本接続はPhase 1-Fで行い、Phase 1-E-2では同じ遷移契約を手動開始で検証する。
 
 ## 16. 参照した公式資料
 
