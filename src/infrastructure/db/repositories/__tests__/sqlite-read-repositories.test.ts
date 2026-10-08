@@ -156,6 +156,38 @@ describe("SQLiteScheduleRepository", () => {
       $routeId: "route-1",
     });
   });
+
+  it("upserts one date override without deleting other dates", async () => {
+    const database = new FakeQueryDatabase();
+    const repository = new SQLiteScheduleRepository(
+      database,
+      () => new Date(timestamp),
+    );
+    await repository.saveDateOverride({
+      id: "override-1",
+      targetDate: "2026-10-10",
+      overrideType: "cancel",
+    });
+    expect(database.calls).toHaveLength(1);
+    expect(database.calls[0].sql).toContain("ON CONFLICT(target_date)");
+    expect(database.calls[0].sql).not.toContain("DELETE FROM");
+    expect(database.calls[0].params).toMatchObject({
+      $targetDate: "2026-10-10",
+      $overrideType: "cancel",
+    });
+  });
+
+  it("deletes only the requested date override", async () => {
+    const database = new FakeQueryDatabase();
+    await new SQLiteScheduleRepository(database).deleteDateOverride(
+      "2026-10-10",
+    );
+    expect(database.calls).toHaveLength(1);
+    expect(database.calls[0].sql).toContain(
+      "DELETE FROM date_schedule_overrides WHERE target_date = $targetDate",
+    );
+    expect(database.calls[0].params).toEqual({ $targetDate: "2026-10-10" });
+  });
 });
 
 describe("SQLiteRouteRepository", () => {

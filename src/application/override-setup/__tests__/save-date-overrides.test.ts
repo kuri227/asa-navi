@@ -21,6 +21,12 @@ class FakeScheduleRepository implements ScheduleRepository {
     this.saved = items;
     return Promise.resolve();
   }
+  saveDateOverride(): Promise<void> {
+    return Promise.resolve();
+  }
+  deleteDateOverride(): Promise<void> {
+    return Promise.resolve();
+  }
 }
 
 describe("saveDateOverrides", () => {

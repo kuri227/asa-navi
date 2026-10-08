@@ -22,6 +22,8 @@ export interface ScheduleRepository {
   replaceDateOverrides(
     overrides: readonly DateScheduleOverride[],
   ): Promise<void>;
+  saveDateOverride(override: DateScheduleOverride): Promise<void>;
+  deleteDateOverride(targetDate: string): Promise<void>;
 }
 
 export interface RoutineRepository {

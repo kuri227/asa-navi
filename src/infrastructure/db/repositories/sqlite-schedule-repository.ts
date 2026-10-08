@@ -167,4 +167,47 @@ export class SQLiteScheduleRepository implements ScheduleRepository {
       }),
     );
   }
+
+  saveDateOverride(override: DateScheduleOverride): Promise<void> {
+    const now = this.now().toISOString();
+    const isReplace = override.overrideType === "replace";
+    return runRepositoryQuery(async () => {
+      await this.database.runAsync(
+        `INSERT INTO date_schedule_overrides (
+          id, target_date, override_type, title, start_time,
+          location_label, route_id, note, created_at, updated_at
+        ) VALUES (
+          $id, $targetDate, $overrideType, $title, $startTime,
+          $locationLabel, $routeId, NULL, $now, $now
+        )
+        ON CONFLICT(target_date) DO UPDATE SET
+          override_type = excluded.override_type,
+          title = excluded.title,
+          start_time = excluded.start_time,
+          location_label = excluded.location_label,
+          route_id = excluded.route_id,
+          note = excluded.note,
+          updated_at = excluded.updated_at`,
+        {
+          $id: override.id,
+          $targetDate: override.targetDate,
+          $overrideType: override.overrideType,
+          $title: isReplace ? override.title : null,
+          $startTime: isReplace ? override.startTime : null,
+          $locationLabel: isReplace ? (override.locationLabel ?? null) : null,
+          $routeId: isReplace ? (override.routeId ?? null) : null,
+          $now: now,
+        },
+      );
+    });
+  }
+
+  deleteDateOverride(targetDate: string): Promise<void> {
+    return runRepositoryQuery(async () => {
+      await this.database.runAsync(
+        "DELETE FROM date_schedule_overrides WHERE target_date = $targetDate",
+        { $targetDate: targetDate },
+      );
+    });
+  }
 }
