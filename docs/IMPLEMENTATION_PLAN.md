@@ -38,6 +38,7 @@
   - Phase 1-D-6で朝タスクのプリセット追加・時間・必須区分・並べ替えとSQLite保存を実装した。
   - Phase 1-D-7で通知理由の事前説明、OS権限要求、拒否時継続、初期設定完了の永続化を実装した。
   - Phase 1-E-1で例外日を解決した翌朝プレビュー、前夜ホーム、単一日の安全な例外編集を実装した。
+  - Phase 1-E-2でplanned sessionの同期、手動・通知共通routeからの開始、active sessionの復元と現在時刻での再計画を実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -50,7 +51,7 @@
 
 ### Specification gap
 
-Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホームを実装済み。朝セッション開始・復元UI、通知予約adapter、実機検証が主な未実装範囲である。
+Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホーム、朝セッション開始・復元を実装済み。タスク実行UI、通知予約adapter、実機検証が主な未実装範囲である。
 
 ## 4. 対象外機能
 
@@ -335,9 +336,9 @@ Acceptance Criteria:
 
 ## 15. 次の最小Sub Phase
 
-`Phase 1-E-2: 手動開始 / 通知遷移とsession復元`。
+`Phase 1-E-3: 起床後プラン`。
 
-前夜ホームの計画から朝セッションを作成し、二重作成を防ぎ、アプリ再起動後は対象日のactive sessionを復元する。通知deep linkの本接続はPhase 1-Fで行い、Phase 1-E-2では同じ遷移契約を手動開始で検証する。
+現在の計画状態、出発目安、最初に行うタスク、遅れ・短縮・省略の理由を一つの朝プランとして表示する。Phase 1-E-2の開始・復元結果を表示モデルへ変換し、色だけに依存しない状態表現と文字拡大を検証する。
 
 ## 16. 参照した公式資料
 

@@ -1,5 +1,45 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-E-2: morning session start and restoration
+
+### 実装内容
+
+- 前夜ホーム表示時に翌日のplanned sessionを作成し、同日の二重作成を防止。
+- 予定変更時は未開始sessionを最新の予定・ルート・起床・出発時刻へ同期し、休講時は取消し。
+- `morning_sessions`へID検索、未開始計画の更新、最初の起床実績を保持する開始操作を追加。
+- 手動開始と将来の通知tapが共有する`/morning/start?sessionId=...` routeを追加。
+- 開始・復元時に現在時刻からPlanning Engineを再実行し、完了済みtaskを保持してexecutionを再構築。
+- ホームで当日のplanned / active sessionを検出し、開始または再開できる導線を追加。
+
+### 主なcommit
+
+- `ac55b52 feat(session): start and restore morning plans`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 41 suites / 147 tests pass
+- `npm run test:sqlite`: pass
+- `npm run migration:check`: pass
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform android --output-dir dist-android-e2`: pass
+
+### 発生した問題
+
+- 単に同日のsessionを再利用すると、例外予定を変更した後も古いplanned時刻が残る。
+- executionを全置換するとき、復元済みのcompleted taskを除外すると進捗を失う。
+
+### 解決方法
+
+- active sessionだけをそのまま復元し、planned sessionは最新previewで更新。予定なしへ変わった場合は対象のplanned sessionだけをcancelledへ変更。
+- completed executionは実績を保持し、未完了taskだけを現在時刻で再計画してmerge。
+
+### 次のPhase
+
+- Phase 1-E-3: 起床後プラン表示。
+
 ## 2026-10-09 — Phase 1-E-1: evening home and tomorrow plan
 
 ### 実装内容
