@@ -2,19 +2,19 @@ import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import { router } from "expo-router";
 
 import HomeRoute from "@/app/home";
-import { loadTomorrowPlanFromDatabase } from "@/infrastructure/app-services/load-tomorrow-plan";
+import { loadHomeDashboardFromDatabase } from "@/infrastructure/app-services/load-tomorrow-plan";
 
 jest.mock("expo-router", () => ({
   router: { push: jest.fn() },
 }));
 
 jest.mock("@/infrastructure/app-services/load-tomorrow-plan", () => ({
-  loadTomorrowPlanFromDatabase: jest.fn(),
+  loadHomeDashboardFromDatabase: jest.fn(),
 }));
 
 describe("home route", () => {
   it("opens exception editing for the displayed date", async () => {
-    jest.mocked(loadTomorrowPlanFromDatabase).mockResolvedValue({
+    jest.mocked(loadHomeDashboardFromDatabase).mockResolvedValue({
       kind: "noSchedule",
       targetDate: "2026-10-10",
       timeZone: "Asia/Tokyo",

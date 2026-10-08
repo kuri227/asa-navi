@@ -1,10 +1,10 @@
 import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
 
-import type { TomorrowPlanPreview } from "@/application/tomorrow-plan";
+import type { HomeDashboardData } from "@/application/home";
 
 import { HomeScreen } from "../home-screen";
 
-const plannedPreview: TomorrowPlanPreview = {
+const plannedPreview: HomeDashboardData = {
   kind: "planned",
   targetDate: "2026-10-10",
   timeZone: "Asia/Tokyo",
@@ -15,6 +15,7 @@ const plannedPreview: TomorrowPlanPreview = {
     startAt: new Date("2026-10-09T23:50:00.000Z"),
     locationLabel: "講義棟A",
   },
+  routeId: "route-1",
   routeName: "いつもの通学ルート",
   routeSegments: [
     {
@@ -33,15 +34,17 @@ const plannedPreview: TomorrowPlanPreview = {
     recommendedWakeAt: new Date("2026-10-09T22:25:00.000Z"),
   },
   alarmState: "notScheduled",
+  sessionId: "session-1",
 };
 
 describe("HomeScreen", () => {
   it("shows tomorrow's resolved plan in the device time zone", async () => {
-    const request = deferred<TomorrowPlanPreview>();
+    const request = deferred<HomeDashboardData>();
     const screen = await render(
       <HomeScreen
         loadPlan={() => request.promise}
         onEditTomorrow={jest.fn()}
+        onStartMorning={jest.fn()}
       />,
     );
     expect(screen.getByLabelText("明日の予定を読み込み中")).toBeTruthy();
@@ -66,6 +69,7 @@ describe("HomeScreen", () => {
           source: "override",
         })}
         onEditTomorrow={onEditTomorrow}
+        onStartMorning={jest.fn()}
       />,
     );
     await waitFor(() => screen.getByText("例外予定"));
@@ -82,19 +86,24 @@ describe("HomeScreen", () => {
           timeZone: "Asia/Tokyo",
         })}
         onEditTomorrow={jest.fn()}
+        onStartMorning={jest.fn()}
       />,
     );
     await waitFor(() => screen.getByText("明日の予定はありません"));
   });
 
   it("can retry after a local database error", async () => {
-    const retryRequest = deferred<TomorrowPlanPreview>();
+    const retryRequest = deferred<HomeDashboardData>();
     const loadPlan = jest
-      .fn<Promise<TomorrowPlanPreview>, []>()
+      .fn<Promise<HomeDashboardData>, []>()
       .mockRejectedValueOnce(new Error("database unavailable"))
       .mockReturnValueOnce(retryRequest.promise);
     const screen = await render(
-      <HomeScreen loadPlan={loadPlan} onEditTomorrow={jest.fn()} />,
+      <HomeScreen
+        loadPlan={loadPlan}
+        onEditTomorrow={jest.fn()}
+        onStartMorning={jest.fn()}
+      />,
     );
     await waitFor(() => screen.getByRole("button", { name: "もう一度試す" }));
     await fireEvent.press(screen.getByRole("button", { name: "もう一度試す" }));
@@ -106,6 +115,35 @@ describe("HomeScreen", () => {
     await waitFor(() =>
       expect(screen.getByText("10月10日（土）")).toBeTruthy(),
     );
+  });
+
+  it("offers to resume today's active session", async () => {
+    const onStartMorning = jest.fn();
+    const screen = await render(
+      <HomeScreen
+        loadPlan={jest.fn().mockResolvedValue({
+          kind: "morningSession",
+          timeZone: "Asia/Tokyo",
+          session: {
+            id: "session-active",
+            targetDate: "2026-10-10",
+            firstEventTitle: "1限 英語",
+            firstEventStartAt: new Date("2026-10-09T23:50:00.000Z"),
+            plannedWakeAt: new Date("2026-10-09T22:25:00.000Z"),
+            latestDepartureAt: new Date("2026-10-09T23:10:00.000Z"),
+            status: "active",
+            lateByMin: 0,
+            createdAt: new Date("2026-10-09T12:00:00.000Z"),
+            updatedAt: new Date("2026-10-09T22:30:00.000Z"),
+          },
+        })}
+        onEditTomorrow={jest.fn()}
+        onStartMorning={onStartMorning}
+      />,
+    );
+    await waitFor(() => screen.getByRole("button", { name: "朝プランを再開" }));
+    fireEvent.press(screen.getByRole("button", { name: "朝プランを再開" }));
+    expect(onStartMorning).toHaveBeenCalledWith("session-active");
   });
 });
 

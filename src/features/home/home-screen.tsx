@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
-import type { TomorrowPlanPreview } from "@/application/tomorrow-plan";
+import type { HomeDashboardData } from "@/application/home";
 import { AppButton, ScreenContainer } from "@/components/ui";
 import { useTheme } from "@/hooks/use-theme";
 import { radius, spacing, typography } from "@/theme";
@@ -13,16 +13,21 @@ import {
 } from "./home-plan-formatters";
 
 type Props = Readonly<{
-  loadPlan: () => Promise<TomorrowPlanPreview>;
+  loadPlan: () => Promise<HomeDashboardData>;
   onEditTomorrow: (targetDate: string) => void;
+  onStartMorning: (sessionId: string) => void;
 }>;
 
 type ViewState =
   | Readonly<{ kind: "loading" }>
-  | Readonly<{ kind: "ready"; plan: TomorrowPlanPreview }>
+  | Readonly<{ kind: "ready"; plan: HomeDashboardData }>
   | Readonly<{ kind: "error" }>;
 
-export function HomeScreen({ loadPlan, onEditTomorrow }: Props) {
+export function HomeScreen({
+  loadPlan,
+  onEditTomorrow,
+  onStartMorning,
+}: Props) {
   const theme = useTheme();
   const [viewState, setViewState] = useState<ViewState>({ kind: "loading" });
   const [requestNumber, setRequestNumber] = useState(0);
@@ -89,6 +94,48 @@ export function HomeScreen({ loadPlan, onEditTomorrow }: Props) {
   }
 
   const { plan } = viewState;
+  if (plan.kind === "morningSession") {
+    const isActive = plan.session.status === "active";
+    return (
+      <ScreenContainer>
+        <View style={styles.heading}>
+          <Text style={[styles.eyebrow, { color: theme.primary }]}>
+            今日の朝ナビ
+          </Text>
+          <Text
+            accessibilityRole="header"
+            style={[styles.headingText, { color: theme.text }]}
+          >
+            {formatPlanDate(plan.session.targetDate, plan.timeZone)}
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.morningCallout,
+            { backgroundColor: theme.successContainer },
+          ]}
+        >
+          <Text style={[styles.label, { color: theme.success }]}>
+            {isActive ? "進行中の朝プランがあります" : "朝の予定を始められます"}
+          </Text>
+          <Text style={[styles.title, { color: theme.text }]}>
+            {formatPlanTime(plan.session.firstEventStartAt, plan.timeZone)}　
+            {plan.session.firstEventTitle}
+          </Text>
+          <Text
+            maxFontSizeMultiplier={1.8}
+            style={[styles.body, { color: theme.textSecondary }]}
+          >
+            アプリを閉じても、完了したタスクを保ったまま続きから再開します。
+          </Text>
+        </View>
+        <AppButton
+          label={isActive ? "朝プランを再開" : "朝の予定を始める"}
+          onPress={() => onStartMorning(plan.session.id)}
+        />
+      </ScreenContainer>
+    );
+  }
   if (plan.kind === "noSchedule") {
     return (
       <ScreenContainer>
@@ -346,6 +393,11 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
     padding: spacing.xl,
     gap: spacing.xs,
+  },
+  morningCallout: {
+    borderRadius: radius.card,
+    padding: spacing.xxl,
+    gap: spacing.md,
   },
   emptyState: {
     borderRadius: radius.card,

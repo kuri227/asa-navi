@@ -82,6 +82,40 @@ export class SQLiteMorningSessionRepository implements MorningSessionRepository 
     });
   }
 
+  savePrepared(session: MorningSession): Promise<void> {
+    return runRepositoryQuery(async () => {
+      await this.database.runAsync(
+        `UPDATE morning_sessions SET
+          first_event_title = $firstEventTitle,
+          first_event_start_at = $firstEventStartAt,
+          route_id = $routeId,
+          planned_wake_at = $plannedWakeAt,
+          latest_departure_at = $latestDepartureAt,
+          updated_at = $updatedAt
+         WHERE id = $id AND status = 'planned'`,
+        {
+          $id: session.id,
+          $firstEventTitle: session.firstEventTitle,
+          $firstEventStartAt: session.firstEventStartAt.toISOString(),
+          $routeId: session.routeId ?? null,
+          $plannedWakeAt: session.plannedWakeAt.toISOString(),
+          $latestDepartureAt: session.latestDepartureAt.toISOString(),
+          $updatedAt: session.updatedAt.toISOString(),
+        },
+      );
+    });
+  }
+
+  findById(sessionId: string): Promise<MorningSession | null> {
+    return runRepositoryQuery(async () => {
+      const row = await this.database.getFirstAsync(
+        "SELECT * FROM morning_sessions WHERE id = $sessionId LIMIT 1",
+        { $sessionId: sessionId },
+      );
+      return row === null ? null : mapSession(row);
+    });
+  }
+
   findActive(targetDate: string): Promise<MorningSession | null> {
     return runRepositoryQuery(async () => {
       const row = await this.database.getFirstAsync(
@@ -91,6 +125,23 @@ export class SQLiteMorningSessionRepository implements MorningSessionRepository 
         { $targetDate: targetDate },
       );
       return row === null ? null : mapSession(row);
+    });
+  }
+
+  start(sessionId: string, actualWakeAt: Date): Promise<void> {
+    return runRepositoryQuery(async () => {
+      await this.database.runAsync(
+        `UPDATE morning_sessions SET
+          actual_wake_at = COALESCE(actual_wake_at, $actualWakeAt),
+          status = 'active',
+          updated_at = $updatedAt
+         WHERE id = $sessionId AND status IN ('planned', 'active')`,
+        {
+          $sessionId: sessionId,
+          $actualWakeAt: actualWakeAt.toISOString(),
+          $updatedAt: this.now().toISOString(),
+        },
+      );
     });
   }
 

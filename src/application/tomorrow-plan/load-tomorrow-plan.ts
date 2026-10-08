@@ -30,6 +30,7 @@ export type TomorrowPlanPreview =
       timeZone: string;
       source: "weekday" | "override";
       firstEvent: FirstEvent;
+      routeId: string;
       routeName: string;
       routeSegments: readonly RouteSegment[];
       basePlan: BasePlan;
@@ -99,6 +100,7 @@ export async function loadTomorrowPlan(
     timeZone: input.timeZone,
     source: resolved.source,
     firstEvent: resolved.firstEvent,
+    routeId,
     routeName: routeWithSegments.route.name,
     routeSegments,
     basePlan,

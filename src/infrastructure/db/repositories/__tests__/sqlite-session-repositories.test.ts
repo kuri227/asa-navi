@@ -106,6 +106,35 @@ describe("SQLiteMorningSessionRepository", () => {
       new Date("2026-10-05T21:30:00.000Z"),
     );
   });
+
+  it("records the first wake time and marks a session active", async () => {
+    const database = new FakeMutationDatabase();
+    const repository = new SQLiteMorningSessionRepository(
+      database,
+      () => updatedAt,
+    );
+    const actualWakeAt = new Date("2026-10-05T21:35:00.000Z");
+    await repository.start("session-1", actualWakeAt);
+    expect(database.runCalls[0].sql).toContain(
+      "actual_wake_at = COALESCE(actual_wake_at, $actualWakeAt)",
+    );
+    expect(database.runCalls[0].params).toMatchObject({
+      $sessionId: "session-1",
+      $actualWakeAt: actualWakeAt.toISOString(),
+      $updatedAt: updatedAt.toISOString(),
+    });
+  });
+
+  it("updates a prepared session only while it is still planned", async () => {
+    const database = new FakeMutationDatabase();
+    await new SQLiteMorningSessionRepository(database).savePrepared(session);
+    expect(database.runCalls[0].sql).toContain("status = 'planned'");
+    expect(database.runCalls[0].params).toMatchObject({
+      $id: "session-1",
+      $firstEventTitle: "1限",
+      $routeId: "route-1",
+    });
+  });
 });
 
 describe("SQLiteMorningTaskExecutionRepository", () => {

@@ -42,7 +42,10 @@ export interface RouteRepository {
 
 export interface MorningSessionRepository {
   create(session: MorningSession): Promise<void>;
+  savePrepared(session: MorningSession): Promise<void>;
+  findById(sessionId: string): Promise<MorningSession | null>;
   findActive(targetDate: string): Promise<MorningSession | null>;
+  start(sessionId: string, actualWakeAt: Date): Promise<void>;
   savePlan(sessionId: string, result: PlanningResult): Promise<void>;
   updateStatus(
     sessionId: string,
