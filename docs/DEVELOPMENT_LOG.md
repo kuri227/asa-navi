@@ -1,5 +1,38 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-E-3: wake-up plan presentation
+
+### 実装内容
+
+- actual / planned wake timeから「予定より早い・遅い・予定どおり」を分単位で表示。
+- 再計画後の出発目安、最終出発、余裕または遅刻見込みを色だけに依存せず文章化。
+- Planning Engineのcompress / skip adjustmentをtask名付きで説明。
+- 現在taskと残りtaskの順序、計画時間、短縮・省略状態を一覧表示。
+
+### 主なcommit
+
+- `bcd69ce feat(session): present the recalculated morning plan`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 42 suites / 151 tests pass
+- `npx expo export --platform android --output-dir dist-android-e3`: pass
+
+### 発生した問題
+
+- 現在taskと残り一覧の両方に同じtask名が表示されるため、単一一致を前提にしたUI testが失敗した。
+
+### 解決方法
+
+- 重複は意図した情報階層として維持し、testを表示箇所数まで検証する形へ修正。
+
+### 次のPhase
+
+- Phase 1-E-4: タスク実行 / 完了 / 許可された省略。
+
 ## 2026-10-09 — Phase 1-E-2: morning session start and restoration
 
 ### 実装内容

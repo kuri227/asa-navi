@@ -39,6 +39,7 @@
   - Phase 1-D-7で通知理由の事前説明、OS権限要求、拒否時継続、初期設定完了の永続化を実装した。
   - Phase 1-E-1で例外日を解決した翌朝プレビュー、前夜ホーム、単一日の安全な例外編集を実装した。
   - Phase 1-E-2でplanned sessionの同期、手動・通知共通routeからの開始、active sessionの復元と現在時刻での再計画を実装した。
+  - Phase 1-E-3で起床差分、出発見込み、余裕・遅刻、調整内容、残りtaskを表示する起床後プランを実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -336,9 +337,9 @@ Acceptance Criteria:
 
 ## 15. 次の最小Sub Phase
 
-`Phase 1-E-3: 起床後プラン`。
+`Phase 1-E-4: タスク実行 / 完了 / 許可された省略`。
 
-現在の計画状態、出発目安、最初に行うタスク、遅れ・短縮・省略の理由を一つの朝プランとして表示する。Phase 1-E-2の開始・復元結果を表示モデルへ変換し、色だけに依存しない状態表現と文字拡大を検証する。
+active taskの完了実績を保存し、optional taskだけに明示的な省略操作を提供する。操作後は完了済みtaskを除外して現在時刻から再計画し、次taskをactiveへ進める。全task終了時はsessionをcompletedにする。
 
 ## 16. 参照した公式資料
 
