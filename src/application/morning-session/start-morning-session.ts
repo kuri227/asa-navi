@@ -16,7 +16,7 @@ export type ActiveMorningSession = Readonly<{
   plan: PlanningResult;
 }>;
 
-type Dependencies = Readonly<{
+export type MorningSessionDependencies = Readonly<{
   sessionRepository: MorningSessionRepository;
   executionRepository: MorningTaskExecutionRepository;
   routeRepository: RouteRepository;
@@ -27,7 +27,7 @@ type Dependencies = Readonly<{
 
 export async function startMorningSession(
   input: Readonly<{ sessionId: string; now: Date }>,
-  dependencies: Dependencies,
+  dependencies: MorningSessionDependencies,
 ): Promise<ActiveMorningSession> {
   const session = await dependencies.sessionRepository.findById(
     input.sessionId,
@@ -51,7 +51,7 @@ export async function startMorningSession(
   if (!route) throw new ValidationError("通学ルートを読み込めませんでした。");
 
   const completedTaskIds = existingExecutions
-    .filter(({ status }) => status === "completed")
+    .filter(({ status }) => ["completed", "skipped"].includes(status))
     .map(({ taskTemplateId }) => taskTemplateId);
   const plan = calculatePlan({
     now: input.now,
@@ -118,8 +118,8 @@ function mergeExecutions(
   const taskOrder = new Map(
     input.tasks.map((task) => [task.id, task.sortOrder]),
   );
-  const completed = input.existingExecutions.filter(
-    ({ status }) => status === "completed",
+  const terminal = input.existingExecutions.filter(({ status }) =>
+    ["completed", "skipped"].includes(status),
   );
   let activeAssigned = false;
   const remaining = input.plan.tasks.map<MorningTaskExecution>((task) => {
@@ -152,7 +152,7 @@ function mergeExecutions(
       updatedAt: input.now,
     };
   });
-  return [...completed, ...remaining].sort(
+  return [...terminal, ...remaining].sort(
     (left, right) => left.sortOrder - right.sortOrder,
   );
 }

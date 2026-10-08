@@ -10,6 +10,10 @@ import type {
 import { ValidationError } from "@/application/errors/validation-error";
 
 import { startMorningSession } from "../start-morning-session";
+import {
+  completeMorningTask,
+  skipOptionalMorningTask,
+} from "../finish-morning-task";
 
 const now = new Date("2026-10-09T22:30:00.000Z");
 const timestamp = new Date("2026-10-09T12:00:00.000Z");
@@ -72,6 +76,83 @@ describe("startMorningSession", () => {
   });
 });
 
+describe("finish morning task", () => {
+  it("completes the current task and activates the next task after replanning", async () => {
+    const dependencies = createDependencies();
+    const current = createExecution({ status: "active" });
+    const next = createExecution({
+      id: "execution-2",
+      taskTemplateId: "task-2",
+      sortOrder: 1,
+      status: "pending",
+    });
+    jest
+      .mocked(dependencies.executionRepository.listForSession)
+      .mockResolvedValueOnce([current, next])
+      .mockResolvedValueOnce([
+        { ...current, status: "completed", actualEndAt: now },
+        next,
+      ]);
+    const result = await completeMorningTask(
+      { sessionId: "session-1", executionId: current.id, now },
+      dependencies,
+    );
+    expect(dependencies.executionRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ id: current.id, status: "completed" }),
+    );
+    expect(result.executions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          taskTemplateId: "task-2",
+          status: "active",
+        }),
+      ]),
+    );
+  });
+
+  it("allows manual skip only for an optional task", async () => {
+    const dependencies = createDependencies();
+    const optional = createExecution({
+      id: "execution-2",
+      taskTemplateId: "task-2",
+      sortOrder: 1,
+      status: "active",
+    });
+    const completed = createExecution({ status: "completed" });
+    jest
+      .mocked(dependencies.executionRepository.listForSession)
+      .mockResolvedValueOnce([completed, optional])
+      .mockResolvedValueOnce([completed, { ...optional, status: "skipped" }]);
+    const result = await skipOptionalMorningTask(
+      { sessionId: "session-1", executionId: optional.id, now },
+      dependencies,
+    );
+    expect(dependencies.executionRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "skipped" }),
+    );
+    expect(result.session.status).toBe("completed");
+    expect(dependencies.sessionRepository.updateStatus).toHaveBeenCalledWith(
+      "session-1",
+      "completed",
+    );
+  });
+
+  it("rejects skipping a required task", async () => {
+    const dependencies = createDependencies();
+    const required = createExecution({ status: "active" });
+    jest
+      .mocked(dependencies.executionRepository.listForSession)
+      .mockResolvedValue([required]);
+    await expect(
+      skipOptionalMorningTask(
+        { sessionId: "session-1", executionId: required.id, now },
+        dependencies,
+      ),
+    ).rejects.toThrow("必須タスクは省略できません。");
+    expect(dependencies.executionRepository.save).not.toHaveBeenCalled();
+  });
+});
+
 function createDependencies() {
   const session = createSession();
   const sessionRepository: MorningSessionRepository = {
@@ -118,7 +199,10 @@ function createDependencies() {
   const routineRepository: RoutineRepository = {
     listEnabledTasks: jest
       .fn()
-      .mockResolvedValue([createTask("task-1", 0), createTask("task-2", 1)]),
+      .mockResolvedValue([
+        createTask("task-1", 0),
+        createTask("task-2", 1, "optional"),
+      ]),
     listTaskTemplates: jest.fn(),
     replaceTaskTemplates: jest.fn(),
   };
@@ -178,13 +262,17 @@ function createExecution(
   };
 }
 
-function createTask(id: string, sortOrder: number) {
+function createTask(
+  id: string,
+  sortOrder: number,
+  requirement: "required" | "optional" = "required",
+) {
   return {
     id,
     name: id,
     normalDurationMin: 15,
     minimumDurationMin: 10,
-    requirement: "required" as const,
+    requirement,
     compressionPriority: sortOrder,
     skipPriority: sortOrder,
     sortOrder,
