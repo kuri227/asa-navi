@@ -204,7 +204,9 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 
 ## 未実装
 
-- Android / iOS実機検証
+- Android / iOS実機での通知精度、background / terminated、Focus / 省電力、端末再起動検証
+
+通知adapterとnavigationの自動testは完了していますが、OSの配信挙動は実機でのみ確定できます。検証手順と記録欄は[モバイル技術メモ](docs/MOBILE_NOTES.md)を参照してください。
 
 ## 今後のロードマップ
 

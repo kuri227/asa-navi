@@ -1,5 +1,42 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-F-6: notification verification guide
+
+### 実装内容
+
+- notification adapter、permission、foreground presentation、response observerの自動test範囲を棚卸し。
+- Android / iOS共通のN-01〜N-12実機checklistを`MOBILE_NOTES.md`へ追加。
+- foreground / background / terminated、再予約、取消、権限変更、Focus、省電力、再起動、timezone変更の期待結果と記録項目を明文化。
+- local / global npm依存、Android SDK command、Expo Doctorを再確認。
+
+### 主なcommit
+
+- この記録と実機手順をdocs commitとして保存する。
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test -- --runInBand`: 48 suites / 182 tests pass
+- `npx expo-doctor`: 21/21 pass
+- `npm audit --omit=dev`: 50件（moderate 5 / high 45、既知3根本advisory）
+- `npm audit`: 54件（moderate 5 / high 49、既知3根本advisory）
+
+### 発生した問題
+
+- このWindows環境に`adb` / Android Emulator commandと接続端末がなく、iOS Simulatorも利用できない。
+- そのためPhase 1-Fの実機通知Acceptance Criteriaは未検証。
+
+### 解決方法
+
+- 実機結果を推測せず未検証と明記し、端末入手後に同じ条件で再現できるchecklistと記録templateを整備した。
+- auditのforce修正はExpo 44または非対応Jest majorへdowngrade / upgradeするため適用せず、既存の到達可能性評価を維持した。
+
+### 次のPhase
+
+- Phase 1-G-1: Android実機の通常・省電力・権限変更・再起動。実行にはAndroid端末またはemulator環境が必要。
+
 ## 2026-10-09 — Phase 1-F-5: notification deep link navigation
 
 ### 実装内容

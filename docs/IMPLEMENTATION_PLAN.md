@@ -48,6 +48,7 @@
   - Phase 1-F-3でExpo Notificationsの日時予約・取消adapter、session deep link data、foreground表示handlerを実装した。
   - Phase 1-F-4でplanned sessionと端末通知・alarm recordを同期し、取消、再予約、同一予約の再利用、部分失敗時の補償取消を実装した。
   - Phase 1-F-5でcold startと起動中の通知tapを監視し、検証済みのmorning alarmだけを対象sessionへ接続した。
+  - Phase 1-F-6で通知境界の自動検証を完了し、Android / iOS実機checklistと記録templateを整備した。接続可能な端末・emulatorがないため実機Acceptance Criteriaは未達として明記している。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -345,9 +346,9 @@ Acceptance Criteria:
 
 ## 15. 次の最小Sub Phase
 
-`Phase 1-F-6: notification adapter testと実機手順`。
+`Phase 1-G-1: Android実機の通常・省電力・権限変更・再起動`。
 
-adapterとnotification response observerの自動testを最終確認し、iOS / Androidで権限、foreground、background、terminated、取消、時刻変更を検証する手順と期待結果を`docs/MOBILE_NOTES.md`へ固定する。接続端末またはemulatorの有無を確認し、実行できない項目は未検証として明記する。
+`docs/MOBILE_NOTES.md`のN-01〜N-12をAndroid実機またはemulatorで実行し、端末・OS・build・権限・省電力条件・通知遅延・tap結果を記録する。現在のWindows環境には`adb` / emulatorがないため、端末接続またはAndroid SDK環境が必要。
 
 ## 16. 参照した公式資料
 
