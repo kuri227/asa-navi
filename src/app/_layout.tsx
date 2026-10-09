@@ -3,6 +3,10 @@ import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "react-native";
 
 import { AnimatedSplashOverlay } from "@/components/animated-icon";
+import { configureExpoNotificationPresentation } from "@/infrastructure/notifications/configure-notification-presentation";
+
+configureExpoNotificationPresentation();
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
