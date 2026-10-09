@@ -1,5 +1,45 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-E-4: morning task execution
+
+### 実装内容
+
+- active taskの完了実績をSQLiteへ保存し、残りtaskを現在時刻から再計画。
+- optional taskだけに省略操作を表示し、Application層でもrequired taskの省略を拒否。
+- 完了・省略後に次taskをactiveへ進め、全task終了時はsessionをcompletedへ更新。
+- 操作中の二重送信を抑止し、保存失敗時は現在taskを維持して再試行可能なerrorを表示。
+- taskの必須区分をUIへ安全に渡すsession view modelを追加。
+
+### 主なcommit
+
+- `f31a6ed feat(session): complete and skip morning tasks`
+- `4b2ab85 feat(session): connect task completion controls`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 42 suites / 157 tests pass
+- `npm run test:sqlite`: pass
+- `npm run migration:check`: pass
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform android --output-dir dist-android-e4`: pass
+
+### 発生した問題
+
+- 非同期のbutton操作testでReactの`act` warningが発生した。
+- sandbox内のWindows一時directoryをJestが`realpath`できず、初回test実行が`EPERM`になった。
+
+### 解決方法
+
+- 非同期state更新を伴うpressを`act`で待機し、warningのないtestへ修正。
+- 同じcommandを通常環境で再実行し、全testの成功を確認。
+
+### 次のPhase
+
+- Phase 1-E-5: 再計画とリカバリー提案。
+
 ## 2026-10-09 — Phase 1-E-3: wake-up plan presentation
 
 ### 実装内容

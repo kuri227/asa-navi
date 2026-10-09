@@ -40,6 +40,7 @@
   - Phase 1-E-1で例外日を解決した翌朝プレビュー、前夜ホーム、単一日の安全な例外編集を実装した。
   - Phase 1-E-2でplanned sessionの同期、手動・通知共通routeからの開始、active sessionの復元と現在時刻での再計画を実装した。
   - Phase 1-E-3で起床差分、出発見込み、余裕・遅刻、調整内容、残りtaskを表示する起床後プランを実装した。
+  - Phase 1-E-4でactive taskの完了、optional taskの省略、実績保存、現在時刻からの自動再計画、全task完了を実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -52,7 +53,7 @@
 
 ### Specification gap
 
-Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホーム、朝セッション開始・復元を実装済み。タスク実行UI、通知予約adapter、実機検証が主な未実装範囲である。
+Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホーム、朝セッション開始・復元・task実行を実装済み。遅延時の選択式リカバリー、出発前確認、通知予約adapter、実機検証が主な未実装範囲である。
 
 ## 4. 対象外機能
 
@@ -337,9 +338,9 @@ Acceptance Criteria:
 
 ## 15. 次の最小Sub Phase
 
-`Phase 1-E-4: タスク実行 / 完了 / 許可された省略`。
+`Phase 1-E-5: 再計画とリカバリー提案`。
 
-active taskの完了実績を保存し、optional taskだけに明示的な省略操作を提供する。操作後は完了済みtaskを除外して現在時刻から再計画し、次taskをactiveへ進める。全task終了時はsessionをcompletedにする。
+遅れが生じたとき、Planning Engineが算出した短縮・省略・遅刻見込みを基に、ユーザーが理解して選べるリカバリー候補を表示する。選択結果をsessionへ反映する方法は既存の決定論的な自動最適化と重複させず、小さなUseCaseとして設計する。
 
 ## 16. 参照した公式資料
 
