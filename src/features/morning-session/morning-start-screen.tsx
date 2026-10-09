@@ -12,6 +12,7 @@ import {
   getPlanStatusMessage,
   getWakeTimingMessage,
 } from "./morning-plan-presenter";
+import { RecoveryPlanCard } from "./recovery-plan-card";
 
 type Props = Readonly<{
   timeZone: string;
@@ -40,6 +41,9 @@ export function MorningStartScreen({
     null,
   );
   const [actionError, setActionError] = useState(false);
+  const [acceptedRecoveryPlanKey, setAcceptedRecoveryPlanKey] = useState<
+    string | null
+  >(null);
   const retry = useCallback(() => {
     setState({ kind: "loading" });
     setRequestNumber((current) => current + 1);
@@ -117,6 +121,13 @@ export function MorningStartScreen({
   const currentTaskIsOptional = currentTask
     ? value.optionalTaskIds.includes(currentTask.taskTemplateId)
     : false;
+  const recoveryPlanKey = [
+    currentTask?.id ?? "finished",
+    value.plan.predictedDepartureAt.toISOString(),
+    ...adjustmentTexts,
+  ].join(":");
+  const needsRecoveryConfirmation =
+    adjustmentTexts.length > 0 && acceptedRecoveryPlanKey !== recoveryPlanKey;
   const performTaskAction = async (
     action: (executionId: string) => Promise<ActiveMorningSession>,
     kind: "complete" | "skip",
@@ -189,68 +200,66 @@ export function MorningStartScreen({
           遅刻見込み {value.plan.lateByMin}分
         </Text>
       </View>
-      <View
-        style={[
-          styles.currentTask,
-          { backgroundColor: theme.successContainer },
-        ]}
-      >
-        <Text style={[styles.label, { color: theme.success }]}>
-          {allTasksFinished ? "朝の準備" : "今すること"}
-        </Text>
-        <Text style={[styles.title, { color: theme.text }]}>
-          {allTasksFinished
-            ? "朝の準備が完了しました"
-            : (taskName ?? "次のタスクを確認しています")}
-        </Text>
-        {currentTask ? (
-          <>
-            <Text style={[styles.body, { color: theme.textSecondary }]}>
-              目安 {currentTask.plannedDurationMin}分
-            </Text>
-            {actionError ? (
-              <Text
-                accessibilityRole="alert"
-                style={[styles.body, { color: theme.error }]}
-              >
-                進捗を保存できませんでした。もう一度お試しください。
-              </Text>
-            ) : null}
-            <View style={styles.taskActions}>
-              <AppButton
-                label="完了しました"
-                loading={actionKind === "complete"}
-                disabled={actionKind !== null}
-                onPress={() => void performTaskAction(completeTask, "complete")}
-              />
-              {currentTaskIsOptional ? (
-                <AppButton
-                  label="このタスクを省略"
-                  loading={actionKind === "skip"}
-                  disabled={actionKind !== null}
-                  onPress={() => void performTaskAction(skipTask, "skip")}
-                  variant="ghost"
-                />
-              ) : null}
-            </View>
-          </>
-        ) : null}
-      </View>
       {adjustmentTexts.length > 0 ? (
+        <RecoveryPlanCard
+          accepted={!needsRecoveryConfirmation}
+          adjustmentTexts={adjustmentTexts}
+          onAccept={() => setAcceptedRecoveryPlanKey(recoveryPlanKey)}
+          predictedDepartureText={formatPlanTime(
+            value.plan.predictedDepartureAt,
+            timeZone,
+          )}
+        />
+      ) : null}
+      {!needsRecoveryConfirmation ? (
         <View
           style={[
-            styles.adjustments,
-            { backgroundColor: theme.warningContainer },
+            styles.currentTask,
+            { backgroundColor: theme.successContainer },
           ]}
         >
-          <Text style={[styles.title, { color: theme.warning }]}>
-            間に合わせるための調整
+          <Text style={[styles.label, { color: theme.success }]}>
+            {allTasksFinished ? "朝の準備" : "今すること"}
           </Text>
-          {adjustmentTexts.map((text) => (
-            <Text key={text} style={[styles.body, { color: theme.text }]}>
-              ・{text}
-            </Text>
-          ))}
+          <Text style={[styles.title, { color: theme.text }]}>
+            {allTasksFinished
+              ? "朝の準備が完了しました"
+              : (taskName ?? "次のタスクを確認しています")}
+          </Text>
+          {currentTask ? (
+            <>
+              <Text style={[styles.body, { color: theme.textSecondary }]}>
+                目安 {currentTask.plannedDurationMin}分
+              </Text>
+              {actionError ? (
+                <Text
+                  accessibilityRole="alert"
+                  style={[styles.body, { color: theme.error }]}
+                >
+                  進捗を保存できませんでした。もう一度お試しください。
+                </Text>
+              ) : null}
+              <View style={styles.taskActions}>
+                <AppButton
+                  label="完了しました"
+                  loading={actionKind === "complete"}
+                  disabled={actionKind !== null}
+                  onPress={() =>
+                    void performTaskAction(completeTask, "complete")
+                  }
+                />
+                {currentTaskIsOptional ? (
+                  <AppButton
+                    label="このタスクを省略"
+                    loading={actionKind === "skip"}
+                    disabled={actionKind !== null}
+                    onPress={() => void performTaskAction(skipTask, "skip")}
+                    variant="ghost"
+                  />
+                ) : null}
+              </View>
+            </>
+          ) : null}
         </View>
       ) : null}
       <View style={styles.taskList}>
@@ -309,11 +318,6 @@ const styles = StyleSheet.create({
   taskActions: { gap: spacing.sm, paddingTop: spacing.sm },
   status: { borderRadius: radius.card, padding: spacing.lg },
   statusText: { ...typography.bodyStrong },
-  adjustments: {
-    borderRadius: radius.card,
-    padding: spacing.xl,
-    gap: spacing.sm,
-  },
   taskList: { gap: spacing.sm },
   taskRow: {
     flexDirection: "row",

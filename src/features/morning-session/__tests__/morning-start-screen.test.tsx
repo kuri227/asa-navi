@@ -209,8 +209,15 @@ describe("MorningStartScreen", () => {
       />,
     );
     await waitFor(() => screen.getByText("このプランでは4分遅れる見込みです"));
-    expect(screen.getByText("間に合わせるための調整")).toBeTruthy();
+    expect(screen.getByText("遅れを取り戻すプラン")).toBeTruthy();
     expect(screen.getByText("・朝食を15分から8分に短縮")).toBeTruthy();
+    expect(screen.getByText("このプランなら08:00に出発できます")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "完了しました" })).toBeNull();
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "このプランで進む" }));
+    });
+    expect(screen.getByText("このリカバリープランで進行中")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "完了しました" })).toBeTruthy();
   });
 
   it("offers retry and a safe way back after a restore error", async () => {
