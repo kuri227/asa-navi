@@ -1,5 +1,45 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-F-4: alarm synchronization and records
+
+### 実装内容
+
+- planned sessionの起床時刻へlocal通知を予約し、SQLiteへalarm recordを保存するUseCaseを追加。
+- 起床時刻変更時は既存の端末通知を取消し、recordをcancelledへ更新して再予約。
+- 同じsession・起床時刻の予約は再利用し、ホーム再表示による不要な取消・再予約を防止。
+- 予定取消・起床時刻経過・permission deniedでは新規予約せず、残存するscheduled recordを取消。
+- OS予約後のDB保存失敗時に端末通知を補償取消し、二重失敗は`AggregateError`で保持。
+- 前夜ホームへscheduled / permission denied / failed / not scheduledの状態表示を追加。
+- 純粋なtarget date計算をnative通知adapterのimportから分離し、unit testの責務を限定。
+
+### 主なcommit
+
+- `fa6c5d8 feat(notifications): sync morning alarm records`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test -- --runInBand`: 47 suites / 178 tests pass
+- `npm run test:sqlite`: pass (SQLite 3.53.1)
+- `npm run migration:check`: pass
+- `npx expo export --platform android --output-dir .expo-export-f4`: pass
+
+### 発生した問題
+
+- 初回のAndroid exportはWindows sandboxの一時directoryへHermes bytecodeを書けず失敗した。
+- 冪等化後、既存の「古い通知」test dataが新しい予約と同時刻で、再利用条件に一致した。
+
+### 解決方法
+
+- 生成途中のexport先を検証して削除し、通常のWindows権限で同じexportを再実行した。
+- 古い通知の時刻を明示的に異なる値へ変更し、test名と前提を一致させた。
+
+### 次のPhase
+
+- Phase 1-F-5: Expo Router notification deep link。
+
 ## 2026-10-09 — Phase 1-F-3: Expo Notifications alarm adapter
 
 ### 実装内容

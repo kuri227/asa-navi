@@ -93,6 +93,8 @@ npx expo-doctor
 - 全task完了でsessionをcompletedにする。
 - app復帰時に古いplanned timesを正とせず現在時刻で再計画する。
 - 設定変更時に既存alarmを取消して再予約する。
+- 同じsession・起床時刻のalarm同期を繰り返しても、取消・再予約を増やさない。
+- OS予約後にDB保存が失敗した場合、端末側の予約を補償取消する。
 - permission deniedで誤って「予約済み」と表示しない。
 
 ## 7. UI / accessibility test
