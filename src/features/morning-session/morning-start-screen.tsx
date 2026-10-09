@@ -7,6 +7,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { radius, spacing, typography } from "@/theme";
 
 import { formatPlanTime } from "../home/home-plan-formatters";
+import { DepartureChecklist } from "./departure-checklist";
 import {
   getAdjustmentText,
   getPlanStatusMessage,
@@ -262,39 +263,52 @@ export function MorningStartScreen({
           ) : null}
         </View>
       ) : null}
-      <View style={styles.taskList}>
-        <Text style={[styles.title, { color: theme.text }]}>
-          このあとの流れ
-        </Text>
-        {value.plan.tasks.map((task, index) => (
-          <View
-            key={task.taskId}
-            style={[styles.taskRow, { borderBottomColor: theme.border }]}
-          >
-            <Text style={[styles.taskNumber, { color: theme.primary }]}>
-              {index + 1}
+      {allTasksFinished ? (
+        <DepartureChecklist
+          departureTimeText={formatPlanTime(
+            value.plan.predictedDepartureAt,
+            timeZone,
+          )}
+          firstEventTitle={value.session.firstEventTitle}
+          onDepart={onBackHome}
+        />
+      ) : (
+        <>
+          <View style={styles.taskList}>
+            <Text style={[styles.title, { color: theme.text }]}>
+              このあとの流れ
             </Text>
-            <View style={styles.taskContent}>
-              <Text style={[styles.bodyStrong, { color: theme.text }]}>
-                {task.name}
-              </Text>
-              <Text style={[styles.body, { color: theme.textSecondary }]}>
-                {task.action === "skipped"
-                  ? "省略"
-                  : `${task.plannedDurationMin}分${task.action === "compressed" ? "（短縮）" : ""}`}
-              </Text>
-            </View>
+            {value.plan.tasks.map((task, index) => (
+              <View
+                key={task.taskId}
+                style={[styles.taskRow, { borderBottomColor: theme.border }]}
+              >
+                <Text style={[styles.taskNumber, { color: theme.primary }]}>
+                  {index + 1}
+                </Text>
+                <View style={styles.taskContent}>
+                  <Text style={[styles.bodyStrong, { color: theme.text }]}>
+                    {task.name}
+                  </Text>
+                  <Text style={[styles.body, { color: theme.textSecondary }]}>
+                    {task.action === "skipped"
+                      ? "省略"
+                      : `${task.plannedDurationMin}分${task.action === "compressed" ? "（短縮）" : ""}`}
+                  </Text>
+                </View>
+              </View>
+            ))}
           </View>
-        ))}
-      </View>
-      <Text style={[styles.note, { color: theme.textSecondary }]}>
-        完了・省略した進捗は端末に保存され、残り時間に合わせて朝プランを自動で組み直します。
-      </Text>
-      <AppButton
-        label="ホームへ戻る"
-        onPress={onBackHome}
-        variant="secondary"
-      />
+          <Text style={[styles.note, { color: theme.textSecondary }]}>
+            完了・省略した進捗は端末に保存され、残り時間に合わせて朝プランを自動で組み直します。
+          </Text>
+          <AppButton
+            label="ホームへ戻る"
+            onPress={onBackHome}
+            variant="secondary"
+          />
+        </>
+      )}
     </ScreenContainer>
   );
 }

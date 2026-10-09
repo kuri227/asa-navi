@@ -132,10 +132,11 @@ describe("MorningStartScreen", () => {
       plan: { ...activeSession.plan, tasks: [] },
     };
     const skipTask = jest.fn().mockResolvedValue(completedSession);
+    const onBackHome = jest.fn();
     const screen = await render(
       <MorningStartScreen
         completeTask={jest.fn()}
-        onBackHome={jest.fn()}
+        onBackHome={onBackHome}
         skipTask={skipTask}
         startSession={jest.fn().mockResolvedValue({
           ...activeSession,
@@ -153,6 +154,21 @@ describe("MorningStartScreen", () => {
     await waitFor(() => screen.getByText("朝の準備が完了しました"));
     expect(skipTask).toHaveBeenCalledWith("execution-1");
     expect(screen.queryByRole("button", { name: "完了しました" })).toBeNull();
+    expect(screen.getByText("出発の時間です！")).toBeTruthy();
+    expect(screen.getByText("08:00を目安に出発しましょう")).toBeTruthy();
+    const wallet = screen.getByRole("checkbox", { name: "財布" });
+    expect(wallet.props.accessibilityState.checked).toBe(false);
+    await act(async () => {
+      fireEvent.press(wallet);
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByRole("checkbox", { name: "財布" }).props.accessibilityState
+          .checked,
+      ).toBe(true),
+    );
+    fireEvent.press(screen.getByRole("button", { name: "いってきます！" }));
+    expect(onBackHome).toHaveBeenCalledTimes(1);
   });
 
   it("keeps the current task visible when saving progress fails", async () => {
