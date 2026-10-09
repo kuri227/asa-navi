@@ -47,6 +47,7 @@
   - Phase 1-F-2で既存の権限UseCaseをfakeで再検証し、拒否後も初期設定を完了できるUX testを確認した。
   - Phase 1-F-3でExpo Notificationsの日時予約・取消adapter、session deep link data、foreground表示handlerを実装した。
   - Phase 1-F-4でplanned sessionと端末通知・alarm recordを同期し、取消、再予約、同一予約の再利用、部分失敗時の補償取消を実装した。
+  - Phase 1-F-5でcold startと起動中の通知tapを監視し、検証済みのmorning alarmだけを対象sessionへ接続した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -344,9 +345,9 @@ Acceptance Criteria:
 
 ## 15. 次の最小Sub Phase
 
-`Phase 1-F-5: Expo Router notification deep link`。
+`Phase 1-F-6: notification adapter testと実機手順`。
 
-通知tapをcold startと起動中の両方で監視し、検証済みのmorning alarm dataだけを対象sessionの`/morning/start`へ接続する。破損・想定外dataはnavigationへ渡さず、listener解除もtestする。
+adapterとnotification response observerの自動testを最終確認し、iOS / Androidで権限、foreground、background、terminated、取消、時刻変更を検証する手順と期待結果を`docs/MOBILE_NOTES.md`へ固定する。接続端末またはemulatorの有無を確認し、実行できない項目は未検証として明記する。
 
 ## 16. 参照した公式資料
 

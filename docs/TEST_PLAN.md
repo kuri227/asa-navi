@@ -96,6 +96,9 @@ npx expo-doctor
 - 同じsession・起床時刻のalarm同期を繰り返しても、取消・再予約を増やさない。
 - OS予約後にDB保存が失敗した場合、端末側の予約を補償取消する。
 - permission deniedで誤って「予約済み」と表示しない。
+- cold startと起動中の通知tapから対象sessionを開く。
+- morning alarm以外や空のsession IDをnavigationへ渡さない。
+- notification response listenerをroot unmount時に解除する。
 
 ## 7. UI / accessibility test
 

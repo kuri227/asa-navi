@@ -1,5 +1,39 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-F-5: notification deep link navigation
+
+### 実装内容
+
+- Expo SDK 57の`getLastNotificationResponse`とresponse listenerを使い、cold startと起動中の通知tapを監視。
+- 通知dataをnative型から小さなsnapshotへ変換し、navigation callbackとExpo adapterの責務を分離。
+- `type: morning-alarm`かつ空でないsession IDだけを`/morning/start`へ渡す境界validationを追加。
+- cold start responseを処理後にclearし、root再mount時の重複navigationを防止。
+- listener cleanupとWebでnative APIを呼ばないことをunit testで保証。
+
+### 主なcommit
+
+- `29fe763 feat(notifications): open morning session from notification`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test -- --runInBand`: 48 suites / 182 tests pass
+- `npx expo export --platform android --output-dir .expo-export-f5`: pass
+
+### 発生した問題
+
+- なし。
+
+### 解決方法
+
+- 追加対応なし。
+
+### 次のPhase
+
+- Phase 1-F-6: notification adapter testと実機手順。
+
 ## 2026-10-09 — Phase 1-F-4: alarm synchronization and records
 
 ### 実装内容

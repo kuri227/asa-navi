@@ -200,10 +200,10 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - Expo Notificationsによる日時指定のlocal通知adapter、取消、session deep link data、foreground表示
 - planned sessionと端末通知・SQLite alarm recordの同期、変更時の再予約、同一予約の再利用、部分失敗時の補償取消
 - 予約・権限・失敗状態を色だけに依存せず伝える前夜ホーム表示
+- cold start・起動中の通知tapから、検証済みsession IDを使って朝セッションを開くnavigation
 
 ## 未実装
 
-- 通知tapのnavigation接続
 - Android / iOS実機検証
 
 ## 今後のロードマップ
