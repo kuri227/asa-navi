@@ -195,10 +195,10 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - active taskの完了、optional taskだけの明示的な省略、SQLiteへの実績保存と自動再計画
 - 再起動後の進捗復元と、全task終了時のsession完了
 - Engineの短縮・省略内容と出発見込みを1つの推奨案として確認するリカバリー提案
+- 全task終了後の出発案内、アクセシブルな基本持ち物checklist、ホーム復帰
 
 ## 未実装
 
-- 出発前の最終確認
 - ローカル通知の予約・取消・deep link
 - Android / iOS実機検証
 

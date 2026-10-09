@@ -1,5 +1,41 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-E-6: departure confirmation
+
+### 実装内容
+
+- 全朝task終了後に予想出発時刻と最初の予定を表示する出発案内を追加。
+- 画面フロー図の基本項目から、財布、スマートフォン、定期券、学生証、PCのlocal checklistを実装。
+- checklistを任意確認として扱い、天気・授業情報が必要な傘や体操服の自動判定は対象外を維持。
+- 48dp相当の操作領域、checkbox role / checked state /固定読み上げ名を設定。
+- 「いってきます！」でsession完了状態を維持したままホームへ戻る導線を追加。
+
+### 主なcommit
+
+- `2487aae feat(session): add departure checklist`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 42 suites / 157 tests pass
+- `npx expo export --platform android --output-dir dist-android-e6`: pass
+
+### 発生した問題
+
+- 未定義のradius tokenを参照し、初回typecheckが失敗した。
+- checkbox選択後に視覚用checkmarkがaccessible nameへ混ざり、role + name検索が不安定になった。
+
+### 解決方法
+
+- 既存の`radius.compact`へ統一。
+- checkboxへ項目名の`accessibilityLabel`を明示し、選択前後で同じ読み上げ名を維持。
+
+### 次のPhase
+
+- Phase 1-F-1: `AlarmService` interfaceとfake。
+
 ## 2026-10-09 — Phase 1-E-5: recovery plan confirmation
 
 ### 実装内容

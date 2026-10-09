@@ -42,6 +42,7 @@
   - Phase 1-E-3で起床差分、出発見込み、余裕・遅刻、調整内容、残りtaskを表示する起床後プランを実装した。
   - Phase 1-E-4でactive taskの完了、optional taskの省略、実績保存、現在時刻からの自動再計画、全task完了を実装した。
   - Phase 1-E-5でEngineが返す単一の推奨リカバリープランを確認して進むUIを実装した。
+  - Phase 1-E-6で全task終了後の出発案内、基本持ち物checklist、ホーム復帰を実装し、Phase 1-Eを完了した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -54,7 +55,7 @@
 
 ### Specification gap
 
-Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホーム、朝セッション開始・復元・task実行・リカバリー提案を実装済み。出発前確認、通知予約adapter、実機検証が主な未実装範囲である。
+Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホーム、朝セッション開始から出発前確認までを実装済み。通知予約adapter、通知deep linkの実機確認、OS差分検証が主な未実装範囲である。
 
 ## 4. 対象外機能
 
@@ -339,9 +340,9 @@ Acceptance Criteria:
 
 ## 15. 次の最小Sub Phase
 
-`Phase 1-E-6: 出発前確認`。
+`Phase 1-F-1: AlarmService interfaceとfake`。
 
-全朝task完了後に、出発時刻、目的地、持ち物checklistを確認できる画面を実装する。第1段階の保存仕様にないchecklist永続化は追加せず、画面フローにある基本項目を安全な初期値として扱い、出発操作でsession完了状態を保ったままホームへ戻れるようにする。
+既存の`AlarmService` portを仕様と照合し、予約・取消・権限状態をUseCaseから検証できるin-memory fakeを追加する。Expo Notifications実装へ進む前に、予定変更時の取消・再予約とDB記録を純粋なApplication testで固定する。
 
 ## 16. 参照した公式資料
 
