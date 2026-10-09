@@ -16,6 +16,8 @@ import {
 type Props = Readonly<{
   timeZone: string;
   startSession: () => Promise<ActiveMorningSession>;
+  completeTask: (executionId: string) => Promise<ActiveMorningSession>;
+  skipTask: (executionId: string) => Promise<ActiveMorningSession>;
   onBackHome: () => void;
 }>;
 
@@ -27,11 +29,17 @@ type ViewState =
 export function MorningStartScreen({
   timeZone,
   startSession,
+  completeTask,
+  skipTask,
   onBackHome,
 }: Props) {
   const theme = useTheme();
   const [state, setState] = useState<ViewState>({ kind: "loading" });
   const [requestNumber, setRequestNumber] = useState(0);
+  const [actionKind, setActionKind] = useState<"complete" | "skip" | null>(
+    null,
+  );
+  const [actionError, setActionError] = useState(false);
   const retry = useCallback(() => {
     setState({ kind: "loading" });
     setRequestNumber((current) => current + 1);
@@ -104,6 +112,27 @@ export function MorningStartScreen({
     .map((adjustment) => getAdjustmentText(adjustment, taskNames))
     .filter((text): text is string => text !== null);
   const late = value.plan.lateByMin > 0;
+  const allTasksFinished =
+    value.session.status === "completed" || currentTask === undefined;
+  const currentTaskIsOptional = currentTask
+    ? value.optionalTaskIds.includes(currentTask.taskTemplateId)
+    : false;
+  const performTaskAction = async (
+    action: (executionId: string) => Promise<ActiveMorningSession>,
+    kind: "complete" | "skip",
+  ) => {
+    if (!currentTask || actionKind) return;
+    setActionKind(kind);
+    setActionError(false);
+    try {
+      const nextValue = await action(currentTask.id);
+      setState({ kind: "ready", value: nextValue });
+    } catch {
+      setActionError(true);
+    } finally {
+      setActionKind(null);
+    }
+  };
   return (
     <ScreenContainer>
       <View style={styles.heading}>
@@ -167,15 +196,44 @@ export function MorningStartScreen({
         ]}
       >
         <Text style={[styles.label, { color: theme.success }]}>
-          最初にすること
+          {allTasksFinished ? "朝の準備" : "今すること"}
         </Text>
         <Text style={[styles.title, { color: theme.text }]}>
-          {taskName ?? "出発の準備は完了です"}
+          {allTasksFinished
+            ? "朝の準備が完了しました"
+            : (taskName ?? "次のタスクを確認しています")}
         </Text>
         {currentTask ? (
-          <Text style={[styles.body, { color: theme.textSecondary }]}>
-            目安 {currentTask.plannedDurationMin}分
-          </Text>
+          <>
+            <Text style={[styles.body, { color: theme.textSecondary }]}>
+              目安 {currentTask.plannedDurationMin}分
+            </Text>
+            {actionError ? (
+              <Text
+                accessibilityRole="alert"
+                style={[styles.body, { color: theme.error }]}
+              >
+                進捗を保存できませんでした。もう一度お試しください。
+              </Text>
+            ) : null}
+            <View style={styles.taskActions}>
+              <AppButton
+                label="完了しました"
+                loading={actionKind === "complete"}
+                disabled={actionKind !== null}
+                onPress={() => void performTaskAction(completeTask, "complete")}
+              />
+              {currentTaskIsOptional ? (
+                <AppButton
+                  label="このタスクを省略"
+                  loading={actionKind === "skip"}
+                  disabled={actionKind !== null}
+                  onPress={() => void performTaskAction(skipTask, "skip")}
+                  variant="ghost"
+                />
+              ) : null}
+            </View>
+          </>
         ) : null}
       </View>
       {adjustmentTexts.length > 0 ? (
@@ -221,7 +279,7 @@ export function MorningStartScreen({
         ))}
       </View>
       <Text style={[styles.note, { color: theme.textSecondary }]}>
-        タスクの完了操作と自動再計画は次の実装段階で追加します。この画面は再起動しても同じセッションを復元します。
+        完了・省略した進捗は端末に保存され、残り時間に合わせて朝プランを自動で組み直します。
       </Text>
       <AppButton
         label="ホームへ戻る"
@@ -248,6 +306,7 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     gap: spacing.sm,
   },
+  taskActions: { gap: spacing.sm, paddingTop: spacing.sm },
   status: { borderRadius: radius.card, padding: spacing.lg },
   statusText: { ...typography.bodyStrong },
   adjustments: {

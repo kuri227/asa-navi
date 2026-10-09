@@ -14,6 +14,7 @@ export type ActiveMorningSession = Readonly<{
   session: MorningSession;
   executions: readonly MorningTaskExecution[];
   plan: PlanningResult;
+  optionalTaskIds: readonly string[];
 }>;
 
 export type MorningSessionDependencies = Readonly<{
@@ -96,6 +97,9 @@ export async function startMorningSession(
     },
     executions,
     plan,
+    optionalTaskIds: tasks
+      .filter(({ requirement }) => requirement === "optional")
+      .map(({ id }) => id),
   };
 }
 
