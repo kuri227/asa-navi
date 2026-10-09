@@ -1,5 +1,36 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-F-2: notification permission verification
+
+### 実装内容
+
+- Phase 1-D-7で先行実装済みの権限UseCaseを`FakeAlarmService`でcontract test。
+- granted / denied / notDeterminedをApplication層が変更せず返すことを確認。
+- 通知理由の事前説明、拒否後の警告、通知なしでの初期設定完了、保存失敗時の画面維持という既存UX testを再確認。
+
+### 主なcommit
+
+- `4a7a043 test(notifications): cover permission use case`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 44 suites / 163 tests pass
+
+### 発生した問題
+
+- Phase 1-F-2の実装範囲はPhase 1-D-7で先行完了していた。
+
+### 解決方法
+
+- 同じUseCaseやUIを作り直さず、新しいfakeを使うcontract testだけを追加して不足がないことを確認した。
+
+### 次のPhase
+
+- Phase 1-F-3: `ExpoNotificationAlarmService`。
+
 ## 2026-10-09 — Phase 1-F-1: AlarmService test fake
 
 ### 実装内容
