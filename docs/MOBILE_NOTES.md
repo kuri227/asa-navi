@@ -3,12 +3,22 @@
 更新日: 2026-10-06
 状態: 調査初版。実機結果は未記録。
 
+## Expo Notifications adapter（2026-10-09）
+
+- Expo SDK 57の推奨`expo-notifications`は`~57.0.22`。日時指定は`SchedulableTriggerInputTypes.DATE`と`Date`を使う。
+- `scheduleNotificationAsync`の戻り値identifierをDBへ保存し、取消時は`cancelScheduledNotificationAsync`へ渡す。tray表示を消す`dismissNotificationAsync`とは区別する。
+- content dataへ`/morning/start?sessionId=...`のURLを含める。通知tap observerとの接続はPhase 1-F-5で行う。
+- foregroundではhandler未設定時に表示されないため、native platformでbanner / list / soundを許可するhandlerをrootで登録する。
+- Android 8以上は`morning-alarm` channelを使う。Android 13のpermission prompt前のchannel作成は既存permission adapterが担う。
+- local通知はExpo Goでも利用可能だが、通知精度、background / terminated、消音・Focus・省電力はDevelopment Build実機で検証する。
+- 通常通知は時計アプリ相当の強制力を保証しない。本格AlarmKit / Exact AlarmへはPhase 1-Gの評価後、ユーザー確認を経て進む。
+
 ## 1. 現時点の技術判断
 
 - Expo SDKは実装開始時点の最新安定版を使う。2026-10-06の公式表ではSDK 57がReact Native 0.86、React 19.2.3、Node 22.13以上を対象とする。
 - 現在のNode 22.17.1はSDK 57の最低要件を満たす。
 - `expo-sqlite`は永続DBとして利用でき、SDK 57推奨版は`~57.0.3`。ユーザー入力を含むSQLはbind parameter / prepared statementを使う。
-- SDK 57推奨版`expo-notifications ~57.0.21`でlocal notificationを検証する。ただし通常通知と時計アプリ相当のアラームを同一視しない。
+- SDK 57推奨版`expo-notifications ~57.0.22`でlocal notificationを検証する。ただし通常通知と時計アプリ相当のアラームを同一視しない。
 - 通知PhaseからDevelopment Buildを標準とする。
 
 ## 2. iOS

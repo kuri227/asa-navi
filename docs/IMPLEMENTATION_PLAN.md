@@ -45,6 +45,7 @@
   - Phase 1-E-6で全task終了後の出発案内、基本持ち物checklist、ホーム復帰を実装し、Phase 1-Eを完了した。
   - Phase 1-F-1でAlarmServiceの予約・取消・権限状態を決定論的に検証できるin-memory fakeを実装した。
   - Phase 1-F-2で既存の権限UseCaseをfakeで再検証し、拒否後も初期設定を完了できるUX testを確認した。
+  - Phase 1-F-3でExpo Notificationsの日時予約・取消adapter、session deep link data、foreground表示handlerを実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -342,9 +343,9 @@ Acceptance Criteria:
 
 ## 15. 次の最小Sub Phase
 
-`Phase 1-F-3: ExpoNotificationAlarmService`。
+`Phase 1-F-4: 予約・取消・再予約とDB記録`。
 
-Expo SDK 57の公式Notifications docsと型定義を確認し、`AlarmService`を実装する予約・取消adapterを追加する。通知tapから`/morning/start?sessionId=...`へ進めるdataを予約contentへ含め、platform API errorは`NotificationError`へ変換する。
+planned sessionの起床時刻に通知を予約し、既存のscheduled recordがあればplatform通知を取消してrecordをcancelledへ更新してから再予約するUseCaseを実装する。OS予約成功後のDB保存失敗など部分失敗もtestし、不整合を回収できる順序を明確にする。
 
 ## 16. 参照した公式資料
 

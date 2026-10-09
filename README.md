@@ -197,10 +197,11 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - Engineの短縮・省略内容と出発見込みを1つの推奨案として確認するリカバリー提案
 - 全task終了後の出発案内、アクセシブルな基本持ち物checklist、ホーム復帰
 - 通知予約・取消・権限状態をApplication testで再現する`FakeAlarmService`
+- Expo Notificationsによる日時指定のlocal通知adapter、取消、session deep link data、foreground表示
 
 ## 未実装
 
-- ローカル通知の予約・取消・deep link
+- planned sessionとlocal通知・DB記録の同期、通知tapのnavigation接続
 - Android / iOS実機検証
 
 ## 今後のロードマップ

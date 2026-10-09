@@ -1,5 +1,43 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-F-3: Expo Notifications alarm adapter
+
+### 実装内容
+
+- Expo SDK 57のversioned Notifications docsとlocal型定義を再確認。
+- `AlarmService`を実装する`ExpoNotificationAlarmService`を追加。
+- 起床日時をDATE triggerで予約し、戻り値identifierで予定通知を取消可能にした。
+- content dataへURL encoded session deep linkを保存。
+- foregroundでもbanner / list / soundを提示するglobal notification handlerをnative platformへ設定。
+- Web非対応とnative scheduling / cancellation failureを`NotificationError`へ変換。
+
+### 主なcommit
+
+- `4f70bbd feat(notifications): add Expo alarm adapter`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 46 suites / 170 tests pass
+- `npx expo-doctor`: 21/21 pass
+- `npx expo export --platform android --output-dir dist-android-f3`: pass
+
+### 発生した問題
+
+- 予約済み通知の取消APIと、trayへ表示済み通知のdismiss APIは別物である。
+- schedule成功だけではforeground表示を保証せず、notification handlerが必要だった。
+
+### 解決方法
+
+- 公式SDK 57 docsに従い`cancelScheduledNotificationAsync`を使用。
+- root起動時にnative platformだけforeground presentation handlerを登録。
+
+### 次のPhase
+
+- Phase 1-F-4: 予約・取消・再予約とDB記録。
+
 ## 2026-10-09 — Phase 1-F-2: notification permission verification
 
 ### 実装内容
