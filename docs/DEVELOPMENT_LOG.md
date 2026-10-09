@@ -1,5 +1,39 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-E-5: recovery plan confirmation
+
+### 実装内容
+
+- Planning Engineが返すcompress / skip adjustmentを、task名と変更前後の時間付きで提示。
+- 仕様どおり複数候補を生成せず、単一の推奨プランと予想出発時刻だけを表示。
+- 「このプランで進む」の確認前はtask完了操作を隠し、確認後に現在taskへ進む段階的UIを追加。
+- 再計画でactive executionが変わった場合は、新しいリカバリープランを改めて確認する識別keyを導入。
+- リカバリー表示を独立componentへ分離し、header semanticsとlive regionを付与。
+
+### 主なcommit
+
+- `26b4060 feat(session): present recovery plan confirmation`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 42 suites / 157 tests pass
+- `npx expo export --platform android --output-dir dist-android-e5`: pass
+
+### 発生した問題
+
+- 画面フロー図は複数の交通候補を例示しているが、一次仕様は第1段階で単一のEngine推奨案だけを要求している。
+
+### 解決方法
+
+- 一次仕様を優先し、外部交通APIや代替経路を追加せず、既存Planning Engineの決定論的なadjustmentのみを提示した。
+
+### 次のPhase
+
+- Phase 1-E-6: 出発前確認。
+
 ## 2026-10-09 — Phase 1-E-4: morning task execution
 
 ### 実装内容

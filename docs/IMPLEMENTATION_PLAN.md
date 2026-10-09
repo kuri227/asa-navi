@@ -41,6 +41,7 @@
   - Phase 1-E-2でplanned sessionの同期、手動・通知共通routeからの開始、active sessionの復元と現在時刻での再計画を実装した。
   - Phase 1-E-3で起床差分、出発見込み、余裕・遅刻、調整内容、残りtaskを表示する起床後プランを実装した。
   - Phase 1-E-4でactive taskの完了、optional taskの省略、実績保存、現在時刻からの自動再計画、全task完了を実装した。
+  - Phase 1-E-5でEngineが返す単一の推奨リカバリープランを確認して進むUIを実装した。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -53,7 +54,7 @@
 
 ### Specification gap
 
-Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホーム、朝セッション開始・復元・task実行を実装済み。遅延時の選択式リカバリー、出発前確認、通知予約adapter、実機検証が主な未実装範囲である。
+Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホーム、朝セッション開始・復元・task実行・リカバリー提案を実装済み。出発前確認、通知予約adapter、実機検証が主な未実装範囲である。
 
 ## 4. 対象外機能
 
@@ -338,9 +339,9 @@ Acceptance Criteria:
 
 ## 15. 次の最小Sub Phase
 
-`Phase 1-E-5: 再計画とリカバリー提案`。
+`Phase 1-E-6: 出発前確認`。
 
-遅れが生じたとき、Planning Engineが算出した短縮・省略・遅刻見込みを基に、ユーザーが理解して選べるリカバリー候補を表示する。選択結果をsessionへ反映する方法は既存の決定論的な自動最適化と重複させず、小さなUseCaseとして設計する。
+全朝task完了後に、出発時刻、目的地、持ち物checklistを確認できる画面を実装する。第1段階の保存仕様にないchecklist永続化は追加せず、画面フローにある基本項目を安全な初期値として扱い、出発操作でsession完了状態を保ったままホームへ戻れるようにする。
 
 ## 16. 参照した公式資料
 
