@@ -2,6 +2,7 @@ import { TZDate } from "@date-fns/tz";
 import { z } from "zod";
 
 import { ValidationError } from "@/application/errors/validation-error";
+import type { AlarmSyncState } from "@/application/alarms";
 import type {
   RouteRepository,
   RoutineRepository,
@@ -34,7 +35,7 @@ export type TomorrowPlanPreview =
       routeName: string;
       routeSegments: readonly RouteSegment[];
       basePlan: BasePlan;
-      alarmState: "notScheduled";
+      alarmState: AlarmSyncState;
     }>;
 
 type Dependencies = Readonly<{

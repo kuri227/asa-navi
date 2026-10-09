@@ -1,10 +1,9 @@
-import { TZDate } from "@date-fns/tz";
-
 import {
   loadTomorrowPlan,
   type TomorrowPlanPreview,
 } from "@/application/tomorrow-plan";
 import type { HomeDashboardData } from "@/application/home";
+import { syncMorningAlarm } from "@/application/alarms";
 import { createPlannedMorningSession } from "@/application/morning-session";
 import { openAppDatabase } from "@/infrastructure/db/open-database";
 import { createMutationDatabase } from "@/infrastructure/db/query-database";
@@ -14,9 +13,12 @@ import {
   SQLiteScheduleRepository,
   SQLiteSettingsRepository,
   SQLiteMorningSessionRepository,
+  SQLiteAlarmRecordRepository,
 } from "@/infrastructure/db/repositories";
+import { ExpoNotificationAlarmService } from "@/infrastructure/notifications/expo-notification-alarm-service";
 
 import { createLocalId } from "./create-local-id";
+import { getTargetDate, getTomorrowTargetDate } from "./target-date";
 
 export async function loadTomorrowPlanFromDatabase(): Promise<TomorrowPlanPreview> {
   const now = new Date();
@@ -50,6 +52,10 @@ export async function loadHomeDashboardFromDatabase(): Promise<HomeDashboardData
     const sessionRepository = new SQLiteMorningSessionRepository(
       mutationDatabase,
     );
+    const alarmRecordRepository = new SQLiteAlarmRecordRepository(
+      mutationDatabase,
+    );
+    const alarmService = new ExpoNotificationAlarmService();
     const activeSession = await sessionRepository.findActive(today);
     if (activeSession)
       return { kind: "morningSession", timeZone, session: activeSession };
@@ -67,6 +73,13 @@ export async function loadHomeDashboardFromDatabase(): Promise<HomeDashboardData
       const staleSession = await sessionRepository.findActive(targetDate);
       if (staleSession?.status === "planned") {
         await sessionRepository.updateStatus(staleSession.id, "cancelled");
+        await syncMorningAlarm(
+          {
+            session: { ...staleSession, status: "cancelled", updatedAt: now },
+            now,
+          },
+          { alarmService, alarmRecordRepository, createId: createLocalId },
+        );
       }
       return preview;
     }
@@ -75,21 +88,12 @@ export async function loadHomeDashboardFromDatabase(): Promise<HomeDashboardData
       createId: createLocalId,
       now,
     });
-    return { ...preview, sessionId: session.id };
+    const alarm = await syncMorningAlarm(
+      { session, now },
+      { alarmService, alarmRecordRepository, createId: createLocalId },
+    );
+    return { ...preview, sessionId: session.id, alarmState: alarm.state };
   } finally {
     await database.closeAsync();
   }
-}
-
-export function getTomorrowTargetDate(now: Date, timeZone: string): string {
-  return getTargetDate(now, timeZone, 1);
-}
-
-function getTargetDate(now: Date, timeZone: string, daysToAdd: number): string {
-  const tomorrow = new TZDate(now, timeZone);
-  tomorrow.setDate(tomorrow.getDate() + daysToAdd);
-  const year = tomorrow.getFullYear();
-  const month = String(tomorrow.getMonth() + 1).padStart(2, "0");
-  const day = String(tomorrow.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
 }

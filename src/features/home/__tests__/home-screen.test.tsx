@@ -77,6 +77,26 @@ describe("HomeScreen", () => {
     expect(onEditTomorrow).toHaveBeenCalledWith("2026-10-10");
   });
 
+  it("shows when the wake-up notification is scheduled", async () => {
+    const screen = await render(
+      <HomeScreen
+        loadPlan={jest.fn().mockResolvedValue({
+          ...plannedPreview,
+          alarmState: "scheduled",
+        })}
+        onEditTomorrow={jest.fn()}
+        onStartMorning={jest.fn()}
+      />,
+    );
+
+    await waitFor(() => screen.getByText("起床通知を予約しました"));
+    expect(
+      screen.getByText(
+        "端末の通知設定や省電力設定によって遅れる場合があります。",
+      ),
+    ).toBeTruthy();
+  });
+
   it("explains when tomorrow has no schedule", async () => {
     const screen = await render(
       <HomeScreen

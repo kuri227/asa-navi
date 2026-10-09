@@ -277,17 +277,36 @@ export function HomeScreen({
       <View
         style={[
           styles.alarmNotice,
-          { backgroundColor: theme.warningContainer },
+          {
+            backgroundColor:
+              plan.alarmState === "scheduled"
+                ? theme.successContainer
+                : plan.alarmState === "failed"
+                  ? theme.errorContainer
+                  : theme.warningContainer,
+          },
         ]}
       >
-        <Text style={[styles.label, { color: theme.warning }]}>
-          起床通知は未予約です
+        <Text
+          style={[
+            styles.label,
+            {
+              color:
+                plan.alarmState === "scheduled"
+                  ? theme.success
+                  : plan.alarmState === "failed"
+                    ? theme.error
+                    : theme.warning,
+            },
+          ]}
+        >
+          {getAlarmStateText(plan.alarmState).title}
         </Text>
         <Text
           maxFontSizeMultiplier={1.8}
           style={[styles.body, { color: theme.text }]}
         >
-          通知の自動予約は次の実装段階で追加します。現在は表示時刻を目安にしてください。
+          {getAlarmStateText(plan.alarmState).description}
         </Text>
       </View>
 
@@ -298,6 +317,39 @@ export function HomeScreen({
       />
     </ScreenContainer>
   );
+}
+
+function getAlarmStateText(
+  state: Extract<HomeDashboardData, { kind: "planned" }>["alarmState"],
+): Readonly<{
+  title: string;
+  description: string;
+}> {
+  switch (state) {
+    case "scheduled":
+      return {
+        title: "起床通知を予約しました",
+        description: "端末の通知設定や省電力設定によって遅れる場合があります。",
+      };
+    case "permissionDenied":
+      return {
+        title: "通知が許可されていません",
+        description:
+          "端末の設定で通知を許可するまで、表示時刻を目安にしてください。",
+      };
+    case "failed":
+      return {
+        title: "起床通知を予約できませんでした",
+        description:
+          "予定は保存されています。ホームを再読み込みして再試行できます。",
+      };
+    case "notScheduled":
+      return {
+        title: "起床通知は未予約です",
+        description:
+          "起床時刻を過ぎている場合は通知せず、予定だけを表示します。",
+      };
+  }
 }
 
 function PlanTime({

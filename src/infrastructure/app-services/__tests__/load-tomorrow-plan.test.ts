@@ -1,4 +1,4 @@
-import { getTomorrowTargetDate } from "../load-tomorrow-plan";
+import { getTomorrowTargetDate } from "../target-date";
 
 describe("getTomorrowTargetDate", () => {
   it("uses the device time zone across a UTC date boundary", () => {
