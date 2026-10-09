@@ -196,6 +196,7 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - 再起動後の進捗復元と、全task終了時のsession完了
 - Engineの短縮・省略内容と出発見込みを1つの推奨案として確認するリカバリー提案
 - 全task終了後の出発案内、アクセシブルな基本持ち物checklist、ホーム復帰
+- 通知予約・取消・権限状態をApplication testで再現する`FakeAlarmService`
 
 ## 未実装
 

@@ -1,5 +1,37 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-09 — Phase 1-F-1: AlarmService test fake
+
+### 実装内容
+
+- 既存`AlarmService` portを実装するExpo非依存の`FakeAlarmService`を追加。
+- 予約inputと決定論的IDを記録し、取消後の予約状態と取消履歴を検証可能にした。
+- 初期権限と権限要求結果を注入し、granted / denied / notDeterminedを再現可能にした。
+- fake自体のschedule / cancel / permission contract testを追加。
+
+### 主なcommit
+
+- `e7ba9fa test(notifications): add alarm service fake`
+
+### テスト結果
+
+- `npm run format:check`: pass
+- `npm run lint`: pass
+- `npm run typecheck`: pass
+- `npm test`: 43 suites / 160 tests pass
+
+### 発生した問題
+
+- なし。
+
+### 解決方法
+
+- 追加対応なし。
+
+### 次のPhase
+
+- Phase 1-F-2: permission use caseと拒否時UXの再検証。
+
 ## 2026-10-09 — Phase 1-E-6: departure confirmation
 
 ### 実装内容
