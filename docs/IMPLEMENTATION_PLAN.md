@@ -1,6 +1,6 @@
 # 朝ナビ 実装計画
 
-更新日: 2026-10-09
+更新日: 2026-10-12
 対象: 第1段階（コアMVP）
 
 ## 1. プロジェクト概要
@@ -49,6 +49,7 @@
   - Phase 1-F-4でplanned sessionと端末通知・alarm recordを同期し、取消、再予約、同一予約の再利用、部分失敗時の補償取消を実装した。
   - Phase 1-F-5でcold startと起動中の通知tapを監視し、検証済みのmorning alarmだけを対象sessionへ接続した。
   - Phase 1-F-6で通知境界の自動検証を完了し、Android / iOS実機checklistと記録templateを整備した。接続可能な端末・emulatorがないため実機Acceptance Criteriaは未達として明記している。
+  - Phase 1-G-3 / 1-G-4の一部としてWeb SQLite起動不具合を修復。Chromeで初期設定・保存・翌朝計画・reload復元と320×568画面を確認した。Android / iOSの実機項目は引き続き未検証。
 - `README.md`とExpo公式`AGENTS.md`を追加済み。READMEの本格整備はPhase 1-A-6で行う。
 
 ### Development environment
@@ -61,7 +62,7 @@
 
 ### Specification gap
 
-Planning Engine、SQLite基盤、通知権限を含む初回設定フロー、前夜ホーム、朝セッション開始から出発前確認までを実装済み。通知予約adapter、通知deep linkの実機確認、OS差分検証が主な未実装範囲である。
+Planning Engine、SQLite基盤、初回設定、前夜ホーム、朝セッションから出発前確認、通知予約adapterとdeep linkを実装済み。通知配信・OS差分・アクセシビリティの実機検証が主な残作業。Web確認は実機Acceptance Criteriaへ算入しない。
 
 ## 4. 対象外機能
 

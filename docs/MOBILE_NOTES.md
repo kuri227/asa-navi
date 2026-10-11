@@ -139,6 +139,12 @@ Notes:
 
 ## 9. 未確定事項
 
+### 2026-10-12 Webによる補助検証
+
+Chromeのexport previewで初回設定→通学route保存→曜日予定保存→routine保存→通知なしで完了→翌朝ホームを実行。reload後もroute 15分、routine 10分、翌朝の起床08:15 / 出発08:25が復元された。通常画面と320×568でホームが表示され、主要操作から翌日の例外編集へ到達できた。
+
+wasm解決、static prerender worker、必須HTTPヘッダー、Web非対応transactionの起動不具合を修復した。開発用手順はREADMEとADR-0003に記録。Web通知は非対応。Dynamic Type、TalkBack / VoiceOver、Android / iOSのOS配信は未検証のままである。
+
 - Androidで採用する最終的なdelivery optionと通知精度。
 - iOS実機 / macOS検証環境。
 - 製品として許容する通知遅延。

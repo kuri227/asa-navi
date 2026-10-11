@@ -1,5 +1,48 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-12 — Phase 1-G-3 / 1-G-4: Web補助検証と起動修復
+
+### 実装内容
+
+- wasm / SPA export / HTTP分離ヘッダーとローカル限定previewを設定。
+- Web transactionを専用接続へ分離し、migration / Repository adapterの共通境界へ接続。Android / iOSの排他transactionは維持。
+- Chromeで初回設定全経路、SQLite保存、翌朝ホーム、reload後の復元、320×568で主要操作を確認。
+- ADR-0003、README手順、MOBILE_NOTES、RELEASE_READINESSを整備。
+
+### 主なcommit
+
+- `44ca030 fix(web): restore SQLite-backed app preview`として機能・設定を保存。記録は別docs commit。
+
+### テスト結果
+
+- `npm run format:check` / `npm run lint` / `npm run typecheck`: pass。
+- `npm test`: 49 suites / 184 tests pass（Web専用接続・constraint・失敗時closeを追加）。
+- `npm run test:sqlite` / `npm run migration:check`: pass。
+- `npx expo-doctor`: 21/21 pass。
+- `npm audit --json`: 54件（moderate 5 / high 49 / critical 0）、既知3根本advisoryから変化なし。
+- Web / Android export: pass。
+- Chrome: route 15分、routine 10分、予定08:50から起床08:15 / 出発08:25を表示し、reload後も復元。
+
+### 問題と解決
+
+- Metroのwasm未設定、static prerenderのworker chunk失敗、HTML応答のCOEP / COOP欠落、Web非対応の排他transactionを再現した。
+- 公式SDK 57資料とインストール済み実装を照合し、SPA export + header付きpreview + 専用transaction接続へ修復。
+- format checkがpreview scriptで失敗したため整形し、再checkに成功。
+- ルート入力画面は新規作成フォームであり、reloadで未保存draftは初期化される。保存結果の復元はホームのRepository読込で確認した。
+
+### Self Review
+
+- Correctness: 保存とreload復元をブラウザで確認。失敗時にDB接続を解放。
+- Readability: platform差分を小さなadapterへ集約し、再現コマンドをREADMEへ記載。
+- Architecture: Domain / Application / schema / migrationの変更なし。UIへのSQL流出なし。
+- Testing: 全自動ゲートとAndroid export成功。Web結果を実機合格へ算入しない。
+- Mobile concerns: native排他処理を維持。OS通知、文字拡大、読み上げは未検証。
+
+### 次のPhase
+
+- Android / iOS実機の通知・OS accessibility検証。環境制約により未完了。
+- 依存advisoryとGitHub CIをリリース前に再確認。Phase 1-Hは実測後に判断。
+
 ## 2026-10-09 — Phase 1-F-6: notification verification guide
 
 ### 実装内容

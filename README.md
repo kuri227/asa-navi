@@ -221,6 +221,17 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 
 ## Troubleshooting
 
+### WebでSQLiteの初期化に失敗する
+
+画面と保存処理のブラウザ検証には、次を順番に実行してください。
+
+```bash
+npm run web:export
+npm run web:preview
+```
+
+`http://127.0.0.1:8090`を開きます。プレビューはSQLite Webに必要なCOEP / COOPヘッダー付きで、PC内だけに配信します。変更後は再exportしてください。終了はCtrl+Cです。SDK 57のこの環境では`npm run web`のHTML応答に必要ヘッダーが付かず初期化に失敗しました。Webは通知・実機検証の代替にはなりません。詳しくは[ADR-0003](docs/decisions/0003-sqlite-web-preview.md)を参照してください。
+
 ### `npm ci`でNode.js versionの警告が出る
 
 `node --version`を確認し、Node 22.13以上の22系へ切り替えてください。
@@ -249,5 +260,6 @@ PCと端末を同じnetworkに接続します。network制限がある場合は`
 - [アーキテクチャ](docs/ARCHITECTURE.md)
 - [テスト計画](docs/TEST_PLAN.md)
 - [モバイル技術メモ](docs/MOBILE_NOTES.md)
+- [第1段階リリース判定](docs/RELEASE_READINESS.md)
 - [開発ログ](docs/DEVELOPMENT_LOG.md)
 - [ADR](docs/decisions/README.md)
