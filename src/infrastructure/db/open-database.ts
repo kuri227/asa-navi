@@ -2,6 +2,8 @@ import { openDatabaseAsync, type SQLiteDatabase } from "expo-sqlite";
 
 import { RepositoryError } from "@/application/errors/repository-error";
 
+import { withDatabaseTransaction } from "./database-transaction";
+
 import {
   type MigrationDatabase,
   type MigrationTransaction,
@@ -24,7 +26,7 @@ function createMigrationAdapter(database: SQLiteDatabase): MigrationDatabase {
     ...createTransactionAdapter(database),
     getAllAsync: <T>(sql: string) => database.getAllAsync<T>(sql),
     withExclusiveTransactionAsync: (task) =>
-      database.withExclusiveTransactionAsync((transaction) =>
+      withDatabaseTransaction(database, (transaction) =>
         task(createTransactionAdapter(transaction)),
       ),
   };

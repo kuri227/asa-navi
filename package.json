@@ -62,6 +62,8 @@
     "format:check": "prettier --check .",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "web:export": "expo export --platform web --output-dir dist",
+    "web:preview": "node ./scripts/preview-web.js",
     "lint": "expo lint",
     "migration:check": "node ./scripts/generate-migrations.js --check",
     "migration:generate": "node ./scripts/generate-migrations.js",

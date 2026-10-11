@@ -1,5 +1,7 @@
 import type { SQLiteBindParams, SQLiteDatabase } from "expo-sqlite";
 
+import { withDatabaseTransaction } from "./database-transaction";
+
 export interface QueryDatabase {
   getFirstAsync<T>(sql: string, params?: SQLiteBindParams): Promise<T | null>;
   getAllAsync<T>(sql: string, params?: SQLiteBindParams): Promise<T[]>;
@@ -43,7 +45,7 @@ export function createMutationDatabase(
   return {
     ...createWriteAdapter(database),
     withExclusiveTransactionAsync: (task) =>
-      database.withExclusiveTransactionAsync((transaction) =>
+      withDatabaseTransaction(database, (transaction) =>
         task(createWriteAdapter(transaction)),
       ),
   };
