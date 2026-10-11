@@ -62,6 +62,8 @@
 
 ### Specification gap
 
+2026-10-12: 起床目安保持、空task終了、focus / foreground復帰、秒単位の残り時間、Development Build準備とコアUseCase結合testまで追加した。自動検証は52 suites / 193 tests、iOS / Android / Web export成功。iPhoneを用意可能との回答を受け、同一Wi-FiのExpo Go接続手順を案内。OS実機結果はまだ受領していない。
+
 Planning Engine、SQLite基盤、初回設定、前夜ホーム、朝セッションから出発前確認、通知予約adapterとdeep linkを実装済み。通知配信・OS差分・アクセシビリティの実機検証が主な残作業。Web確認は実機Acceptance Criteriaへ算入しない。
 
 ## 4. 対象外機能

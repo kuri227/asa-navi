@@ -93,6 +93,8 @@
 
 ### 事前準備
 
+2026-10-12: ユーザーがiPhoneを用意可能と回答。PCとの接続にはUSBではなく同一Wi-FiとExpo GoのQR読取りを案内した。READMEの「iOSで試す方法」を使用する。まだ端末での検証結果は受領していないため、下記は未検証のまま。
+
 1. `git checkout feat/project-foundation`後、`npm ci`と`npx expo-doctor`を実行する。
 2. AndroidはExpo GoまたはDevelopment Build、iOSはiPhone上のExpo GoまたはDevelopment Buildを用意する。通知の最終評価はDevelopment Buildを優先する。
 3. 初回設定で、明日の最初の予定、通学route、朝task、通知権限を登録する。

@@ -9,9 +9,11 @@
 - SQLite migration、Repository、constraint、再openのintegration test。
 - 初回設定、翌朝計画、朝session、再計画、タスク完了・省略、出発案内の自動テスト。
 - 通知adapter、権限、予約同期、失敗補償、tap navigationの自動テスト。
-- 全49 suites / 184 tests、format、lint、typecheck、migration check。
+- 全52 suites / 193 tests、format、lint、typecheck、migration check。
 - Expo Doctor 21/21、Android / Web export。
 - Chromeで初期設定の全経路、翌朝ホーム、reload後のSQLite復元。320×568と通常画面のホーム表示・主要操作。
+- 当初の起床目安保持、タスク0件終了、復帰更新・秒単位表示、コアUseCase結合テストを追加。
+- Development Build用依存 / EAS profile、WindowsとiPhoneのWi-Fi接続手順を準備。
 
 ## リリース前に必要
 

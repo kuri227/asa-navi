@@ -1,7 +1,7 @@
 # 朝ナビ アーキテクチャ
 
-更新日: 2026-10-06
-状態: 初版（実装前）
+更新日: 2026-10-12
+状態: コアMVP実装済み。OS実機検証待ち。
 
 ## 1. 設計目標
 
@@ -245,6 +245,8 @@ Complete action
 ```
 
 ## 13. UIアーキテクチャ
+
+実装済みrouteは初回設定、home、tomorrow-override、morning/start。HomeとMorningはfocus / foreground復帰でInfrastructure経由のUseCaseを再実行する。タスクの秒表示は独立componentでSystem時刻から導出し、backgroundではtimerを停止する。毎秒Planning EngineやDBを呼ばない。当初のplannedWakeAtは開始後のprogress保存で変更しない。
 
 - `src/app`はroute compositionだけにし、business logicを置かない。
 - 画面フロー図は情報階層と操作順の参照とし、固定pixel配置はコピーしない。

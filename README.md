@@ -36,7 +36,7 @@
 | Domain       | React Native非依存の純粋TypeScript              |
 | Database     | expo-sqlite + versioned migration               |
 | Validation   | Zod（UI・DB等の信頼境界）                       |
-| Notification | AlarmService + expo-notifications（実装予定）   |
+| Notification | AlarmService + expo-notifications（実装済み）   |
 | Test         | Jest / jest-expo / React Native Testing Library |
 | Quality      | ESLint / Prettier / TypeScript / expo-doctor    |
 | CI           | GitHub Actions                                  |
@@ -82,7 +82,7 @@ npm ci
 ## 起動方法
 
 ```bash
-npx expo start
+npm run start:go
 ```
 
 terminalに表示されるQR codeまたはshortcutから対象platformを開きます。Metro cacheに問題がある場合は`npx expo start --clear`を試してください。
@@ -90,14 +90,31 @@ terminalに表示されるQR codeまたはshortcutから対象platformを開き�
 ## Androidで試す方法
 
 1. Android端末へExpo Goをinstallし、PCと同じnetworkへ接続します。
-2. `npx expo start`を実行します。
+2. `npm run start:go`を実行します。
 3. Expo GoでQR codeを読み取ります。
 
 Android Emulatorを設定済みの場合は`npm run android`でも起動できます。native codeを追加したPhase以降はExpo GoではなくDevelopment Buildが必要です。
 
 ## iOSで試す方法
 
-iPhoneではExpo GoでQR codeを読み取れます。iOS SimulatorはmacOSとXcodeが必要なため、Windowsだけでは起動できません。native codeが必要になった場合は、macOSで`npx expo run:ios`を使うか、EAS Development Buildを作成します。
+Windows PCとiPhoneはUSB接続なしで試せます。
+
+1. iPhoneのApp StoreでExpo公式の「Expo Go」をインストールします。
+2. PCとiPhoneを同じWi-Fiへ接続します。
+3. PCのPowerShellでプロジェクトへ移動して起動します。
+
+```powershell
+cd C:\Users\rikum\Documents\asa-navi
+npm run start:go
+```
+
+4. 表示されたQRコードをiPhoneの「カメラ」で読み取り、Expo Goで開きます。iPhoneのSafariへ`localhost`を入力してもPCには接続できません。
+5. 初回設定を完了し、翌朝ホーム、保存した設定、通知の権限説明を確認します。
+6. PCでCtrl+Cを押すと開発サーバーを終了できます。端末データを消す操作ではありません。
+
+接続できない場合は、PCの有線LANとiPhoneのWi-Fiが同じネットワークか、ゲストWi-Fiで端末間通信が制限されていないか確認してください。iPhoneのローカルネットワーク権限が拒否されている場合は、本人がOS設定で見直します。VPNやfirewallの保護を一括無効化しないでください。
+
+ローカル通知はExpo Goで一次確認できますが、Expo Goと朝ナビ専用buildの通知結果は区別して記録します。iOS SimulatorにはmacOSとXcodeが必要です。専用buildの作成手順は下記を参照してください。
 
 ## Expo GoとDevelopment Buildの違い
 
@@ -105,6 +122,21 @@ iPhoneではExpo GoでQR codeを読み取れます。iOS SimulatorはmacOSとXco
 - Development Build: 朝ナビ専用のnative moduleと設定を含む開発用アプリです。通知や将来のnative adapter等を正確に検証するときに使います。
 
 `ios/`と`android/`はContinuous Native Generationで生成し、手編集しません。native設定は`app.json`とconfig pluginで管理します。
+
+### 朝ナビ専用Development Build
+
+SDK互換の`expo-dev-client`と`eas.json`を準備しています。PCにAndroid SDKがある場合は`npx expo run:android --device`、macOSとXcodeがある場合は`npx expo run:ios --device`でローカルbuildできます。初回のapplication identifierは自分のapp用に確認してください。
+
+専用buildをインストールした後は`npm run start:dev-client`で接続します。Expo Goを使うときは`npm run start:go`で明示的に切り替えます。
+
+WindowsからEASでbuildする場合は、Expoアカウント、利用枠、iPhone用Apple署名・Developer membershipの条件を確認してから、本人のアカウントで次を実行します。
+
+```bash
+npx eas-cli@latest build --profile development --platform android
+npx eas-cli@latest build --profile development --platform ios
+```
+
+クラウドbuildや署名情報の生成は本リポジトリの準備作業では実行していません。`development-simulator`はiOS Simulator向けで、実際のiPhoneには使いません。ストア提出用profileは第1段階の検証結果が確定してから追加します。
 
 ## テスト方法
 
@@ -201,6 +233,8 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 - planned sessionと端末通知・SQLite alarm recordの同期、変更時の再予約、同一予約の再利用、部分失敗時の補償取消
 - 予約・権限・失敗状態を色だけに依存せず伝える前夜ホーム表示
 - cold start・起動中の通知tapから、検証済みsession IDを使って朝セッションを開くnavigation
+- 画面・foreground復帰時の計画更新、タスクの残り時間と超過表示
+- 当初の起床目安保持、タスク0件時の終了、保存失敗後の進捗再読込
 
 ## 未実装
 

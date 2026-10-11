@@ -1,5 +1,16 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-12 — Phase 1-G-4c: 実機確認の準備と結合検証
+
+- SDK 57互換expo-dev-client 57.0.19とEAS development / simulator profileを準備。認証・cloud build・署名発行は未実行。
+- 前夜計画→通知idempotent同期→起床→完了→復元→全task完了→通知取消のApplication結合testを追加し成功。
+- WindowsとiPhoneのWi-Fi / QR接続をREADMEに記載。Expo Goと専用buildの結果を区別し、費用・署名の確認点をADR-0004へ記録。
+- 添付仕様と図のローカル収録を準備（図はSHA256一致）。自動承認の審査で原資料のGitHub送信が拒否されたため、SPEC.mdとdocs/assets/screen-flow.pngは未追跡のまま保留し、ユーザーの送信確認後に追加する。
+- feature branch pushでもCIを実行するよう設定。
+- 最終品質ゲート: format / lint / typecheck / migration / SQLite integration成功、全52 suites / 193 tests成功、Expo Doctor 21/21、iOS / Android / Web export成功。
+- Self Review: 入力仕様・DB schema・Domain変更なし。新依存は公式開発toolのみ、MITとSDK互換性を確認。cloud費用やユーザーcredentialsを発生させない。
+- 次: 全品質ゲート・export・UI確認を実施し、iPhone実機試験をユーザーと進める。
+
 ## 2026-10-12 — Phase 1-G-4b: 復帰更新とタスク残り時間
 
 - Home / Morning routeのfocus・foreground復帰で再読込し、blurでlistenerを解除。

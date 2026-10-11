@@ -129,6 +129,8 @@ npx expo-doctor
 
 ## 9. バグ修正手順
 
+追加済みの`test/acceptance/core-mvp-flow.test.ts`はApplicationとFake Repository / AlarmServiceの結合testである。前夜の計画、通知同期の冪等性、短縮、完了、復元、終了、取消を実行する。実際のSQLite検証やOS通知配信とは別の試験であり、実機E2Eの代替とは扱わない。
+
 1. 失敗を再現するtestを追加。
 2. testが期待どおり失敗することを確認。
 3. 最小修正。

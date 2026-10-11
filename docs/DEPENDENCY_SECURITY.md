@@ -74,6 +74,8 @@ Phase 1-D-7で`expo-notifications ~57.0.21`を公式の`npx expo install`から�
 
 ## 定期確認
 
+Development Build準備でexpo-dev-client 57.0.19を追加後も監査した。install時には55件、直後の`npm audit --json`には54件（moderate 5 / high 49 / critical 0）が報告された。根本advisoryは同じbraces、node-forge、sprintf-js。新しい根本advisoryは確認されず、Expo Doctorは21/21。件数をゼロにする非互換upgradeは行わない。
+
 2026-10-12の`npm audit --json`でも全依存54件（moderate 5 / high 49 / critical 0）。根本advisoryはbraces、node-forge、sprintf-jsの3件で、既存の調査結果から変化なし。今回のWeb修復では依存追加・version変更を行っていない。
 
 各Phase完了時とrelease前に次を実行する。
