@@ -1,5 +1,16 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-12 — Phase 1-G-4d: CI install修復とiPhone接続案内
+
+- GitHub Actions run 38152674625はInstall dependenciesで失敗。公開APIでstepを特定したが、詳細ログ取得は認証必須で403だった。
+- Node 22.17.1同梱相当のnpm 10.9.2で`ci --dry-run --ignore-scripts`を実行し、`@emnapi/core` / `@emnapi/runtime`のlockfile不足を再現。npm 11.6.2の同操作は成功していた。
+- npm 10のpackage-lock-only installで不足したoptional / peer metadataを補完。既存packageのversion変更なし。npm 10 / 11両方でdry-run成功。
+- CIのnpmを開発環境と同じ11.6.2へ固定し、packageManagerへ明記。SQLite integrationがホストの偶然のCLI導入に依存しないよう、CIにsqlite3導入stepを追加。
+- iPhone向けloading pageはplatform=ios付きURLでHTTP 200。Expo Go / Development Buildの選択を説明し、最新公式資料の同一Expoアカウント要件をREADMEへ追記。PCのwhoamiはNot logged inで、認証はユーザー本人へ案内。
+- Self Review: CI品質ゲートを削除・skipしていない。Domain / DB / アプリ仕様変更なし。添付原資料は公開承認待ちの未追跡状態を維持。
+- テスト結果: npm 10 / 11のci dry-run、format / lint / typecheck / migration / SQLite integration成功。全52 suites / 193 tests成功、Expo Doctor 21/21。主commitは`fix(ci): repair npm lockfile and align toolchain`。GitHub Actionsと実機の起動・通知試験は別途確認する。
+- 次: push後のCI全stepを確認し、iPhoneの起動結果を受領して実機検証を進める。
+
 ## 2026-10-12 — Phase 1-G-4c: 実機確認の準備と結合検証
 
 - SDK 57互換expo-dev-client 57.0.19とEAS development / simulator profileを準備。認証・cloud build・署名発行は未実行。

@@ -74,6 +74,7 @@ Node.jsのmajorが異なる場合は、Node version managerで22系へ切り替�
 ```bash
 git clone https://github.com/kuri227/asa-navi.git
 cd asa-navi
+npm install --global npm@11.6.2
 npm ci
 ```
 
@@ -100,7 +101,7 @@ Android Emulatorを設定済みの場合は`npm run android`でも起動でき�
 Windows PCとiPhoneはUSB接続なしで試せます。
 
 1. iPhoneのApp StoreでExpo公式の「Expo Go」をインストールします。
-2. PCとiPhoneを同じWi-Fiへ接続します。
+2. PCとiPhoneを同じWi-Fiへ接続します。現在のExpo公式手順では、PCの`npx expo login`とiPhoneのExpo Goで同じExpoアカウントへログインする必要があります。認証は本人が行い、パスワードや認証コードを共有しないでください。
 3. PCのPowerShellでプロジェクトへ移動して起動します。
 
 ```powershell
@@ -108,13 +109,15 @@ cd C:\Users\rikum\Documents\asa-navi
 npm run start:go
 ```
 
-4. 表示されたQRコードをiPhoneの「カメラ」で読み取り、Expo Goで開きます。iPhoneのSafariへ`localhost`を入力してもPCには接続できません。
+4. 表示されたQRコードをiPhoneの「カメラ」で読み取り、Expo Goで開きます。URL先に「Development Build / Expo Go」の選択肢が出た場合は、専用buildをまだインストールしていなければ「Expo Go」を選びます。iPhoneのSafariへ`localhost`を入力してもPCには接続できません。
 5. 初回設定を完了し、翌朝ホーム、保存した設定、通知の権限説明を確認します。
 6. PCでCtrl+Cを押すと開発サーバーを終了できます。端末データを消す操作ではありません。
 
 接続できない場合は、PCの有線LANとiPhoneのWi-Fiが同じネットワークか、ゲストWi-Fiで端末間通信が制限されていないか確認してください。iPhoneのローカルネットワーク権限が拒否されている場合は、本人がOS設定で見直します。VPNやfirewallの保護を一括無効化しないでください。
 
 ローカル通知はExpo Goで一次確認できますが、Expo Goと朝ナビ専用buildの通知結果は区別して記録します。iOS SimulatorにはmacOSとXcodeが必要です。専用buildの作成手順は下記を参照してください。
+
+接続・アカウント要件の根拠: [Expo公式の起動手順](https://docs.expo.dev/get-started/start-developing/)。SDK非対応やアカウントに関するエラーが出た場合は、端末に表示された本文を確認してください。
 
 ## Expo GoとDevelopment Buildの違い
 
