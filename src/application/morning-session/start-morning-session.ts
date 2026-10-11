@@ -82,15 +82,21 @@ export async function startMorningSession(
   );
   await dependencies.sessionRepository.start(session.id, input.now);
 
+  const status = executions.some((execution) => execution.status === "active")
+    ? "active"
+    : "completed";
+  if (status === "completed") {
+    await dependencies.sessionRepository.updateStatus(session.id, status);
+  }
+
   return {
     session: {
       ...session,
       actualWakeAt: session.actualWakeAt ?? input.now,
-      plannedWakeAt: plan.recommendedWakeAt,
       latestDepartureAt: plan.latestDepartureAt,
       predictedDepartureAt: plan.predictedDepartureAt,
       predictedArrivalAt: plan.predictedArrivalAt,
-      status: "active",
+      status,
       planStatus: plan.status,
       lateByMin: plan.lateByMin,
       updatedAt: input.now,

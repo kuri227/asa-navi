@@ -149,7 +149,6 @@ export class SQLiteMorningSessionRepository implements MorningSessionRepository 
     return runRepositoryQuery(async () => {
       await this.database.runAsync(
         `UPDATE morning_sessions SET
-          planned_wake_at = $plannedWakeAt,
           latest_departure_at = $latestDepartureAt,
           predicted_departure_at = $predictedDepartureAt,
           predicted_arrival_at = $predictedArrivalAt,
@@ -159,7 +158,6 @@ export class SQLiteMorningSessionRepository implements MorningSessionRepository 
          WHERE id = $sessionId`,
         {
           $sessionId: sessionId,
-          $plannedWakeAt: result.recommendedWakeAt.toISOString(),
           $latestDepartureAt: result.latestDepartureAt.toISOString(),
           $predictedDepartureAt: result.predictedDepartureAt.toISOString(),
           $predictedArrivalAt: result.predictedArrivalAt.toISOString(),

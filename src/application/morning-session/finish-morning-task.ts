@@ -44,21 +44,10 @@ async function finishMorningTask(
   await dependencies.executionRepository.save(
     finishExecution(target, outcome, input.now),
   );
-  const active = await startMorningSession(
+  return startMorningSession(
     { sessionId: input.sessionId, now: input.now },
     dependencies,
   );
-  if (active.executions.some(({ status }) => status === "active")) {
-    return active;
-  }
-  await dependencies.sessionRepository.updateStatus(
-    input.sessionId,
-    "completed",
-  );
-  return {
-    ...active,
-    session: { ...active.session, status: "completed", updatedAt: input.now },
-  };
 }
 
 function finishExecution(

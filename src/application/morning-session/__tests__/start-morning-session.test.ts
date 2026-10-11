@@ -19,6 +19,34 @@ const now = new Date("2026-10-09T22:30:00.000Z");
 const timestamp = new Date("2026-10-09T12:00:00.000Z");
 
 describe("startMorningSession", () => {
+  it("keeps the original wake target when completed work changes the base plan", async () => {
+    const dependencies = createDependencies();
+    jest
+      .mocked(dependencies.executionRepository.listForSession)
+      .mockResolvedValue([createExecution({ status: "completed" })]);
+    const result = await startMorningSession(
+      { sessionId: "session-1", now },
+      dependencies,
+    );
+    expect(result.session.plannedWakeAt).toEqual(createSession().plannedWakeAt);
+  });
+
+  it("persists completion immediately when there are no enabled tasks", async () => {
+    const dependencies = createDependencies();
+    jest
+      .mocked(dependencies.routineRepository.listEnabledTasks)
+      .mockResolvedValue([]);
+    const result = await startMorningSession(
+      { sessionId: "session-1", now },
+      dependencies,
+    );
+    expect(result.session.status).toBe("completed");
+    expect(dependencies.sessionRepository.updateStatus).toHaveBeenCalledWith(
+      "session-1",
+      "completed",
+    );
+  });
+
   it("records wake time, plans tasks, and activates the first executable task", async () => {
     const dependencies = createDependencies();
     const result = await startMorningSession(

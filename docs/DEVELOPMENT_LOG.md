@@ -1,5 +1,14 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-12 — Phase 1-G-4a: 朝sessionの復元整合性
+
+- 起床目安の書換え、タスク0件のactive残存を再現する3 testを先に追加し、すべて失敗することを確認。
+- progress保存では当初のplannedWakeAtを保持し、設定変更によるplanned session更新だけで変更する。
+- 開始 / 復元 / task完了の共通処理で、実行可能taskがなければcompletedを保存する。
+- format、lint、typecheck、関連14 tests、SQLite integrationを検証。コミット名: `fix(morning): preserve wake target and finish empty sessions`。
+- Self Review: schema変更なし、wake実績保持、終了判定の重複除去、正常・復元・空taskを検証。
+- 次: 1-G-4b（画面復帰更新・残り時間）。実機通知は未検証。
+
 ## 2026-10-12 — Phase 1-G-3 / 1-G-4: Web補助検証と起動修復
 
 ### 実装内容

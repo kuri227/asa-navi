@@ -271,6 +271,9 @@ Sub Phase:
 - 1-G-2: iOS実機またはDevelopment Buildの通知・権限・再起動
 - 1-G-3: 小型/大型画面、文字拡大、TalkBack / VoiceOver
 - 1-G-4: 不具合修正、README、MOBILE_NOTES、release readiness更新
+  - 1-G-4a: 当初の起床目安を保持し、タスク0件 / 全終了でsessionをcompletedへ。再現testとRepository testを追加。
+  - 1-G-4b: focus / foreground復帰時の再読込と朝タスクの実時刻・残り時間表示。listener / timer解除とエラー回復を検証。
+  - 1-G-4c: Development Buildの設定・実機手順と、コアフローの結合検証を整備。
 
 Acceptance Criteria:
 

@@ -1,4 +1,5 @@
 import type { SQLiteBindParams } from "expo-sqlite";
+import { calculatePlan } from "@/domain/planning";
 
 import type {
   MorningSession,
@@ -62,6 +63,27 @@ const session: MorningSession = {
 };
 
 describe("SQLiteMorningSessionRepository", () => {
+  it("does not overwrite the original wake target while saving progress", async () => {
+    const database = new FakeMutationDatabase();
+    const plan = calculatePlan({
+      now: updatedAt,
+      firstEvent: {
+        id: "event",
+        title: "1限",
+        startAt: session.firstEventStartAt,
+      },
+      arrivalBufferMin: 10,
+      routeSegments: [],
+      tasks: [],
+      completedTaskIds: [],
+    });
+    await new SQLiteMorningSessionRepository(database).savePlan(
+      session.id,
+      plan,
+    );
+    expect(database.runCalls[0].sql).not.toContain("planned_wake_at =");
+  });
+
   it("binds session values as ISO timestamps when creating", async () => {
     const database = new FakeMutationDatabase();
 
