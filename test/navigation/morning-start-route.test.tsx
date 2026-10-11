@@ -4,6 +4,8 @@ import { useLocalSearchParams } from "expo-router";
 import MorningStartRoute from "@/app/morning/start";
 import { startMorningSessionFromDatabase } from "@/infrastructure/app-services/morning-session";
 
+jest.mock("@/hooks/use-screen-refresh", () => ({ useScreenRefresh: () => 0 }));
+
 jest.mock("expo-router", () => ({
   router: { replace: jest.fn() },
   useLocalSearchParams: jest.fn(),

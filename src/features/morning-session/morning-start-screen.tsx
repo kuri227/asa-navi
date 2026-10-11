@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 import type { ActiveMorningSession } from "@/application/morning-session";
@@ -14,8 +14,10 @@ import {
   getWakeTimingMessage,
 } from "./morning-plan-presenter";
 import { RecoveryPlanCard } from "./recovery-plan-card";
+import { TaskTiming } from "./task-timing";
 
 type Props = Readonly<{
+  refreshVersion?: number;
   timeZone: string;
   startSession: () => Promise<ActiveMorningSession>;
   completeTask: (executionId: string) => Promise<ActiveMorningSession>;
@@ -34,9 +36,12 @@ export function MorningStartScreen({
   completeTask,
   skipTask,
   onBackHome,
+  refreshVersion = 0,
 }: Props) {
   const theme = useTheme();
   const [state, setState] = useState<ViewState>({ kind: "loading" });
+  const lastSession = useRef<ActiveMorningSession | null>(null);
+  const restoring = useRef(false);
   const [requestNumber, setRequestNumber] = useState(0);
   const [actionKind, setActionKind] = useState<"complete" | "skip" | null>(
     null,
@@ -51,18 +56,28 @@ export function MorningStartScreen({
   }, []);
 
   useEffect(() => {
+    // Departure confirmation must remain usable after a completed session resumes.
+    if (lastSession.current?.session.status === "completed") return;
+    restoring.current = true;
     let active = true;
     void startSession()
       .then((value) => {
-        if (active) setState({ kind: "ready", value });
+        if (active) {
+          restoring.current = false;
+          lastSession.current = value;
+          setState({ kind: "ready", value });
+        }
       })
       .catch(() => {
-        if (active) setState({ kind: "error" });
+        if (active) {
+          restoring.current = false;
+          setState({ kind: "error" });
+        }
       });
     return () => {
       active = false;
     };
-  }, [requestNumber, startSession]);
+  }, [requestNumber, startSession, refreshVersion]);
 
   if (state.kind === "loading") {
     return (
@@ -133,11 +148,12 @@ export function MorningStartScreen({
     action: (executionId: string) => Promise<ActiveMorningSession>,
     kind: "complete" | "skip",
   ) => {
-    if (!currentTask || actionKind) return;
+    if (!currentTask || actionKind || restoring.current) return;
     setActionKind(kind);
     setActionError(false);
     try {
       const nextValue = await action(currentTask.id);
+      lastSession.current = nextValue;
       setState({ kind: "ready", value: nextValue });
     } catch {
       setActionError(true);
@@ -232,13 +248,30 @@ export function MorningStartScreen({
               <Text style={[styles.body, { color: theme.textSecondary }]}>
                 目安 {currentTask.plannedDurationMin}分
               </Text>
+              <TaskTiming
+                startedAt={
+                  currentTask.actualStartAt ??
+                  value.session.actualWakeAt ??
+                  value.session.updatedAt
+                }
+                durationMin={currentTask.plannedDurationMin}
+                latestDepartureAt={value.plan.latestDepartureAt}
+                timeZone={timeZone}
+              />
               {actionError ? (
-                <Text
-                  accessibilityRole="alert"
-                  style={[styles.body, { color: theme.error }]}
-                >
-                  進捗を保存できませんでした。もう一度お試しください。
-                </Text>
+                <View style={styles.taskActions}>
+                  <Text
+                    accessibilityRole="alert"
+                    style={[styles.body, { color: theme.error }]}
+                  >
+                    進捗を保存できませんでした。もう一度お試しください。
+                  </Text>
+                  <AppButton
+                    label="進捗を再読み込み"
+                    onPress={retry}
+                    variant="secondary"
+                  />
+                </View>
               ) : null}
               <View style={styles.taskActions}>
                 <AppButton

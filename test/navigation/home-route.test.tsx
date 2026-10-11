@@ -4,6 +4,8 @@ import { router } from "expo-router";
 import HomeRoute from "@/app/home";
 import { loadHomeDashboardFromDatabase } from "@/infrastructure/app-services/load-tomorrow-plan";
 
+jest.mock("@/hooks/use-screen-refresh", () => ({ useScreenRefresh: () => 0 }));
+
 jest.mock("expo-router", () => ({
   router: { push: jest.fn() },
 }));

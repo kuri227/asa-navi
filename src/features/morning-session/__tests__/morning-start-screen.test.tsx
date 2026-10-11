@@ -57,6 +57,28 @@ const activeSession: ActiveMorningSession = {
 };
 
 describe("MorningStartScreen", () => {
+  it("keeps departure confirmation available when a completed session resumes", async () => {
+    const startSession = jest.fn().mockResolvedValue({
+      ...activeSession,
+      session: { ...activeSession.session, status: "completed" },
+      executions: [],
+      plan: { ...activeSession.plan, tasks: [] },
+    });
+    const props = {
+      startSession,
+      completeTask: jest.fn(),
+      skipTask: jest.fn(),
+      onBackHome: jest.fn(),
+      timeZone: "Asia/Tokyo",
+    };
+    const screen = await render(
+      <MorningStartScreen {...props} refreshVersion={0} />,
+    );
+    await waitFor(() => screen.getByText("出発の時間です！"));
+    await screen.rerender(<MorningStartScreen {...props} refreshVersion={1} />);
+    expect(startSession).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "いってきます！" })).toBeTruthy();
+  });
   it("shows the recalculated departure and first active task", async () => {
     const screen = await render(
       <MorningStartScreen

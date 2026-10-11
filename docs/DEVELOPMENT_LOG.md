@@ -1,5 +1,15 @@
 # 朝ナビ 開発ログ
 
+## 2026-10-12 — Phase 1-G-4b: 復帰更新とタスク残り時間
+
+- Home / Morning routeのfocus・foreground復帰で再読込し、blurでlistenerを解除。
+- タスク実際開始時刻と絶対時刻から残り時間を毎秒表示。backgroundでtimer停止、復帰で時刻に追従。完了操作とDB書込みはtimerへ接続しない。
+- completed sessionの出発確認を復帰後も保持。復元中のtask操作を抑止し、保存失敗後の進捗再読込を追加。
+- 関連19 testsで復帰、超過、timer停止、listener解除、出発導線を検証。format / lint / typecheckを実行。
+- Self Review: 秒表示を独立componentに分離し、画面全体の毎秒再renderと無関係なDB reloadを避けた。色だけで超過を伝えない。
+- コミット名: `feat(morning): refresh resumed plans and show task countdown`。
+- 次: Development Build準備とコアフロー結合検証。OS実機配信は未検証。
+
 ## 2026-10-12 — Phase 1-G-4a: 朝sessionの復元整合性
 
 - 起床目安の書換え、タスク0件のactive残存を再現する3 testを先に追加し、すべて失敗することを確認。

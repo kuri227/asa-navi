@@ -38,6 +38,26 @@ const plannedPreview: HomeDashboardData = {
 };
 
 describe("HomeScreen", () => {
+  it("reloads changed plans when the route resumes", async () => {
+    const loadPlan = jest
+      .fn()
+      .mockResolvedValueOnce(plannedPreview)
+      .mockResolvedValueOnce({
+        kind: "noSchedule",
+        targetDate: plannedPreview.targetDate,
+        timeZone: "Asia/Tokyo",
+      });
+    const props = {
+      loadPlan,
+      onEditTomorrow: jest.fn(),
+      onStartMorning: jest.fn(),
+    };
+    const screen = await render(<HomeScreen {...props} refreshVersion={0} />);
+    await waitFor(() => screen.getByText("07:25"));
+    await screen.rerender(<HomeScreen {...props} refreshVersion={1} />);
+    await waitFor(() => screen.getByText("明日の予定はありません"));
+    expect(loadPlan).toHaveBeenCalledTimes(2);
+  });
   it("shows tomorrow's resolved plan in the device time zone", async () => {
     const request = deferred<HomeDashboardData>();
     const screen = await render(

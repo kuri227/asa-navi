@@ -13,6 +13,7 @@ import {
 } from "./home-plan-formatters";
 
 type Props = Readonly<{
+  refreshVersion?: number;
   loadPlan: () => Promise<HomeDashboardData>;
   onEditTomorrow: (targetDate: string) => void;
   onStartMorning: (sessionId: string) => void;
@@ -27,6 +28,7 @@ export function HomeScreen({
   loadPlan,
   onEditTomorrow,
   onStartMorning,
+  refreshVersion = 0,
 }: Props) {
   const theme = useTheme();
   const [viewState, setViewState] = useState<ViewState>({ kind: "loading" });
@@ -49,7 +51,7 @@ export function HomeScreen({
     return () => {
       active = false;
     };
-  }, [loadPlan, requestNumber]);
+  }, [loadPlan, requestNumber, refreshVersion]);
 
   if (viewState.kind === "loading") {
     return (
