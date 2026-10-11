@@ -11,6 +11,12 @@
 - テスト結果: npm 10 / 11のci dry-run、format / lint / typecheck / migration / SQLite integration成功。全52 suites / 193 tests成功、Expo Doctor 21/21。主commitは`fix(ci): repair npm lockfile and align toolchain`。GitHub Actionsと実機の起動・通知試験は別途確認する。
 - 次: push後のCI全stepを確認し、iPhoneの起動結果を受領して実機検証を進める。
 
+### Remote確認結果
+
+- `1a61fa3`の[Quality run 38153544509](https://github.com/kuri227/asa-navi/actions/runs/38153544509)は全step成功。npm ci、format、migration、lint、typecheck、test、SQLite、Expo Doctor、critical audit gateまで確認した。
+- npm audit gate成功はcritical 0件の確認であり、既知high advisoryの解消を意味しない。
+- iPhone向けmanifestもHTTP 200。端末の起動成功・通知配信はユーザーからの結果待ちであり、合格に算入しない。
+
 ## 2026-10-12 — Phase 1-G-4c: 実機確認の準備と結合検証
 
 - SDK 57互換expo-dev-client 57.0.19とEAS development / simulator profileを準備。認証・cloud build・署名発行は未実行。

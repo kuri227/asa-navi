@@ -14,17 +14,18 @@
 - Chromeで初期設定の全経路、翌朝ホーム、reload後のSQLite復元。320×568と通常画面のホーム表示・主要操作。
 - 当初の起床目安保持、タスク0件終了、復帰更新・秒単位表示、コアUseCase結合テストを追加。
 - Development Build用依存 / EAS profile、WindowsとiPhoneのWi-Fi接続手順を準備。
+- feature branchの[GitHub Quality run 38153544509](https://github.com/kuri227/asa-navi/actions/runs/38153544509)で全品質ゲート成功。npm ciのlockfile不整合を修復しnpm 11.6.2へ統一。PR時にも同じworkflowを実行する。
 
 ## リリース前に必要
 
-| 項目                | 状態                               | 完了条件                                                                           |
-| ------------------- | ---------------------------------- | ---------------------------------------------------------------------------------- |
-| Android通知         | 未検証                             | MOBILE_NOTESのN-01〜N-12を実機で記録                                               |
-| iOS通知             | 未検証                             | 同チェックリストをiPhoneのDevelopment Buildで記録                                  |
-| OS accessibility    | 未検証                             | Dynamic Type / font scaling、TalkBack / VoiceOver、keyboard、Safe Areaを実機で確認 |
-| 通知精度の適合      | 判断保留                           | 配信遅延、消音・Focus、省電力、terminated状態を測定し判断                          |
-| dependency security | 既知advisory残存                   | DEPENDENCY_SECURITYの修正版・SDK互換性・到達経路を再評価し、残存リスクの扱いを確定 |
-| GitHub CI           | ローカル検証済み、remote結果未確認 | PRで全品質ゲート成功を確認                                                         |
+| 項目                | 状態                            | 完了条件                                                                           |
+| ------------------- | ------------------------------- | ---------------------------------------------------------------------------------- |
+| Android通知         | 未検証                          | MOBILE_NOTESのN-01〜N-12を実機で記録                                               |
+| iOS通知             | 未検証                          | 同チェックリストをiPhoneのDevelopment Buildで記録                                  |
+| OS accessibility    | 未検証                          | Dynamic Type / font scaling、TalkBack / VoiceOver、keyboard、Safe Areaを実機で確認 |
+| 通知精度の適合      | 判断保留                        | 配信遅延、消音・Focus、省電力、terminated状態を測定し判断                          |
+| dependency security | 既知advisory残存                | DEPENDENCY_SECURITYの修正版・SDK互換性・到達経路を再評価し、残存リスクの扱いを確定 |
+| GitHub CI           | feature branch pushで全step成功 | PRでも全品質ゲート成功を確認                                                       |
 
 実機の記録先はMOBILE_NOTES。端末・build・条件・実時刻・結果を必ず残す。Web結果でOS試験を置き換えない。Phase 1-Hは通知の実測結果が要件を満たさない場合だけ検討し、着手前にユーザー確認する。
 
