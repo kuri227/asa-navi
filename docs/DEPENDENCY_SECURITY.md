@@ -1,15 +1,19 @@
 # 依存関係セキュリティ
 
-更新日: 2026-10-09
+更新日: 2026-11-15
 
 ## 方針
 
 `npm audit`の件数だけで互換性を壊す自動更新は行わない。advisory、依存経路、朝ナビからの到達可能性、Expo SDKとの互換性を確認し、次の順で対処する。
 
-1. Expo SDK 57互換の修正版へ更新する。
+1. 使用中のExpo SDKに互換な修正版へ更新する。
 2. transitive dependencyに互換な修正版がある場合は、検証付きのnpm `overrides`を使用する。
 3. 修正版がない場合は到達可能性と軽減策を記録し、上流releaseを追跡する。
 4. `npm audit fix --force`がSDKやReact Nativeを非互換versionへ変更する場合は実行しない。
+
+## 2026-11-15のSDK 58更新
+
+SDK 58のlockfileで`npm ci`を実行した時点の監査結果はlow 1件、moderate 27件、high / critical 0件。SDK 57時点の数字は以下に履歴として残す。件数はアプリからの到達可能性を示さないため、出荷前に現在のadvisoryと依存経路を再確認する。SDK 58のReact 19.3に合わせ、`test-renderer` overrideを1.3.0に更新した。
 
 ## 2026-10-06の対応
 
@@ -90,7 +94,7 @@ npx expo-doctor
 次の場合はこの文書とlockfileを更新する。
 
 - `braces`または`node-forge`の修正版が公開された。
-- Expo SDK 57互換packageが依存を更新した。
+- 使用中のExpo SDKに互換なpackageが依存を更新した。
 - Expo SDKをupgradeした。
 - 新しいhigh / critical advisoryが検出された。
 - application runtimeやbuild pipelineから新しい到達経路が生じた。

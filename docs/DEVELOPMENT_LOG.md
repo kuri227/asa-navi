@@ -1,5 +1,15 @@
 # 朝ナビ 開発ログ
 
+## 2026-11-15 — Phase 1-G-4e: Expo GoのSDK 58互換性復旧
+
+- iPhoneの実機画面とMetroログで、Expo GoがSDK 58専用、プロジェクト側がSDK 57のため起動できないことを再現した。LAN接続エラーとは区別する。
+- Node 22.17.1を維持し、SDK 58正式版とExpo CLIが指定するReact Native 0.88.1 / React 19.3.0の互換セットを採用（ADR-0005）。
+- 旧lockfileでRouterとExpo Symbolsのpeer依存が衝突したため、Expo CLIが指定した互換セットからlockfileを再生成し、npm 11.6.2で`npm ci`を確認した。`--force`と`--legacy-peer-deps`は使っていない。
+- React Native 0.88の色モードとPressable refの型に合わせて修正し、Native Tabsを安定版の公開importへ変更。通知権限のSDK公開API・ESLint設定を調整し、アラーム動作とDB schemaは変更しない。
+- `expo install --check`、Expo Doctor 20/20、lint、型検査、migration、SQLite integration、全52 suites / 193 tests成功。初回のcold bundle並行検証で1 testがタイムアウトしたため、タイムアウト延長やskipを行わず全件再実行した。
+- Expo Goモードで再起動し、iOS manifestの`58.0.0`とMetroのiOSバンドル応答を確認した。
+- iPhoneがアプリ画面を表示できること、保存と通知が動作することは実機で別途確認する。
+
 ## 2026-10-12 — Phase 1-G-4d: CI install修復とiPhone接続案内
 
 - GitHub Actions run 38152674625はInstall dependenciesで失敗。公開APIでstepを特定したが、詳細ログ取得は認証必須で403だった。

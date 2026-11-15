@@ -1,6 +1,6 @@
 # 朝ナビ 実装計画
 
-更新日: 2026-10-12
+更新日: 2026-11-15
 対象: 第1段階（コアMVP）
 
 ## 1. プロジェクト概要
@@ -27,6 +27,7 @@
 - 2026-10-06に空のリモートから初回計画commitを作成した。
 - Phase 1-AとPhase 1-Bは`feat/project-foundation` branchで完了。remoteは`origin`。
 - Phase 1-A-1でExpo SDK 57、React Native 0.86.3、React 19.2.3、TypeScript 6.0.3を公式default templateから初期化した。2026-10-09時点の互換patchはExpo 57.0.27、Expo Router 57.0.25。
+- Phase 1-G-4eでは、実機iPhoneが使用するExpo Goに対応するため、SDK 58の互換セットに更新する（ADR-0005）。
 - ESLint、Prettier、Jest、React Native Testing Library、CI、SQLiteを導入済み。
   - Planning EngineとSchedule Resolverを実装し、TC-P01〜TC-P10を含むtestが成功している。
   - Phase 1-CでSQLite migration、Repository、constraint / reopen integration testを実装した。
@@ -81,7 +82,7 @@ Planning Engine、SQLite基盤、初回設定、前夜ホーム、朝セッシ�
 
 | 領域         | 方針                                                          |
 | ------------ | ------------------------------------------------------------- |
-| App          | React Native + Expo SDK 57安定版を初期候補とする              |
+| App          | React Native + Expo SDK安定版（初期57、現在58）               |
 | Navigation   | Expo Router                                                   |
 | Language     | TypeScript `strict: true`、`any`禁止                          |
 | Domain       | React Native / Expo / SQLite非依存の純粋TypeScript            |
@@ -276,6 +277,8 @@ Sub Phase:
   - 1-G-4a: 当初の起床目安を保持し、タスク0件 / 全終了でsessionをcompletedへ。再現testとRepository testを追加。
   - 1-G-4b: focus / foreground復帰時の再読込と朝タスクの実時刻・残り時間表示。listener / timer解除とエラー回復を検証。
   - 1-G-4c: Development Buildの設定・実機手順と、コアフローの結合検証を整備。
+  - 1-G-4d: npmのlockfile不整合を解消してGitHub Actionsを修復。
+  - 1-G-4e: 実機iPhoneのExpo Goに合わせてSDK 58へ更新し、互換性とiOSバンドルを確認する。
 
 Acceptance Criteria:
 

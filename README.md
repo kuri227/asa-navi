@@ -30,7 +30,7 @@
 
 | 領域         | 技術・方針                                      |
 | ------------ | ----------------------------------------------- |
-| Mobile       | Expo SDK 57 / React Native 0.86 / React 19.2    |
+| Mobile       | Expo SDK 58 / React Native 0.88 / React 19.3    |
 | Navigation   | Expo Router                                     |
 | Language     | TypeScript 6 / strict mode                      |
 | Domain       | React Native非依存の純粋TypeScript              |
@@ -286,6 +286,10 @@ npx expo-doctor
 ### QR codeから接続できない
 
 PCと端末を同じnetworkに接続します。network制限がある場合は`npx expo start --tunnel`を試せますが、通常より遅くなることがあります。
+
+### Expo Goに「Project is incompatible」と表示される
+
+朝ナビのExpo SDKは58です。iPhoneのExpo GoとプロジェクトのSDKが一致していることを確認してください。SDK 57の古い開発サーバーを起動している場合は、停止してからこのブランチで`npm ci`、`npm run start:go`を実行し、新しいQRコードで接続し直します。実機iPhoneのExpo GoはApp Storeが配布するSDKのみをサポートします。詳しくは[Expo公式のSDK移行手順](https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/)を参照してください。
 
 ### `npm audit`がhighを報告する
 

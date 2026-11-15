@@ -1,6 +1,6 @@
 # 第1段階 リリース判定
 
-更新日: 2026-10-12
+更新日: 2026-11-15
 判定: 実装済みコア機能は自動検証済み。実機検証と依存脆弱性対応が残るため、製品リリース可能とは判定しない。
 
 ## 確認済み
@@ -14,6 +14,7 @@
 - Chromeで初期設定の全経路、翌朝ホーム、reload後のSQLite復元。320×568と通常画面のホーム表示・主要操作。
 - 当初の起床目安保持、タスク0件終了、復帰更新・秒単位表示、コアUseCase結合テストを追加。
 - Development Build用依存 / EAS profile、WindowsとiPhoneのWi-Fi接続手順を準備。
+- SDK 58.0.25へ移行後も全193 testsとExpo Doctor 20/20を確認。iOS manifestと開発バンドルはPCで確認済み、Expo Goでの起動結果は未確認。
 - feature branchの[GitHub Quality run 38153544509](https://github.com/kuri227/asa-navi/actions/runs/38153544509)で全品質ゲート成功。npm ciのlockfile不整合を修復しnpm 11.6.2へ統一。PR時にも同じworkflowを実行する。
 
 ## リリース前に必要

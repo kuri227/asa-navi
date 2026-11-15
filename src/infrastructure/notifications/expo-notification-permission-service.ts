@@ -1,4 +1,10 @@
-import * as Notifications from "expo-notifications";
+import {
+  AndroidImportance,
+  getPermissionsAsync,
+  IosAuthorizationStatus,
+  requestPermissionsAsync,
+  setNotificationChannelAsync,
+} from "expo-notifications";
 import { Platform } from "react-native";
 
 import { NotificationError } from "@/application/errors/notification-error";
@@ -10,7 +16,7 @@ import type {
 type PermissionResponse = Readonly<{
   status: "granted" | "denied" | "undetermined";
   granted: boolean;
-  ios?: Readonly<{ status: Notifications.IosAuthorizationStatus }>;
+  ios?: Readonly<{ status: IosAuthorizationStatus }>;
 }>;
 
 type NotificationPermissionGateway = Readonly<{
@@ -20,15 +26,15 @@ type NotificationPermissionGateway = Readonly<{
 }>;
 
 const expoGateway: NotificationPermissionGateway = {
-  getPermissions: () => Notifications.getPermissionsAsync(),
+  getPermissions: getPermissionsAsync,
   requestPermissions: () =>
-    Notifications.requestPermissionsAsync({
+    requestPermissionsAsync({
       ios: { allowAlert: true, allowBadge: false, allowSound: true },
     }),
   prepareAndroidChannel: async () => {
-    await Notifications.setNotificationChannelAsync("morning-alarm", {
+    await setNotificationChannelAsync("morning-alarm", {
       name: "朝ナビのアラーム",
-      importance: Notifications.AndroidImportance.MAX,
+      importance: AndroidImportance.MAX,
       sound: "default",
       vibrationPattern: [0, 250, 250, 250],
     });
@@ -72,8 +78,8 @@ function mapPermissionState(
 ): AlarmPermissionState {
   if (
     response.granted ||
-    response.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL ||
-    response.ios?.status === Notifications.IosAuthorizationStatus.EPHEMERAL
+    response.ios?.status === IosAuthorizationStatus.PROVISIONAL ||
+    response.ios?.status === IosAuthorizationStatus.EPHEMERAL
   ) {
     return "granted";
   }
