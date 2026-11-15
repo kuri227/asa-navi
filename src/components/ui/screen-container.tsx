@@ -15,6 +15,7 @@ export type ScreenContainerProps = PropsWithChildren<
   Readonly<{
     footer?: ReactNode;
     scrollable?: boolean;
+    centerContent?: boolean;
     accessibilityHidden?: boolean;
   }>
 >;
@@ -23,10 +24,15 @@ export function ScreenContainer({
   children,
   footer,
   scrollable = true,
+  centerContent = false,
   accessibilityHidden = false,
 }: ScreenContainerProps) {
   const theme = useTheme();
-  const content = <View style={styles.content}>{children}</View>;
+  const content = (
+    <View style={[styles.content, centerContent && styles.centerContent]}>
+      {children}
+    </View>
+  );
 
   return (
     <SafeAreaView
@@ -80,6 +86,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xxl,
     gap: spacing.section,
   },
+  centerContent: { flexGrow: 1, justifyContent: "center" },
   footer: {
     alignItems: "center",
     borderTopWidth: StyleSheet.hairlineWidth,

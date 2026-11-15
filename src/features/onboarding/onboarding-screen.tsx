@@ -2,114 +2,89 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { AppButton, ScreenContainer } from "@/components/ui";
 import { useTheme } from "@/hooks/use-theme";
-import { radius, spacing, typography } from "@/theme";
+import { spacing, typography } from "@/theme";
 
-export type OnboardingScreenProps = Readonly<{
-  onStart: () => void;
-}>;
+import { StartupMark } from "./startup-mark";
+
+type OnboardingScreenProps = Readonly<{ onStart: () => void }>;
+
+const morningExample = [
+  { time: "06:45", label: "起床" },
+  { time: "08:05", label: "出発" },
+  { time: "08:50", label: "1限" },
+] as const;
 
 export function OnboardingScreen({ onStart }: OnboardingScreenProps) {
   const theme = useTheme();
 
   return (
-    <ScreenContainer footer={<AppButton label="始める" onPress={onStart} />}>
-      <View style={styles.copy}>
-        <Text
-          accessibilityRole="header"
-          maxFontSizeMultiplier={1.5}
-          style={[styles.title, { color: theme.text }]}
-        >
-          朝のバタバタ、{"\n"}もう終わりにしませんか？
-        </Text>
-        <Text
-          maxFontSizeMultiplier={1.8}
-          style={[styles.description, { color: theme.textSecondary }]}
-        >
-          通学ルートや時間割に合わせて、最適な起床・やるべきことを自動で提案します。
-        </Text>
-      </View>
-
-      <View
-        accessible
-        accessibilityLabel="朝の予定を整えるイメージ"
-        style={[styles.illustration, { backgroundColor: theme.surfaceSubtle }]}
-      >
-        <Text accessibilityElementsHidden style={styles.sun}>
-          ☀️
-        </Text>
-        <View style={[styles.planCard, { backgroundColor: theme.surface }]}>
+    <ScreenContainer
+      centerContent
+      footer={<AppButton label="始める" onPress={onStart} />}
+    >
+      <View style={styles.welcome}>
+        <View style={styles.brand}>
+          <StartupMark size={180} />
           <Text
-            maxFontSizeMultiplier={1.5}
-            style={[styles.planEyebrow, { color: theme.primary }]}
+            accessibilityRole="header"
+            style={[styles.title, { color: theme.text }]}
           >
-            明日の朝
-          </Text>
-          <Text
-            maxFontSizeMultiplier={1.5}
-            style={[styles.planTime, { color: theme.text }]}
-          >
-            6:45 起床
-          </Text>
-          <Text
-            maxFontSizeMultiplier={1.8}
-            style={[styles.planCaption, { color: theme.textSecondary }]}
-          >
-            予定から逆算してご案内
+            朝ナビ
           </Text>
         </View>
-      </View>
 
-      <Text
-        maxFontSizeMultiplier={1.8}
-        style={[styles.setupHint, { color: theme.textSecondary }]}
-      >
-        セットアップは約3分です
-      </Text>
+        <View style={styles.preview}>
+          <Text style={[styles.previewTitle, { color: theme.textSecondary }]}>
+            朝のプラン例
+          </Text>
+          {morningExample.map(({ time, label }, index) => (
+            <View
+              key={time}
+              style={[styles.row, { borderTopColor: theme.border }]}
+            >
+              <View
+                aria-hidden
+                style={[
+                  styles.dot,
+                  {
+                    backgroundColor:
+                      index === 0 ? theme.primary : theme.borderStrong,
+                  },
+                ]}
+              />
+              <Text
+                style={[
+                  styles.time,
+                  { color: index === 0 ? theme.primary : theme.text },
+                ]}
+              >
+                {time}
+              </Text>
+              <Text style={[styles.event, { color: theme.text }]}>{label}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  copy: {
-    gap: spacing.lg,
-  },
-  title: {
-    ...typography.heading,
-  },
-  description: {
-    ...typography.body,
-  },
-  illustration: {
-    flex: 1,
-    minHeight: 260,
-    borderRadius: radius.card,
-    padding: spacing.xxl,
+  welcome: { alignItems: "center", gap: spacing.section },
+  brand: { alignItems: "center" },
+  title: { ...typography.display, textAlign: "center" },
+  preview: { width: "100%", maxWidth: 360 },
+  previewTitle: { ...typography.label, paddingBottom: spacing.sm },
+  row: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.xl,
+    columnGap: spacing.md,
+    rowGap: spacing.xxs,
+    paddingVertical: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
-  sun: {
-    fontSize: 64,
-    lineHeight: 76,
-  },
-  planCard: {
-    width: "100%",
-    maxWidth: 320,
-    borderRadius: radius.card,
-    padding: spacing.xl,
-    gap: spacing.xs,
-  },
-  planEyebrow: {
-    ...typography.label,
-  },
-  planTime: {
-    ...typography.title,
-  },
-  planCaption: {
-    ...typography.caption,
-  },
-  setupHint: {
-    ...typography.caption,
-    textAlign: "center",
-  },
+  dot: { width: spacing.sm, height: spacing.sm, borderRadius: spacing.xs },
+  time: { ...typography.title, fontVariant: ["tabular-nums"] },
+  event: { ...typography.bodyStrong },
 });

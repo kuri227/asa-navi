@@ -6,16 +6,12 @@ import {
   Stack,
   ThemeProvider,
 } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "react-native";
 
-import { AnimatedSplashOverlay } from "@/components/animated-icon";
 import { configureExpoNotificationPresentation } from "@/infrastructure/notifications/configure-notification-presentation";
 import { observeMorningAlarmResponses } from "@/infrastructure/notifications/observe-morning-alarm-responses";
 
 configureExpoNotificationPresentation();
-
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -28,7 +24,6 @@ export default function RootLayout() {
   );
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
       <Stack screenOptions={{ headerShown: false }} />
     </ThemeProvider>
   );

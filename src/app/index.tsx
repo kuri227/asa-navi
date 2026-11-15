@@ -4,6 +4,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 import { AppButton, ScreenContainer } from "@/components/ui";
 import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
+import { StartupMark } from "@/features/onboarding/startup-mark";
 import { useTheme } from "@/hooks/use-theme";
 import { loadOnboardingCompleted } from "@/infrastructure/app-services/notification-onboarding";
 import { spacing, typography } from "@/theme";
@@ -32,19 +33,21 @@ export default function OnboardingRoute() {
 
   if (state === "checking") {
     return (
-      <ScreenContainer scrollable={false}>
-        <ActivityIndicator
-          accessibilityLabel="初期設定を確認中"
-          color={theme.primary}
-          size="large"
-        />
+      <ScreenContainer centerContent>
+        <View style={styles.loading}>
+          <StartupMark size={132} />
+          <ActivityIndicator
+            accessibilityLabel="初期設定を確認中"
+            color={theme.primary}
+          />
+        </View>
       </ScreenContainer>
     );
   }
 
   if (state === "error") {
     return (
-      <ScreenContainer scrollable={false}>
+      <ScreenContainer>
         <View style={styles.errorContent}>
           <Text
             accessibilityRole="alert"
@@ -69,6 +72,7 @@ export default function OnboardingRoute() {
 }
 
 const styles = StyleSheet.create({
+  loading: { alignItems: "center", gap: spacing.sm },
   errorContent: { gap: spacing.xl },
   error: { ...typography.bodyStrong },
 });
