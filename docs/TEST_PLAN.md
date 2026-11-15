@@ -102,6 +102,8 @@ npx expo-doctor
 
 ## 7. UI / accessibility test
 
+[モバイル開発ハーネス](MOBILE_DEVELOPMENT_HARNESS.md)のM01〜M07と実機判定に従い、環境・結果・未実施項目をPRに記録する。
+
 - labelと入力が関連付く。
 - validation errorが読み上げ可能で、入力値を失わず修正できる。
 - icon-only操作にaccessible nameがある。

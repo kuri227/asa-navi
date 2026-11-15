@@ -297,6 +297,8 @@ PCと端末を同じnetworkに接続します。network制限がある場合は`
 
 ## 開発資料
 
+- [モバイル開発ハーネス](docs/MOBILE_DEVELOPMENT_HARNESS.md)：iOS / Androidの設計・実装・レビュー・実機検証の共通ルール
+
 - [実装計画](docs/IMPLEMENTATION_PLAN.md)
 - [アーキテクチャ](docs/ARCHITECTURE.md)
 - [テスト計画](docs/TEST_PLAN.md)

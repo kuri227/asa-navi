@@ -1,5 +1,9 @@
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
 
+## Mobile development harness
+
+Before changing app UI, navigation, persistence, notifications, dependencies, or build configuration, read [the mobile development harness](docs/MOBILE_DEVELOPMENT_HARNESS.md). Apply the relevant M01–M12 checks and record results in the PR template. Use platform insets, not a fixed status-bar offset. Report device checks separately from browser and automated test results; unverified checks are not passes.
+
 ## Expo has changed — do not trust your training data
 
 Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:
