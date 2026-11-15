@@ -72,7 +72,7 @@ export async function loadHomeDashboardFromDatabase(): Promise<HomeDashboardData
     if (preview.kind === "noSchedule") {
       const staleSession = await sessionRepository.findActive(targetDate);
       if (staleSession?.status === "planned") {
-        await sessionRepository.updateStatus(staleSession.id, "cancelled");
+        // Keep the session discoverable so a failed cancellation can be retried.
         await syncMorningAlarm(
           {
             session: { ...staleSession, status: "cancelled", updatedAt: now },
@@ -80,6 +80,7 @@ export async function loadHomeDashboardFromDatabase(): Promise<HomeDashboardData
           },
           { alarmService, alarmRecordRepository, createId: createLocalId },
         );
+        await sessionRepository.updateStatus(staleSession.id, "cancelled");
       }
       return preview;
     }
