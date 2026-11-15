@@ -103,7 +103,11 @@ export class SQLiteRoutineRepository implements RoutineRepository {
     const updatedAt = this.now().toISOString();
     return runRepositoryQuery(() =>
       this.database.withExclusiveTransactionAsync(async (transaction) => {
-        await transaction.runAsync("DELETE FROM morning_task_templates");
+        // Historical executions still reference old task templates.
+        await transaction.runAsync(
+          "UPDATE morning_task_templates SET enabled = 0, updated_at = $updatedAt WHERE enabled = 1",
+          { $updatedAt: updatedAt },
+        );
         for (const task of tasks) {
           await transaction.runAsync(
             `INSERT INTO morning_task_templates (
@@ -114,7 +118,17 @@ export class SQLiteRoutineRepository implements RoutineRepository {
               $id, $name, $normalDurationMin, $minimumDurationMin,
               $requirement, $compressionPriority, $skipPriority, $sortOrder,
               $enabled, $specialType, $createdAt, $updatedAt
-            )`,
+            ) ON CONFLICT(id) DO UPDATE SET
+              name = excluded.name,
+              normal_duration_min = excluded.normal_duration_min,
+              minimum_duration_min = excluded.minimum_duration_min,
+              requirement = excluded.requirement,
+              compression_priority = excluded.compression_priority,
+              skip_priority = excluded.skip_priority,
+              sort_order = excluded.sort_order,
+              enabled = excluded.enabled,
+              special_type = excluded.special_type,
+              updated_at = excluded.updated_at`,
             {
               $id: task.id,
               $name: task.name,

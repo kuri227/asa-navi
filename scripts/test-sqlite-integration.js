@@ -106,6 +106,31 @@ try {
     "active",
     "reopened active session",
   );
+  execute(`
+    PRAGMA foreign_keys = ON;
+    BEGIN;
+    UPDATE morning_task_templates SET enabled = 0 WHERE enabled = 1;
+    INSERT INTO morning_task_templates (
+      id, name, normal_duration_min, minimum_duration_min, requirement,
+      sort_order, created_at, updated_at
+    ) VALUES ('task-2', '身支度', 10, 5, 'required', 0,
+              '2026-10-07T00:00:00.000Z', '2026-10-07T00:00:00.000Z');
+    COMMIT;
+  `);
+  assertEqual(
+    execute(`SELECT template.name || '|' || template.enabled
+             FROM morning_task_executions AS execution
+             JOIN morning_task_templates AS template ON template.id = execution.task_template_id
+             WHERE execution.id = 'execution-1';`),
+    "朝食|0",
+    "retired task remains available to historical executions",
+  );
+  assertEqual(
+    execute("SELECT id FROM morning_task_templates WHERE enabled = 1;"),
+    "task-2",
+    "only the new routine is enabled",
+  );
+  assertEqual(execute("PRAGMA foreign_key_check;"), "", "foreign_key_check");
   execute(
     "PRAGMA foreign_keys = ON; DELETE FROM morning_sessions WHERE id = 'session-1';",
   );

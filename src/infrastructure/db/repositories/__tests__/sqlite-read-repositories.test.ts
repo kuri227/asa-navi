@@ -353,7 +353,7 @@ describe("SQLiteRoutineRepository", () => {
     });
   });
 
-  it("replaces task templates in one transaction", async () => {
+  it("retires old templates without breaking references from task history", async () => {
     const database = new FakeQueryDatabase();
     const repository = new SQLiteRoutineRepository(
       database,
@@ -377,8 +377,9 @@ describe("SQLiteRoutineRepository", () => {
     ]);
     expect(database.calls).toHaveLength(2);
     expect(database.calls[0].sql).toContain(
-      "DELETE FROM morning_task_templates",
+      "UPDATE morning_task_templates SET enabled = 0",
     );
+    expect(database.calls[0].params).toEqual({ $updatedAt: timestamp });
     expect(database.calls[1].params).toMatchObject({
       $name: "朝食",
       $normalDurationMin: 15,
