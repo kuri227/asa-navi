@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
 
 import { ValidationError } from "@/application/errors/validation-error";
 import type { MorningRoutineTaskInput } from "@/application/routine-setup";
 import { AppButton, FormSection, ScreenContainer } from "@/components/ui";
+import { ReorderPanel } from "@/components/ui/reorder-panel";
 import { useTheme } from "@/hooks/use-theme";
 import { spacing, typography } from "@/theme";
 
@@ -29,6 +30,12 @@ export function RoutineSetupScreen({ onSave, onSaved }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string>();
+  const [reorderId, setReorderId] = useState<string>();
+
+  const openOrder = (id: string) => {
+    Keyboard.dismiss();
+    setReorderId(id);
+  };
 
   const allocateId = () => {
     const id = `routine-${nextId.current}`;
@@ -64,94 +71,112 @@ export function RoutineSetupScreen({ onSave, onSaved }: Props) {
   };
 
   return (
-    <ScreenContainer
-      footer={
-        <AppButton
-          label="次へ"
-          loading={saving}
-          onPress={() => void handleSave()}
-        />
-      }
-    >
-      <FormSection
-        description="起床後から出発までに行うことを順番に登録します。時間が足りないときは最短時間まで短縮します。"
-        title="朝のルーティンを設定しましょう"
+    <>
+      <ScreenContainer
+        accessibilityHidden={reorderId !== undefined}
+        footer={
+          <AppButton
+            label="次へ"
+            loading={saving}
+            onPress={() => void handleSave()}
+          />
+        }
       >
-        {formError ? (
-          <Text
-            accessibilityLiveRegion="polite"
-            accessibilityRole="alert"
-            maxFontSizeMultiplier={1.8}
-            style={[styles.error, { color: theme.error }]}
-          >
-            {formError}
-          </Text>
-        ) : null}
-      </FormSection>
-      <View style={styles.section}>
-        <Text
-          maxFontSizeMultiplier={1.6}
-          style={[styles.sectionTitle, { color: theme.text }]}
+        <FormSection
+          description="起床後から出発までに行うことを順番に登録します。時間が足りないときは最短時間まで短縮します。"
+          title="朝のルーティンを設定しましょう"
         >
-          プリセット
-        </Text>
-        <View style={styles.presetList}>
-          {routinePresets.map((preset) => (
+          {formError ? (
+            <Text
+              accessibilityLiveRegion="polite"
+              accessibilityRole="alert"
+              maxFontSizeMultiplier={1.8}
+              style={[styles.error, { color: theme.error }]}
+            >
+              {formError}
+            </Text>
+          ) : null}
+        </FormSection>
+        <View style={styles.section}>
+          <Text
+            maxFontSizeMultiplier={1.6}
+            style={[styles.sectionTitle, { color: theme.text }]}
+          >
+            プリセット
+          </Text>
+          <View style={styles.presetList}>
+            {routinePresets.map((preset) => (
+              <AppButton
+                key={preset.label}
+                label={`${preset.label}を追加`}
+                onPress={() =>
+                  setDrafts((current) => [
+                    ...current,
+                    createPresetTask(allocateId(), preset),
+                  ])
+                }
+                style={styles.presetButton}
+                variant="secondary"
+              />
+            ))}
+          </View>
+        </View>
+        <View style={styles.list}>
+          {drafts.length > 1 ? (
             <AppButton
-              key={preset.label}
-              label={`${preset.label}を追加`}
-              onPress={() =>
-                setDrafts((current) => [
-                  ...current,
-                  createPresetTask(allocateId(), preset),
-                ])
-              }
-              style={styles.presetButton}
+              label="朝タスクの順番を変更"
+              onPress={() => openOrder(drafts[0].clientId)}
               variant="secondary"
+            />
+          ) : null}
+          {drafts.map((draft, index) => (
+            <RoutineTaskCard
+              draft={draft}
+              index={index}
+              canReorder={drafts.length > 1}
+              key={draft.clientId}
+              onChange={(update) =>
+                setDrafts((current) =>
+                  current.map((task) =>
+                    task.clientId === draft.clientId
+                      ? { ...task, ...update }
+                      : task,
+                  ),
+                )
+              }
+              onReorder={() => openOrder(draft.clientId)}
+              onRemove={() =>
+                setDrafts((current) =>
+                  current.filter((task) => task.clientId !== draft.clientId),
+                )
+              }
+              submitted={submitted}
             />
           ))}
         </View>
-      </View>
-      <View style={styles.list}>
-        {drafts.map((draft, index) => (
-          <RoutineTaskCard
-            draft={draft}
-            index={index}
-            isFirst={index === 0}
-            isLast={index === drafts.length - 1}
-            key={draft.clientId}
-            onChange={(update) =>
-              setDrafts((current) =>
-                current.map((task) =>
-                  task.clientId === draft.clientId
-                    ? { ...task, ...update }
-                    : task,
-                ),
-              )
-            }
-            onMoveDown={() =>
-              setDrafts((current) => moveTask(current, index, index + 1))
-            }
-            onMoveUp={() =>
-              setDrafts((current) => moveTask(current, index, index - 1))
-            }
-            onRemove={() =>
-              setDrafts((current) =>
-                current.filter((task) => task.clientId !== draft.clientId),
-              )
-            }
-            submitted={submitted}
-          />
-        ))}
-      </View>
-      <AppButton
-        label="自分でタスクを追加"
-        onPress={() =>
-          setDrafts((current) => [...current, createCustomTask(allocateId())])
-        }
-        variant="secondary"
-      />
-    </ScreenContainer>
+        <AppButton
+          label="自分でタスクを追加"
+          onPress={() =>
+            setDrafts((current) => [...current, createCustomTask(allocateId())])
+          }
+          variant="secondary"
+        />
+      </ScreenContainer>
+      {reorderId !== undefined ? (
+        <ReorderPanel
+          initialItemId={reorderId}
+          items={drafts.map((draft) => ({
+            id: draft.clientId,
+            label: draft.name.trim() || "名前が未入力のタスク",
+          }))}
+          onClose={() => setReorderId(undefined)}
+          onMove={(from, to) =>
+            setDrafts((current) => moveTask(current, from, to))
+          }
+          title="朝タスクの順番"
+        />
+      ) : null}
+    </>
   );
 }
 

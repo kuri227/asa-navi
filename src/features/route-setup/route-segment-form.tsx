@@ -13,7 +13,7 @@ type RouteSegmentFormProps = Readonly<{
   segmentCount: number;
   submitted: boolean;
   onChange: (update: Partial<SegmentDraft>) => void;
-  onMove: (offset: -1 | 1) => void;
+  onReorder: () => void;
   onRemove: () => void;
 }>;
 
@@ -25,13 +25,23 @@ const MODE_OPTIONS: readonly { value: RouteSegmentMode; label: string }[] = [
   { value: "other", label: "その他" },
 ];
 
+export function segmentOrderLabel(segment: SegmentDraft): string {
+  const mode = MODE_OPTIONS.find(
+    (option) => option.value === segment.mode,
+  )?.label;
+  const from = segment.fromLabel.trim();
+  const to = segment.toLabel.trim();
+  if (!from && !to) return `${mode}：始点・終点が未入力`;
+  return `${mode}：${from || "始点未入力"} → ${to || "終点未入力"}`;
+}
+
 export function RouteSegmentForm({
   segment,
   index,
   segmentCount,
   submitted,
   onChange,
-  onMove,
+  onReorder,
   onRemove,
 }: RouteSegmentFormProps) {
   const theme = useTheme();
@@ -116,20 +126,15 @@ export function RouteSegmentForm({
         value={segment.durationMin}
       />
       <View style={styles.actions}>
-        <AppButton
-          disabled={index === 0}
-          label="上へ"
-          onPress={() => onMove(-1)}
-          style={styles.action}
-          variant="ghost"
-        />
-        <AppButton
-          disabled={index === segmentCount - 1}
-          label="下へ"
-          onPress={() => onMove(1)}
-          style={styles.action}
-          variant="ghost"
-        />
+        {segmentCount > 1 ? (
+          <AppButton
+            label="順番を変更"
+            accessibilityHint={`区間${index + 1}の位置を変更します`}
+            onPress={onReorder}
+            style={styles.action}
+            variant="ghost"
+          />
+        ) : null}
         <AppButton
           disabled={segmentCount === 1}
           label="削除"

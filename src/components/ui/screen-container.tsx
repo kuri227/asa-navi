@@ -15,6 +15,7 @@ export type ScreenContainerProps = PropsWithChildren<
   Readonly<{
     footer?: ReactNode;
     scrollable?: boolean;
+    accessibilityHidden?: boolean;
   }>
 >;
 
@@ -22,12 +23,14 @@ export function ScreenContainer({
   children,
   footer,
   scrollable = true,
+  accessibilityHidden = false,
 }: ScreenContainerProps) {
   const theme = useTheme();
   const content = <View style={styles.content}>{children}</View>;
 
   return (
     <SafeAreaView
+      aria-hidden={accessibilityHidden || undefined}
       style={[styles.safeArea, { backgroundColor: theme.background }]}
     >
       <KeyboardAvoidingView

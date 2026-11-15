@@ -17,7 +17,17 @@ describe("RoutineSetupScreen", () => {
       screen.getAllByLabelText("通常時間（分）、必須")[0],
       "20",
     );
-    await fireEvent.press(screen.getAllByRole("button", { name: "上へ" })[1]);
+    await fireEvent.press(
+      screen.getAllByRole("button", { name: "順番を変更" })[1],
+    );
+    expect(
+      screen.getByRole("button", { name: "2番目、持ち物確認、選択中" }),
+    ).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "上へ" }));
+    await fireEvent.press(screen.getByRole("button", { name: "下へ" }));
+    expect(screen.getByText("1番目 → 2番目：「持ち物確認」")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "上へ" }));
+    await fireEvent.press(screen.getByRole("button", { name: "完了" }));
     await fireEvent.press(screen.getByRole("button", { name: "次へ" }));
     await waitFor(() =>
       expect(onSave).toHaveBeenCalledWith([

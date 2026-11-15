@@ -9,24 +9,20 @@ import { taskError, type RoutineTaskDraft } from "./routine-setup-model";
 type Props = Readonly<{
   draft: RoutineTaskDraft;
   index: number;
-  isFirst: boolean;
-  isLast: boolean;
+  canReorder: boolean;
   submitted: boolean;
   onChange: (update: Partial<RoutineTaskDraft>) => void;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
+  onReorder: () => void;
   onRemove: () => void;
 }>;
 
 export function RoutineTaskCard({
   draft,
   index,
-  isFirst,
-  isLast,
+  canReorder,
   submitted,
   onChange,
-  onMoveUp,
-  onMoveDown,
+  onReorder,
   onRemove,
 }: Props) {
   const theme = useTheme();
@@ -42,22 +38,15 @@ export function RoutineTaskCard({
           {index + 1}番目
         </Text>
         <View style={styles.orderActions}>
-          <AppButton
-            accessibilityHint="このタスクを一つ前へ移動します"
-            disabled={isFirst}
-            label="上へ"
-            onPress={onMoveUp}
-            style={styles.smallAction}
-            variant="ghost"
-          />
-          <AppButton
-            accessibilityHint="このタスクを一つ後ろへ移動します"
-            disabled={isLast}
-            label="下へ"
-            onPress={onMoveDown}
-            style={styles.smallAction}
-            variant="ghost"
-          />
+          {canReorder ? (
+            <AppButton
+              label="順番を変更"
+              accessibilityHint={`${index + 1}番目のタスクの位置を変更します`}
+              onPress={onReorder}
+              style={styles.smallAction}
+              variant="ghost"
+            />
+          ) : null}
           <AppButton
             label="削除"
             onPress={onRemove}
@@ -149,8 +138,8 @@ export function RoutineTaskCard({
 
 const styles = StyleSheet.create({
   card: { borderRadius: radius.card, padding: spacing.lg, gap: spacing.lg },
-  header: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  position: { ...typography.title, flex: 1 },
+  header: { gap: spacing.sm },
+  position: { ...typography.title },
   orderActions: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
   smallAction: { minWidth: layout.minimumTouchTarget },
   durationRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },

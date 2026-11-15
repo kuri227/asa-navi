@@ -29,7 +29,24 @@ describe("RouteSetupScreen", () => {
       "JR京都線",
     );
     await fireEvent.changeText(durations[1], "12");
-    await fireEvent.press(screen.getAllByRole("button", { name: "上へ" })[1]);
+    await fireEvent.press(
+      screen.getByRole("button", { name: "通学区間の順番を変更" }),
+    );
+    await fireEvent.press(
+      screen.getByRole("button", { name: "2番目、電車：吹田駅 → 大阪駅" }),
+    );
+    expect(screen.getByRole("button", { name: "下へ" })).toBeDisabled();
+    await fireEvent.press(screen.getByRole("button", { name: "上へ" }));
+    expect(
+      screen.getByText("2番目 → 1番目：「電車：吹田駅 → 大阪駅」"),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", {
+        name: "1番目、電車：吹田駅 → 大阪駅、選択中",
+      }),
+    ).toBeTruthy();
+    expect(screen.getByRole("button", { name: "上へ" })).toBeDisabled();
+    await fireEvent.press(screen.getByRole("button", { name: "完了" }));
     await fireEvent.press(screen.getByRole("button", { name: "次へ" }));
 
     await waitFor(() =>

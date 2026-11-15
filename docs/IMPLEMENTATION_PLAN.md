@@ -279,6 +279,7 @@ Sub Phase:
   - 1-G-4c: Development Buildの設定・実機手順と、コアフローの結合検証を整備。
   - 1-G-4d: npmのlockfile不整合を解消してGitHub Actionsを修復。
   - 1-G-4e: 実機iPhoneのExpo Goに合わせてSDK 58へ更新し、互換性とiOSバンドルを確認する。
+  - 1-G-4g: 通学区間と朝タスクの並べ替えを小型画面向けに見直す。選択、変更前後、境界、入力保持、保存と読み上げを確認する。
 
 Acceptance Criteria:
 
