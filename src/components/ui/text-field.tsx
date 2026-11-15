@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -65,6 +66,8 @@ export function TextField({
         placeholderTextColor={theme.textDisabled}
         style={[
           styles.input,
+          // Let the native iOS single-line field position its own baseline.
+          (multiline || Platform.OS !== "ios") && styles.inputLineHeight,
           multiline && styles.multiline,
           {
             backgroundColor: theme.surface,
@@ -102,12 +105,17 @@ const styles = StyleSheet.create({
     ...typography.label,
   },
   input: {
-    ...typography.body,
+    fontFamily: typography.body.fontFamily,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.body.fontWeight,
     minHeight: layout.minimumTouchTarget,
     borderWidth: 1,
     borderRadius: radius.control,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
+  },
+  inputLineHeight: {
+    lineHeight: typography.body.lineHeight,
   },
   multiline: {
     minHeight: 112,

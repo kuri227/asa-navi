@@ -1,4 +1,7 @@
 import { fireEvent, render } from "@testing-library/react-native";
+import { Platform, StyleSheet } from "react-native";
+
+import { layout, typography } from "@/theme";
 
 import { AppButton } from "../app-button";
 import { TextField } from "../text-field";
@@ -32,6 +35,34 @@ describe("AppButton", () => {
 });
 
 describe("TextField", () => {
+  it.each([
+    ["ios", false, undefined],
+    ["ios", true, typography.body.lineHeight],
+    ["android", false, typography.body.lineHeight],
+    ["web", false, typography.body.lineHeight],
+  ] as const)(
+    "uses the intended line height on %s with multiline=%s",
+    async (platform, multiline, lineHeight) => {
+      const platformOverride = jest.replaceProperty(Platform, "OS", platform);
+      try {
+        const screen = await render(
+          <TextField label="ルート名" multiline={multiline} />,
+        );
+        const style = StyleSheet.flatten(
+          screen.getByLabelText("ルート名").props.style,
+        );
+
+        expect(style.lineHeight).toBe(lineHeight);
+        expect(style.fontSize).toBe(typography.body.fontSize);
+        expect(style.minHeight).toBeGreaterThanOrEqual(
+          layout.minimumTouchTarget,
+        );
+      } finally {
+        platformOverride.restore();
+      }
+    },
+  );
+
   it("labels required input and forwards text changes", async () => {
     const onChangeText = jest.fn();
     const screen = await render(
