@@ -41,7 +41,20 @@ export async function loadTomorrowPlanFromDatabase(): Promise<TomorrowPlanPrevie
   }
 }
 
-export async function loadHomeDashboardFromDatabase(): Promise<HomeDashboardData> {
+let previousDashboardLoad = Promise.resolve();
+
+export function loadHomeDashboardFromDatabase(): Promise<HomeDashboardData> {
+  // Focus and foreground refreshes may overlap. Finish the current DB/OS work
+  // before calculating again, so both refreshes cannot create the same alarm.
+  const result = previousDashboardLoad.then(loadHomeDashboard);
+  previousDashboardLoad = result.then(
+    () => undefined,
+    () => undefined,
+  );
+  return result;
+}
+
+async function loadHomeDashboard(): Promise<HomeDashboardData> {
   const now = new Date();
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
   const today = getTargetDate(now, timeZone, 0);

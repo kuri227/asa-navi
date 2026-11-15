@@ -65,6 +65,47 @@ it("keeps cancellation retryable when the OS fails to remove an alarm", async ()
   expect(mockClose).toHaveBeenCalledTimes(2);
 });
 
+it("does not run overlapping dashboard refreshes while scheduling or cancelling", async () => {
+  jest.clearAllMocks();
+  const session = { id: "tomorrow", status: "planned" } as const;
+  const preview = {
+    kind: "noSchedule",
+    targetDate: "2026-11-16",
+    timeZone: "Asia/Tokyo",
+  } as const;
+  jest.mocked(loadTomorrowPlan).mockResolvedValue(preview);
+  mockFindActive
+    .mockResolvedValueOnce(null)
+    .mockResolvedValueOnce(session)
+    .mockResolvedValueOnce(null)
+    .mockResolvedValueOnce(null);
+  let finishCancellation: () => void = () => undefined;
+  let notifyCancellationStarted: () => void = () => undefined;
+  const cancellationStarted = new Promise<void>((resolve) => {
+    notifyCancellationStarted = resolve;
+  });
+  jest.mocked(syncMorningAlarm).mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finishCancellation = () => resolve({ state: "notScheduled" });
+        notifyCancellationStarted();
+      }),
+  );
+
+  const first = loadHomeDashboardFromDatabase();
+  await cancellationStarted;
+  const second = loadHomeDashboardFromDatabase();
+  try {
+    await Promise.resolve();
+    expect(mockFindActive).toHaveBeenCalledTimes(2);
+  } finally {
+    finishCancellation();
+    await Promise.all([first, second]);
+  }
+  expect(mockFindActive).toHaveBeenCalledTimes(4);
+  expect(syncMorningAlarm).toHaveBeenCalledTimes(1);
+});
+
 describe("getTomorrowTargetDate", () => {
   it("uses the device time zone across a UTC date boundary", () => {
     expect(
