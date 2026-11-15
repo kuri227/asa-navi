@@ -6,7 +6,7 @@ import {
   type MorningSessionDependencies,
 } from "@/application/morning-session";
 import { openAppDatabase } from "@/infrastructure/db/open-database";
-import { createMutationDatabase } from "@/infrastructure/db/query-database";
+import { runMutationTransaction } from "@/infrastructure/db/query-database";
 import {
   SQLiteMorningSessionRepository,
   SQLiteMorningTaskExecutionRepository,
@@ -54,17 +54,18 @@ async function withMorningSessionDependencies<T>(
 ): Promise<T> {
   const database = await openAppDatabase();
   try {
-    const mutationDatabase = createMutationDatabase(database);
-    return await operation({
-      sessionRepository: new SQLiteMorningSessionRepository(mutationDatabase),
-      executionRepository: new SQLiteMorningTaskExecutionRepository(
-        mutationDatabase,
-      ),
-      routeRepository: new SQLiteRouteRepository(mutationDatabase),
-      routineRepository: new SQLiteRoutineRepository(mutationDatabase),
-      settingsRepository: new SQLiteSettingsRepository(mutationDatabase),
-      createId: createLocalId,
-    });
+    return await runMutationTransaction(database, (transaction) =>
+      operation({
+        sessionRepository: new SQLiteMorningSessionRepository(transaction),
+        executionRepository: new SQLiteMorningTaskExecutionRepository(
+          transaction,
+        ),
+        routeRepository: new SQLiteRouteRepository(transaction),
+        routineRepository: new SQLiteRoutineRepository(transaction),
+        settingsRepository: new SQLiteSettingsRepository(transaction),
+        createId: createLocalId,
+      }),
+    );
   } finally {
     await database.closeAsync();
   }

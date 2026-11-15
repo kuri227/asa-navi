@@ -35,18 +35,41 @@ export function createQueryDatabase(
 export function createMutationDatabase(
   database: SQLiteDatabase,
 ): MutationDatabase {
-  const createWriteAdapter = (
-    target: Pick<SQLiteDatabase, "getFirstAsync" | "getAllAsync" | "runAsync">,
-  ): WriteDatabase => ({
-    ...createQueryDatabase(target),
-    runAsync: (sql, params) =>
-      params ? target.runAsync(sql, params) : target.runAsync(sql),
-  });
   return {
     ...createWriteAdapter(database),
     withExclusiveTransactionAsync: (task) =>
       withDatabaseTransaction(database, (transaction) =>
         task(createWriteAdapter(transaction)),
       ),
+  };
+}
+
+// Repositories participating in a larger write must share its connection and
+// let the outer transaction commit or roll back the entire operation.
+export async function runMutationTransaction<T>(
+  database: SQLiteDatabase,
+  task: (transaction: MutationDatabase) => Promise<T>,
+): Promise<T> {
+  let result: { value: T } | undefined;
+  await withDatabaseTransaction(database, async (connection) => {
+    const adapter = createWriteAdapter(connection);
+    result = {
+      value: await task({
+        ...adapter,
+        withExclusiveTransactionAsync: (write) => write(adapter),
+      }),
+    };
+  });
+  if (!result) throw new Error("Transaction callback did not return a result.");
+  return result.value;
+}
+
+function createWriteAdapter(
+  target: Pick<SQLiteDatabase, "getFirstAsync" | "getAllAsync" | "runAsync">,
+): WriteDatabase {
+  return {
+    ...createQueryDatabase(target),
+    runAsync: (sql, params) =>
+      params ? target.runAsync(sql, params) : target.runAsync(sql),
   };
 }
