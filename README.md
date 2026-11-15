@@ -255,6 +255,7 @@ Engine内部で現在時刻を取得せず、同じ入力には同じ結果を�
 6. OS差分・accessibility・実機検証
 
 細かなSub PhaseとAcceptance Criteriaは[実装計画](docs/IMPLEMENTATION_PLAN.md)を参照してください。
+MVPの次に検討する入力補完と経路候補の比較は、[通学ルートの入力補助・経路提案案](docs/ROUTE_ASSIST_IDEAS.md)にまとめています。
 
 ## Troubleshooting
 
