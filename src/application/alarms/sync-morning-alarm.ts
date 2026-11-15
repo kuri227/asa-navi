@@ -103,7 +103,8 @@ async function scheduleAndRecord(
       sessionId: input.session.id,
       fireAt: input.session.plannedWakeAt,
       title: "朝ナビ",
-      body: `${input.session.firstEventTitle}の日です。朝の予定を始めましょう。`,
+      // The body can be visible on the lock screen before the device is unlocked.
+      body: "朝の予定を始めましょう。",
     }));
   } catch {
     return recordFailedAttempt(input, dependencies);

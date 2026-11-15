@@ -43,6 +43,9 @@ describe("syncMorningAlarm", () => {
       sessionId: "session-1",
       fireAt: session.plannedWakeAt,
     });
+    expect(alarmService.getScheduledAlarms()[0].input.body).not.toContain(
+      session.firstEventTitle,
+    );
     expect(repository.create).toHaveBeenCalledWith(
       expect.objectContaining({
         id: "record-1",
