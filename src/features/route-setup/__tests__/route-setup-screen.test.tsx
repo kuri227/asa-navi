@@ -2,6 +2,11 @@ import { fireEvent, render, waitFor } from "@testing-library/react-native";
 
 import { RouteSetupScreen } from "../route-setup-screen";
 
+jest.mock(
+  "react-native-safe-area-context",
+  () => jest.requireActual("react-native-safe-area-context/jest/mock").default,
+);
+
 describe("RouteSetupScreen", () => {
   it("adds and saves multiple transport segments in display order", async () => {
     const onSave = jest.fn().mockResolvedValue(undefined);

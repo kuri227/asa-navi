@@ -2,6 +2,11 @@ import { fireEvent, render, waitFor } from "@testing-library/react-native";
 
 import { RoutineSetupScreen } from "../routine-setup-screen";
 
+jest.mock(
+  "react-native-safe-area-context",
+  () => jest.requireActual("react-native-safe-area-context/jest/mock").default,
+);
+
 describe("RoutineSetupScreen", () => {
   it("adds presets, changes their order, and saves editable values", async () => {
     const onSave = jest.fn().mockResolvedValue(undefined);
