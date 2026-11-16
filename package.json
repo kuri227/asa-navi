@@ -59,6 +59,7 @@
   "scripts": {
     "start": "expo start",
     "start:go": "expo start --go",
+    "start:go:first-run": "node ./scripts/start-first-run.js",
     "start:dev-client": "expo start --dev-client",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
