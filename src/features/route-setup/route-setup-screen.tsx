@@ -37,6 +37,10 @@ export function RouteSetupScreen({ onSave, onSaved }: RouteSetupScreenProps) {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string>();
   const [reorderId, setReorderId] = useState<string>();
+  const placeLabels = segments.flatMap(({ fromLabel, toLabel }) => [
+    fromLabel,
+    toLabel,
+  ]);
 
   const openOrder = (id: string) => {
     Keyboard.dismiss();
@@ -135,6 +139,8 @@ export function RouteSetupScreen({ onSave, onSaved }: RouteSetupScreenProps) {
             <RouteSegmentForm
               index={index}
               key={segment.clientId}
+              placeLabels={placeLabels}
+              previousDestination={segments[index - 1]?.toLabel}
               onChange={(update) => updateSegment(index, update)}
               onReorder={() => openOrder(segment.clientId)}
               onRemove={() =>

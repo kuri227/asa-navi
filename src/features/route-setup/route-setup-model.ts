@@ -27,6 +27,37 @@ export function isValidDuration(value: string): boolean {
   return Number(durationText) <= 1440;
 }
 
+export function findDraftPlaceMatches(
+  query: string,
+  placeLabels: readonly string[],
+): string[] {
+  const normalizedQuery = normalizePlaceLabel(query);
+  if (!normalizedQuery) return [];
+
+  const seen = new Set([normalizedQuery]);
+  const prefixMatches: string[] = [];
+  const otherMatches: string[] = [];
+  for (const label of placeLabels) {
+    const normalizedLabel = normalizePlaceLabel(label);
+    if (
+      seen.has(normalizedLabel) ||
+      !normalizedLabel.includes(normalizedQuery)
+    ) {
+      continue;
+    }
+    seen.add(normalizedLabel);
+    const matches = normalizedLabel.startsWith(normalizedQuery)
+      ? prefixMatches
+      : otherMatches;
+    matches.push(label.trim());
+  }
+  return [...prefixMatches, ...otherMatches].slice(0, 3);
+}
+
+function normalizePlaceLabel(label: string): string {
+  return label.normalize("NFKC").trim().toLowerCase();
+}
+
 export function createCommuteRouteInput(
   name: string,
   segments: readonly SegmentDraft[],

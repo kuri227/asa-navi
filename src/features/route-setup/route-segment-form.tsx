@@ -5,12 +5,15 @@ import type { RouteSegmentMode } from "@/domain/planning";
 import { useTheme } from "@/hooks/use-theme";
 import { layout, radius, spacing, typography } from "@/theme";
 
+import { PlaceNameField } from "./place-name-field";
 import { isValidDuration, type SegmentDraft } from "./route-setup-model";
 
 type RouteSegmentFormProps = Readonly<{
   segment: SegmentDraft;
   index: number;
   segmentCount: number;
+  previousDestination?: string;
+  placeLabels: readonly string[];
   submitted: boolean;
   onChange: (update: Partial<SegmentDraft>) => void;
   onReorder: () => void;
@@ -39,6 +42,8 @@ export function RouteSegmentForm({
   segment,
   index,
   segmentCount,
+  previousDestination,
+  placeLabels,
   submitted,
   onChange,
   onReorder,
@@ -85,24 +90,25 @@ export function RouteSegmentForm({
           );
         })}
       </View>
-      <TextField
+      <PlaceNameField
         errorMessage={
           submitted && !segment.fromLabel.trim() ? "始点は必須です" : undefined
         }
         label="始点"
         onChangeText={(fromLabel) => onChange({ fromLabel })}
         placeholder="例: 自宅"
-        required
+        previousDestination={previousDestination}
+        placeLabels={placeLabels}
         value={segment.fromLabel}
       />
-      <TextField
+      <PlaceNameField
         errorMessage={
           submitted && !segment.toLabel.trim() ? "終点は必須です" : undefined
         }
         label="終点"
         onChangeText={(toLabel) => onChange({ toLabel })}
         placeholder="例: JR吹田駅"
-        required
+        placeLabels={placeLabels}
         value={segment.toLabel}
       />
       <TextField

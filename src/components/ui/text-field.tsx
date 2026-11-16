@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ComponentProps } from "react";
 import {
   Platform,
   StyleSheet,
@@ -20,6 +20,7 @@ export type TextFieldProps = Omit<
     helperText?: string;
     errorMessage?: string;
     required?: boolean;
+    ref?: ComponentProps<typeof TextInput>["ref"];
   }>;
 
 export function TextField({

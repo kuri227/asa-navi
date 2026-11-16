@@ -27,7 +27,10 @@ describe("RouteSetupScreen", () => {
     const ends = screen.getAllByLabelText("終点、必須");
     const durations = screen.getAllByLabelText("所要時間（分）、必須");
     await fireEvent.press(screen.getAllByRole("radio", { name: "電車" })[1]);
-    await fireEvent.changeText(starts[1], "吹田駅");
+    await fireEvent.press(
+      screen.getByRole("button", { name: "始点に「吹田駅」を入力" }),
+    );
+    expect(starts[1]).toHaveDisplayValue("吹田駅");
     await fireEvent.changeText(ends[1], "大阪駅");
     await fireEvent.changeText(
       screen.getAllByLabelText("路線名（任意）")[1],
@@ -76,6 +79,65 @@ describe("RouteSetupScreen", () => {
       }),
     );
     expect(onSaved).toHaveBeenCalledTimes(1);
+  });
+
+  it("matches draft place names while keeping manual edits and saving explicit", async () => {
+    const onSave = jest.fn().mockResolvedValue(undefined);
+    const screen = await render(
+      <RouteSetupScreen onSave={onSave} onSaved={jest.fn()} />,
+    );
+    await fireEvent.changeText(
+      screen.getByLabelText("始点、必須"),
+      "ＪＲ大阪駅",
+    );
+    await fireEvent.changeText(screen.getByLabelText("終点、必須"), "北口");
+    await fireEvent.changeText(
+      screen.getByLabelText("所要時間（分）、必須"),
+      "3",
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "区間を追加" }));
+
+    const [firstEnd, nextEnd] = screen.getAllByLabelText("終点、必須");
+    const nextStart = screen.getAllByLabelText("始点、必須")[1];
+    expect(nextStart).toHaveDisplayValue("");
+    await fireEvent.changeText(firstEnd, "南口");
+    expect(
+      screen.queryByRole("button", { name: "始点に「北口」を入力" }),
+    ).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "始点に「南口」を入力" }),
+    ).toBeTruthy();
+    await fireEvent.changeText(nextStart, "バス停");
+    expect(
+      screen.queryByRole("button", { name: "始点に「南口」を入力" }),
+    ).toBeNull();
+
+    await fireEvent.changeText(nextEnd, "jr大");
+    await fireEvent.press(
+      screen.getByRole("button", { name: "終点に「ＪＲ大阪駅」を入力" }),
+    );
+    expect(nextEnd).toHaveDisplayValue("ＪＲ大阪駅");
+    await fireEvent.changeText(nextEnd, "大学前");
+    await fireEvent.changeText(
+      screen.getAllByLabelText("所要時間（分）、必須")[1],
+      "12",
+    );
+    expect(onSave).not.toHaveBeenCalled();
+    await fireEvent.press(screen.getByRole("button", { name: "次へ" }));
+
+    await waitFor(() =>
+      expect(onSave).toHaveBeenCalledWith(
+        expect.objectContaining({
+          segments: [
+            expect.objectContaining({
+              fromLabel: "ＪＲ大阪駅",
+              toLabel: "南口",
+            }),
+            expect.objectContaining({ fromLabel: "バス停", toLabel: "大学前" }),
+          ],
+        }),
+      ),
+    );
   });
 
   it("keeps the user on the form and identifies invalid fields", async () => {
